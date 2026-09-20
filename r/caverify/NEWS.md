@@ -23,10 +23,11 @@
   from each column's own maximum. Tuple counting and indexing in the C
   kernel are mixed-radix; a uniform array is the degenerate case and
   takes the same code path.
-* Unchanged defaults: `v = NULL` still infers a single uniform value
-  from the data range exactly as in 0.1.x, and a scalar `v` behaves as
-  before, so existing callers (including package 'CAs') see identical
-  behaviour.
+* A scalar `v` behaves exactly as in 0.1.x. The only change for
+  existing callers is the `v = NULL` default described above, which
+  now reads each column's own symbol count. A uniform array with every
+  symbol present in every column verifies identically under both
+  readings.
 * `print` shows mixed-level results with the levels profile in
   exponent notation (e.g. `levels 4^2 3 2^3`).
 * Tests: mixed-level brute-force oracle plus randomized mixed-level
