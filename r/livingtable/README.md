@@ -107,22 +107,55 @@ no omissions:
 
 | class | entries | share | meaning |
 |---|---|---|---|
-| RESOLVED | 987 | 7.2% | an implemented route or web recipe reproduces the recorded N exactly (985 MATCH rows plus 2 BETTER rows for which a recipe node has the recorded N) |
-| BETTER | 24 | 0.2% | implemented routes beat the record |
-| LEAF | 3,623 | 26.6% | the Source tag names a search, CPHF or annealing origin, so there are no ingredients to propagate from |
+| VERIFIED | 987 | 7.2% | an implemented route or web recipe reproduces the recorded N exactly (985 MATCH rows plus 2 rows of sweep status BETTER for which a recipe node has the recorded N) |
+| VERIFIED_IMPROVED | 24 | 0.2% | implemented routes beat the record |
+| SEARCH | 3,623 | 26.6% | the Source tag names a search, CPHF or annealing origin, so there are no ingredients to propagate from |
 | UNRESOLVED | 9,007 | 66.0% | everything else |
+
+The SEARCH rows were not rebuilt. Their sweep status is GAP 3,036,
+NOIMPL 570 and ERR 17, so the class repeats what the tag says and
+does not say that an array was checked.
 
 The UNRESOLVED count by strength is t=2: 2,920, t=3: 686, t=4: 850,
 t=5: 1,670, t=6: 2,881.
 
-`data/better_verified.csv` holds the 17 BETTER entries that were
-feasible to build and verify in full. All 17 verified, with margins of
-1 to 170 rows over the snapshot (routes TJ, CK_doublingCA, ODbasedCA,
-DWYER).
+`data/better_verified.csv` holds the 17 VERIFIED_IMPROVED entries that
+were feasible to build and verify in full. All 17 verified, with
+margins of 1 to 170 rows over the snapshot (routes TJ, CK_doublingCA,
+ODbasedCA, DWYER).
 
 The 9,007 UNRESOLVED entries are the subject of the arithmetic tier
 below, which reads size laws off their Source tags and splits the
-class further in `data/engine_coverage_v2.csv`.
+class into the remaining final classes in
+`data/engine_coverage_v2.csv`.
+
+### Class names
+
+Every entry ends in one of nine classes. VERIFIED and
+VERIFIED_IMPROVED hold arrays that CAs rebuilt and caverify checked,
+at the recorded size or below it. RECURSIVE holds entries whose
+recorded size a construction reproduces exactly from ingredients in
+the table, with nothing built. RECURSIVE_TENTATIVE is the same where
+the reading may be a coincidence or one ingredient is not a table
+quantity. RECURSIVE_STALE holds entries where the construction now
+gives fewer rows than the entry. POST_OPTIMIZED holds entries where a
+construction started the array and a post-optimization search
+finished it, so the construction gives only the size before the
+search. SEARCH holds the search-tagged entries with no table
+ingredient. DIRECT_ONLY holds published one-off constructions and
+search results with no table ingredient and no builder here. OPEN
+holds the entries whose ingredients the tables never published. The
+one distinction that matters is between an array that exists and has
+been checked (VERIFIED, VERIFIED_IMPROVED) and a size that only a
+construction accounts for (the RECURSIVE family). Two further names
+appear in the code. UNRESOLVED is the internal name for the 9,007
+entries between `engine_coverage.R` and the tally, and the family
+scripts can label a row RECURSIVE_BELOW (record below the law) on the
+way to the tally, which keeps that label at count 0. The `confidence`
+column of the edge files keeps the vocabulary of
+`LIVING_TABLE_SCHEMA.md` (EXECUTED, ARITHMETIC, CLAIMED), where
+ARITHMETIC marks an edge whose size relation was checked without
+building the array, the edge-level counterpart of RECURSIVE.
 
 ## The arithmetic tier
 
@@ -145,24 +178,29 @@ calibration gate is that the recorded N of every row of the family in
 the frozen table must equal the law applied to the recorded sizes of
 its ingredients, using no free parameter beyond what the tag states
 (one exception, the Power N-CT hash family row count, is described in
-the table). Rows that fail the gate are not admitted and are tiered by
-how they fail. The tiers, over the 9,007 UNRESOLVED entries
+the table). Rows that fail the gate are not admitted and are classed
+by how they fail. The classes, over the 9,007 UNRESOLVED entries
 (`data/arith_tally.csv`, `results/arith_tally_result.txt`):
 
-| tier | entries | meaning |
+| class | entries | meaning |
 |---|---|---|
-| ARITHMETIC | 4,401 | a calibrated law reproduces the recorded N exactly from ingredient sizes that are themselves table entries; wired into the engine |
-| ARITH_INFERRED | 149 | the law is exact but an ingredient is not a table entry (117 Martirosyan-Colbourn rows with v of at least 6) or the reading may be coincidental (32 Direct product generalized rows); not wired |
-| ARITH_ABOVE | 10 | the record sits above its own law, so the law claims a smaller array than the record; leads, not claims, until the array is built |
-| ARITH_BELOW | 0 | the record sits below the law (a better ingredient reading exists); none remain |
-| ARITH_BOUND_ONLY | 13 | postop NCK tags, where the law gives a bound only |
-| TERMINAL_CLAIMED | 700 | the tag names a search result or a published array with no table ingredient, so no propagation can ever reach the entry |
-| ARITH_OPEN | 2,901 | attempted, law not recovered |
-| NOT_ATTEMPTED | 833 | Cohen-Colbourn-Ling 318, PCAx2PCA 294, PCAxPCA 221 |
+| RECURSIVE | 4,425 | a calibrated law reproduces the recorded N exactly from ingredient sizes that are themselves table entries, wired into the engine |
+| RECURSIVE_TENTATIVE | 531 | the law is exact but an ingredient is not a table entry or the reading may be coincidental (310 PCA product rows at the plain best-pair floor, 117 Martirosyan-Colbourn rows with v of at least 6, 62 Power CZ rows with the paper's quilting array sizes, 32 Direct product generalized rows, 10 strength-4 CMTW rows with one fitted CODN value), not wired |
+| RECURSIVE_STALE | 10 | the record sits above its own law, so the law claims a smaller array than the record, a lead and not a claim until the array is built |
+| POST_OPTIMIZED | 380 | the tag carries a postop suffix (NCK or TJ-SA), so a construction started the array and a search finished it, 361 rows in the terminal families and 19 in families with a law, where the law gives the size before the search |
+| DIRECT_ONLY | 339 | the tag names a published array or a search result with no table ingredient and no postop suffix (Augment OA 103, Add Factor SO 70, Torres-Jimenez 23, the Fix n symbols, cover starter, Raaphorst-Moura-Stevens, extended OA and cyclotomy tags, and the rest), so no propagation can ever reach the entry |
+| OPEN | 3,322 | attempted, construction not recovered, because the ingredients the construction needs were never published |
+
+The split of the 700 terminal rows into POST_OPTIMIZED and DIRECT_ONLY
+is by the tag alone. A Source tag ending in `postop NCK` or
+`postop TJ-SA` records a post-optimization pass over an array some
+construction started, and 361 of the 700 carry it (321 NCK, 40 TJ-SA).
+The other 339 carry no such suffix. The 19 postop rows of families
+with a law (11 NCK, 8 TJ-SA) are POST_OPTIMIZED on the same rule.
 
 The families and their laws, each calibrated on every row of the
 family in the frozen table (counts from the result logs named in the
-inventory; "unresolved admitted" is the family's ARITHMETIC count in
+inventory, and "unresolved admitted" is the family's RECURSIVE count in
 the tally):
 
 | family | law | calibration on the table | unresolved admitted |
@@ -170,33 +208,52 @@ the tally):
 | Power CT | hash family of M rows over the columns of OA(q^e, q+1, q, e), row i a CA(t, w_i, v) with rho_i constant rows, N = chi + sum (N_i - rho_i) (Colbourn and Torres-Jimenez 2010, Theorem 2.3, as in `CAs::DHHF2CA`), M = (e - 1) Turan(t, v) + 1, tag grammar q^e, +p, T, S, Arc, Trin, c read from the record | 469 of 471 exact, 0 wrong, 2 inexpressible | 445 |
 | Power N-CT | the same law with M not known from theory and solved from the record as one integer per (t, min(t, v), q, e), 39 keys, every row of a key giving the same integer, M plus or minus 1 fitting 0 of 2,093 rows | 2,033 of 2,093 exact, 0 wrong, 60 inexpressible | 2,033 |
 | perfect hash family a,b,w [T r or S s] [,c] | the same law with M = a; the D16 form (na rows at a symbols, nb at b) N = na (eCAN(t, a, v) - 1) + nb (eCAN(t, b, v) - 1) + 1 | 612 of 612, and 8 of 8 for the D16 form | 620 |
-| Direct product (plain tag) | N = min over pairs k1 k2 of at least k of eCAN(2, k1, v) + eCAN(2, k2, v) - v (Colbourn, Martirosyan, Mullen, Shasha, Sherwood and Yucas 2006; `CAs::productCA`), 174 of 174 on the executed DPcat recipes | 212 of 545 exact; the generalized tag 32 of 1,573 with the record below the best pair on 1,522 | 206 |
+| Direct product (plain tag) | N = min over pairs k1 k2 of at least k of eCAN(2, k1, v) + eCAN(2, k2, v) - v (Colbourn, Martirosyan, Mullen, Shasha, Sherwood and Yucas 2006, Theorem 3.2; `CAs::productCA`), 174 of 174 on the executed DPcat recipes | 212 of 545 exact; the generalized tag 32 of 1,573 with the record below the best pair on 1,522 | 206 |
+| PCAxPCA, PCAx2PCA | Theorems 3.2 and 3.3 of the same paper, N = eCAN(2, w1, v) + eCAN(2, w2, v) - v with the two widths from a bounded closure of the products over the OA, the PCAcat rows and the package's cover starters (`arith_formula_cmmssy.R`, recipe table `data/arith_pcax_recipes.csv`), and the package's 447 PCAcat recipes reproduce on (N, k, k1) 447 of 447 | 44 of 545 exact (27 of them VERIFIED already), 313 at the plain best-pair floor and classed RECURSIVE_TENTATIVE, 182 above it, 6 postop | 17 |
 | Derive from strength t+1 | N = floor(eCAN(t+1, k+1, v) / v) | 71 of 71 | 33 |
 | Add n factors, Add a factor | b = k - n, N = eCAN(t, b, v) + sum over j = 2 to min(t, n+1) of v^(j-1) (v-1) eCAN(t-j, b-1, v); domain n of at most 2, or v a prime power with n of at most v, or n = 3 at v in 12, 15, 20, 21, 24 | 396 of 579 exact, 6 above inside the domain, 177 outside the domain | 391 |
 | Chateauneuf-Kreher doubling | N = eCAN(3, k/2, v) + (v-1) eCAN(2, k/2, v) (Cohen, Colbourn and Ling 2008, Theorem 2) | 111 of 114, the 3 rows at v = 20 above the law | 95 |
-| Martirosyan-Colbourn | h = k/2, N = eCAN(t, h, v) + (v-1) eCAN(t-1, h, v) + eCAN(t-2, h, v^2), read off the record (no copy of the paper was available) | 37 of 38 exact where the third ingredient is a table entry (v of at most 5), 1 above; 117 rows at larger v exact with one constant per (t, v), tiered ARITH_INFERRED | 37 |
+| Martirosyan-Colbourn | h = k/2, N = eCAN(t, h, v) + (v-1) eCAN(t-1, h, v) + eCAN(t-2, h, v^2), read off the record (no copy of the paper was available) | 37 of 38 exact where the third ingredient is a table entry (v of at most 5), 1 above; 117 rows at larger v exact with one constant per (t, v), classed RECURSIVE_TENTATIVE | 37 |
 | fuse (every tag ending in m fuse words) | N = eCAN(t, k, v + m) - 2m at strengths 3 to 6, a regularity read from the record | 1,303 of 1,354 exact, 42 with the base outside the table, 9 below the law | 147 |
 | Colbourn-Martirosyan-TVT-Walker, strength 3 | N = eCAN(3, k', v) + (v-1) eCAN(2, k', v) + v^3 - v^2, k' = ceiling(k / v), at prime power v; at v + 1 a prime power, that row minus 2 | 28 of 28 (23 and 5) | 28 |
+| Colbourn-Martirosyan-TVT-Walker, strength 4 | the k = v^2 rows by CMTW Theorem 4.13 with DCAN(2, v, v) = v - 1 from Yin 2003 and CODN(2, v, v^2) = v^4 - v^2, N = eCAN(4, v, v) + (v-1) eCAN(3, v, v) + (v^3 - v^2)(v - 1) + 2 (v^4 - v^2) (`arith_formula_dcan.R`, Yin's values in `data/dcan_table.csv`) | 7 of 7 such rows, 11 rows by Lemma 4.8 with one fitted CODN value classed RECURSIVE_TENTATIVE, 565 open | 7 |
 | Martirosyan-TVT | even k, c = k/2, the size law `CAs::N_upper_MTVTRouxtypeCA` states at strength 5 and its shape one strength up at 6; odd k (the variant tag), the ingredient widths split over ceiling(k/2) and floor(k/2) as the unique full fit | 206 of 206 even, 160 of 160 odd, 6 postop rows bound only | 366 |
+| Power CZ | Colbourn and Zhou 2012, Theorem 2.2, N = the least sum of quilting array sizes over the assignments Lemma 2.3 allows, sizes from the paper's Tables 1 and 2 (`arith_formula_powercz.R`, tables in `cz_tables.R`), a reading, nothing wired | 41 of 68 binary rows exact with the sizes as printed, 65 with two sizes fitted from the record, while the 27 ternary rows at strength 3, the 3 at strength 6 and the 117 rows at v = 6 have no ingredient in the paper | 0 (62 RECURSIVE_TENTATIVE) |
+| Cohen-Colbourn-Ling | the k-ary Roux of CMTW Theorem 3.3 with Yin's DCAN values | 0 of 318, the record a median 24 percent below the law, so the difference covering arrays behind these rows were found by search | 0 |
 
-The strength-4 rows of Colbourn-Martirosyan-TVT-Walker (582 of the
-583), the direct product rows without a law (1,861, of which 1,541
-carry the generalized tag and 320 the plain tag), Power CZ (212), the
-Add rows
-outside their domain (177), 62 power rows with an Arc reduction
-followed by a T reduction, and 7 fused extended OA rows are the 2,901
-ARITH_OPEN entries.
+The fitted N-CT hash family table (`data/arith_power_Mtable.csv`, 39
+keys) carries a status column, `nct_status`, from a separate lane that
+tested whether the fitted M is reached by the e = 2 Power CT hash
+family with a chosen set of M directions of AG(2, q) in place of the
+first Turan(t, p) + 1. CERTIFIED (32 keys) means such a set was found
+and checked exactly, REFUTED (4 keys, t = 5 at q = 41 and 47, t = 6
+with p = 6 at q = 41 and 43) means an exhaustive search proved that no
+such set exists at that M, and OPEN (3 keys, t = 6 with p = 6 at q = 73
+and 83 and with p = 4 at q = 71) means every search tried failed and
+exhaustion was not run. A refuted key says that this mechanism cannot
+produce the row at that parameter, not that the table row is wrong.
+The statuses are in `data/nct_key_status.csv` and
+`arith_formula_power.R` carries them into the table on a rerun.
+
+The strength-4 rows of Colbourn-Martirosyan-TVT-Walker without a law
+(565), the direct product rows without a law (1,861, of which 1,541
+carry the generalized tag and 320 the plain tag), the 318
+Cohen-Colbourn-Ling rows, the Add rows outside their domain (177),
+the PCA product rows above the plain floor (182), Power CZ rows the
+paper's tables do not reach (150), 60 power N-CT rows and 2 power CT
+rows with an Arc reduction followed by a T reduction, and 7 fused
+extended OA rows are the 3,322 OPEN entries.
 
 Identity test (`arith_engine.R identity`,
 `results/arith_engine_identity_result.txt`). The law evaluators in
 `arith_laws.R` are a second implementation of the calibration scripts,
 and the engine requires the frozen record to reproduce itself through
-them. Result, 4,401 of 4,401 ARITHMETIC entries reproduce their
-recorded N. The run writes `data/arith_edges.csv`, 10,328 distinct
-entry-to-lookup edges (14,101 lookups in all), the non-range lookups
-answered by 1,902 distinct table rows, and 240 ARITHMETIC entries are themselves
-ingredients of other ARITHMETIC entries, which is why propagation has
-to iterate.
+them. Result, 4,425 of 4,425 RECURSIVE entries reproduce their
+recorded N. The run writes `data/arith_edges.csv`, 10,376 distinct
+entry-to-lookup edges (14,149 lookups in all), the non-range lookups
+answered by 1,929 distinct table rows, and 253 RECURSIVE entries are
+themselves ingredients of other RECURSIVE entries, which is why
+propagation has to iterate.
 
 Propagation (`arith_engine.R demo` and `arith_engine.R propagate
 file.csv`). An improvement is a row t, k, v, N, optionally with the
@@ -208,7 +265,7 @@ integer N of at least v^t, k of at least t, N below the current
 lookup, k clamped to the table's widest row). Two modes, graph (only
 the entries whose recorded lookups the improvement can move, applied
 and repeated with the changed entries as the next round's
-improvements) and sweep (recompute every ARITHMETIC entry, apply,
+improvements) and sweep (recompute every RECURSIVE entry, apply,
 repeat), are each iterated to a fixpoint and must agree on the
 closure, the sweep winning otherwise.
 
@@ -222,77 +279,77 @@ Martirosyan-TVT variant law, 16,786 rows in all. Graph mode and sweep
 mode both stop after two rounds and agree (the log's verdict line is
 `TWO-MODE AGREEMENT ON THE CLOSURE: PASS`). Both new sizes are claims.
 The doubling's other ingredient, the table's CAN(2, 12, 14) at 217
-rows, carries a terminal tag (Add Factor SO, a search result), so the
+rows, is DIRECT_ONLY (Add Factor SO, a search result), so the
 doubled array cannot be built here from table ingredients and neither
 new size has been verified. The other 16 improvements move no
-recorded lookup; graph mode found two candidate entries in its first
+recorded lookup. Graph mode found two candidate entries in its first
 round, both fed by CA(3, 12, 14), and none in the second.
 
-The ten ARITH_ABOVE rows are the only places where a law claims more
-than the record, and each is a construction that has not been
+The ten RECURSIVE_STALE rows are the only places where a law claims
+more than the record, and each is a construction that has not been
 executed. They are the three Chateauneuf-Kreher doubling rows at
 v = 20, k = 36, 38, 40 (recorded 18,677, 18,753, 19,019 against the
 law's 18,487, 18,563, 18,639, with the present eCAN(2, 18 to 20, 20)
 as ingredient), six Add n factors rows, three at (t, v) = (5, 8) and
 three at (5, 13), above the sum by 7, 12 and 24 units of v(v - 1),
 each equal to the difference between the answering strength-3 row
-and a neighbouring row, and one Martirosyan-Colbourn row, (5, 4, 2374)
+and a neighboring row, and one Martirosyan-Colbourn row, (5, 4, 2374)
 recorded 45,549 against 45,534. They are listed in
 `results/arith_formula_small_result.txt`,
 `results/arith_formula_addn_result.txt` and
 `results/arith_formula_mc_result.txt`.
 
-Coverage with the tier counted apart (`arith_coverage_republish.R`,
+Coverage with the classes counted apart (`arith_coverage_republish.R`,
 `data/engine_coverage_v2.csv`, `results/arith_coverage_republish_result.txt`),
 over 13,641 entries with no omissions:
 
 | class | entries | share |
 |---|---|---|
-| RESOLVED | 987 | 7.2% |
-| BETTER | 24 | 0.2% |
-| LEAF | 3,623 | 26.6% |
-| ARITHMETIC | 4,401 | 32.3% |
-| ARITH_INFERRED | 149 | 1.1% |
-| ARITH_ABOVE | 10 | 0.1% |
-| ARITH_BELOW | 0 | 0.0% |
-| ARITH_BOUND_ONLY | 13 | 0.1% |
-| TERMINAL_CLAIMED | 700 | 5.1% |
-| ARITH_OPEN | 2,901 | 21.3% |
-| NOT_ATTEMPTED | 833 | 6.1% |
+| VERIFIED | 987 | 7.2% |
+| VERIFIED_IMPROVED | 24 | 0.2% |
+| RECURSIVE | 4,425 | 32.4% |
+| RECURSIVE_TENTATIVE | 531 | 3.9% |
+| RECURSIVE_STALE | 10 | 0.1% |
+| POST_OPTIMIZED | 380 | 2.8% |
+| SEARCH | 3,623 | 26.6% |
+| DIRECT_ONLY | 339 | 2.5% |
+| OPEN | 3,322 | 24.4% |
 
-Entries with a handle (verified by construction 1,011, leaves 3,623,
-ARITHMETIC 4,401, each counted apart) number 9,035 of 13,641, 66.2
-percent. By strength the share with a handle is 16.6 percent at t = 2,
-70.1 at t = 3, 64.1 at t = 4, 85.0 at t = 5 and 94.2 at t = 6. Strength
-two is low because its 2,376 entries without a handle are exactly the
-direct product rows without a law (1,861) and the PCA products (515).
-Entries
-with no handle (open plus not attempted) are 3,734 in all, 27.4
-percent, and 700 are terminal claims that no propagation can reach.
+Entries with a handle (verified 1,011, search-tagged 3,623, RECURSIVE
+4,425, each counted apart) number 9,059 of 13,641, 66.4 percent. By
+strength the share with a handle is 17.1 percent at t = 2, 70.1 at
+t = 3, 64.5 at t = 4, 85.0 at t = 5 and 94.2 at t = 6. Strength two is
+low because 2,697 of its 3,254 entries have no handle, among them the
+direct product rows without a law (1,861), the PCA product rows (498
+tentative, open or postop) and 304 terminal rows. Entries with no
+handle (OPEN) are 3,322 in all, 24.4 percent, and 719 (POST_OPTIMIZED
+and DIRECT_ONLY) can never be reached by propagation.
 
-What stays open, and why. Two closed papers and one missing table
-hold the constructions behind most of the 3,734 entries. Colbourn,
-Martirosyan, Mullen, Shasha, Sherwood and Yucas (2006, J. Combin.
-Des. 14) are the tables' authority for the generalized product (the
-1,861 open direct product rows, 1,541 of them under the generalized
-tag) and, by the tag names, for the PCA products (515 rows); Colbourn
-2008 (Discrete Mathematics 308) was read and cites the 2006 theorems
-rather than restating them. Colbourn and Zhou (2012, J. Stat. Theory
-Pract. 6) are named by the Power CZ tag (212 rows); the Power CT law
-reproduces none of its 215 table rows, every residual negative. Neither
-paper is open access and neither was read. The third gap is not a
-paper but a table. The k-ary Roux theorem of Cohen, Colbourn and Ling
-(2008, Theorem 3) and the strength-4 theorems of Colbourn,
-Martirosyan, Van Trung and Walker (2006) use difference covering array
-numbers (DCAN) and covering ordered design numbers (CODN) that the
-covering array table does not hold, so the 318 Cohen-Colbourn-Ling
-rows and the 583 strength-4 CMTW rows cannot be calibrated from the
-table alone (the pure-CAN strength-4 forms were tested and fit none of
-the 583). The CMTW paper was read only through an automated summary
-of the authors' open copy, so its theorem numbers are that summary's.
-The Add n factors law outside its stated domain (177 rows) and the 62
-power rows with an Arc reduction followed by a T reduction were
-attempted and not recovered.
+What stays open, and why. The three papers the tags name were read
+by eye on 2026-09-12 and the notes are in `findings/`. Colbourn,
+Martirosyan, Mullen, Shasha, Sherwood and Yucas (2006, J. Combin. Des.
+14, `findings/CMMSSY_NOTES.md`) reproduce the package's 447 PCAcat
+recipes exactly and 44 PCA product rows of the table, 17 of them new.
+Their generalized product (Theorem 3.1) subtracts a don't-care
+profile the tables never state, and 1,522 of the 1,573 generalized
+rows and 230 of the 320 open plain rows sit below the N + M - v floor
+that any product of two table-size arrays obeys, so those 1,861 rows
+are open by a proven reason. Colbourn and Zhou (2012, J. Stat. Theory
+Pract. 6, `findings/POWERCZ_NOTES.md`) state no formula. The tag is
+the type column of their Tables 3 and 4, a least-cost reading of their
+quilting arrays is exact on 65 of the 69 binary rows and is kept as
+tentative, and the 117 rows at v = 6 have no ingredient in the paper.
+Yin (2003, J. Combin. Theory A 104, `findings/DCAN_NOTES.md`) gives
+difference covering array numbers only to k = 25. His values settle
+seven strength-4 CMTW rows at k = v^2 and show the record on all 318
+Cohen-Colbourn-Ling rows below the k-ary Roux evaluated with them, so
+those difference arrays were found by search. The Add n factors law
+outside its stated domain (177 rows) and the 62 power rows with an Arc
+reduction followed by a T reduction were attempted and not recovered.
+The 3,322 OPEN entries wait on data that was never published, the
+product partitions and don't-care profiles, the Colbourn-Zhou
+assignment rule and its v = 6 ingredients, and the search-found
+difference covering arrays, not on anything in print.
 
 ## Verification campaign results
 
@@ -416,13 +473,15 @@ author's workstation.
   `.rds` file.
 - 9,007 of 13,641 entries (66.0%) are UNRESOLVED: no implemented route
   in CAs reproduces them and no recipe node matches them, so the
-  engine cannot rebuild them. A further 3,623 are leaves. The
-  arithmetic tier gives 4,401 of the 9,007 a calibrated size law, as
-  claims only; 3,734 have no handle and 700 are terminal claims.
+  engine cannot rebuild them. A further 3,623 are SEARCH rows, which
+  were not rebuilt either. The arithmetic tier gives 4,425 of the
+  9,007 a calibrated size law, as claims only, while 3,322 are OPEN and 719
+  (POST_OPTIMIZED and DIRECT_ONLY) can never be reached by
+  propagation.
 - Nothing in the arithmetic tier is verified. The two propagated
   sizes of the demo, CAN(3, 24, 14) at 6,202 and CAN(5, 23, 14) at
   3,053,515, are claims from a verified ingredient through the
-  record's own tags, and the ten ARITH_ABOVE rows are constructions
+  record's own tags, and the ten RECURSIVE_STALE rows are constructions
   that have not been executed. The propagate mode has been exercised
   here only with the demo's improvement set, and no propagated size
   has yet been built and verified.
@@ -433,14 +492,30 @@ author's workstation.
   Each is exact on every row of its stated domain, and each is
   labeled a reading in its script header. The paper of Colbourn,
   Martirosyan, Van Trung and Walker was read only through an
-  automated summary of the authors' copy.
+  automated summary of the authors' copy, in two passes (the second,
+  formula by formula, is in `findings/DCAN_NOTES.md`). The Power CZ
+  reading uses two quilting array sizes fitted from the record, and
+  the Colbourn-Zhou Tables 1 and 2 in `cz_tables.R` and Yin's values
+  in `data/dcan_table.csv` were transcribed from the papers by eye.
+- `arith_formula_cmmssy.R` reads `data/arith_tally.csv` as shipped to
+  mark which rows were open before its pass, and `arith_tally.R` then
+  reads its csv, so the two are run in that order with the shipped
+  tally in place. Its log and `data/arith_pcax_recipes.csv` were
+  produced with the tally in its final state, which is why the log's
+  open-row tables show the PCA product rows already classed.
 - `results/arith_formula_dp_result.txt` was not regenerated in the
   packaging test (the script needs `data/engine_nodes.csv`,
   `data/recipe_ingredients.csv` and `data/ingredient_dims.csv`, which
-  were not in the test copy); it is the log of the original run. Every
+  were not in the test copy). It is the log of the original run. Every
   other arithmetic-tier log was regenerated by the shipped scripts on
   2026-09-06, and every regenerated csv with an original to compare
-  against (15 of 16) was byte-identical to it.
+  against (15 of 16) was byte-identical to it. The three paper passes
+  were reproduced on 2026-09-12 with every csv byte-identical. The
+  class names were changed afterwards by editing the string literals
+  in the scripts, the class columns of the csvs and the labels in the
+  logs, so the logs carry the new names without a fresh run.
+  `mac_rename_check.R` reruns the tally and the republish and prints
+  the class counts, so a run confirms the names.
 - 85 MATCH entries remain unverified: 49 arrays are too large for the
   memory of one workstation (128 GB) and 36 hit the 15-minute limit
   per row in the retry pass. Screens of 50-column windows are not certificates.
@@ -451,10 +526,10 @@ author's workstation.
   `data/sweep_agreement.csv` carries the old sizes in N_book and
   N_base, and `data/ca_reproduction.csv` records those three entries
   as MATCH via the CYCLOTOMY route, which `data/engine_coverage.csv`
-  inherits as RESOLVED. With the current CAs, `Ns(3, 128, 6)` reports
+  inherits as VERIFIED. With the current CAs, `Ns(3, 128, 6)` reports
   CYCLOTOMY = 768 against the snapshot's 762, so a rerun of the
   reproduction sweep would turn those three rows into GAP (MATCH 985
-  would become 982 and RESOLVED 987 would become 984), and a rerun of
+  would become 982 and VERIFIED 987 would become 984), and a rerun of
   `mac_sweep.R` against the shipped nodes would report 1,528 of 1,539
   baseline matches instead of 1,531. The reproduction sweep script is
   not shipped, so `data/ca_reproduction.csv` cannot be regenerated
@@ -534,7 +609,8 @@ The arithmetic tier, in this order (each script reads the frozen
 table inside CAs and, most of them, `data/engine_coverage.csv`, writes
 its csv to `data/`, and takes a few seconds apart from
 `arith_formula_mtvt.R` at about a minute; the whole sequence ran in
-about two minutes in the packaging test):
+about two minutes in the packaging test, plus about a minute for the
+three paper passes):
 
     Rscript arith_measure.R | tee results/arith_measure_result.txt
     Rscript arith_formula_power.R | tee results/arith_formula_power_result.txt
@@ -549,6 +625,9 @@ about two minutes in the packaging test):
     Rscript arith_formula_cmtw.R | tee results/arith_formula_cmtw_result.txt
     Rscript arith_formula_mtvt.R | tee results/arith_formula_mtvt_result.txt
     Rscript arith_families_tail.R | tee results/arith_families_tail_result.txt
+    Rscript arith_formula_cmmssy.R | tee results/arith_formula_cmmssy_result.txt
+    Rscript arith_formula_powercz.R | tee results/arith_formula_powercz_result.txt
+    Rscript arith_formula_dcan.R | tee results/arith_formula_dcan_result.txt
     Rscript arith_tally.R | tee results/arith_tally_result.txt
     Rscript arith_engine.R identity | tee results/arith_engine_identity_result.txt
     Rscript arith_engine.R demo | tee results/arith_engine_demo_result.txt
@@ -556,11 +635,18 @@ about two minutes in the packaging test):
 
 `arith_formula_dp.R` reads the substrate files (`data/engine_nodes.csv`,
 `data/recipe_ingredients.csv`, `data/ingredient_dims.csv`) and only
-checks the law on the executed recipes; the family scripts do not
-depend on it. `arith_formula_fuse.R` reads the probe's csv, `arith_tally.R`
+checks the law on the executed recipes. The family scripts do not
+depend on it. `arith_formula_fuse.R` reads the probe's csv,
+`arith_formula_cmmssy.R` reads the shipped tally (see above),
+`arith_formula_powercz.R` sources `cz_tables.R`, `arith_tally.R`
 reads every family csv, `arith_engine.R` reads `data/arith_tally.csv`
-and `data/arith_power_Mtable.csv` and sources `arith_laws.R`, and the
-republish reads the tally. To propagate your own improvements, give a
+and `data/arith_power_Mtable.csv` and sources `arith_laws.R` (which
+reads `data/arith_pcax_recipes.csv`), and the republish reads the
+tally. `arith_formula_power.R` reads `data/nct_key_status.csv` to
+carry the N-CT statuses into the Mtable. To confirm the class counts
+after any change, `Rscript mac_rename_check.R` reruns the tally and
+the republish and prints the counts of the nine classes against the
+expected numbers. To propagate your own improvements, give a
 csv with columns t, k, v, N and optionally nconst (constant rows the
 array carries, default 1):
 
@@ -590,7 +676,7 @@ Every size it contains is a claim.
 | `mac_grind.R` | certification grind over MATCH entries |
 | `mac_finish2.R`, `finish_one.R` | subprocess-per-row finishing run and its worker |
 | `mac_finish3.R` | screen-tier retry of the timeout pile with memory guard |
-| `verify_better.R` | build and verify the BETTER entries |
+| `verify_better.R` | build and verify the entries whose sweep status is BETTER |
 | `mac_cyclotomy_audit2.R`, `mac_cyclotomy_followup.R` | cyclotomy family audit and follow-up |
 | `mac_4a_check.R`, `mac_4a_q127.R` | checks of the type 4a repair |
 | `mac_powerct_audit.R` | powerCT family audit |
@@ -604,7 +690,7 @@ Every size it contains is a claim.
 | `data/construction_families.csv` | Source tags of `colbournBigFrame` clustered into families |
 | `data/ca_reproduction.csv` | reproduction sweep over all 13,641 entries |
 | `data/engine_coverage.csv` | coverage class of every entry |
-| `data/better_verified.csv` | verified BETTER entries |
+| `data/better_verified.csv` | the VERIFIED_IMPROVED entries built and verified in full |
 | `data/edge_executed_progress.csv` | full-verification ledger of the campaign |
 | `data/edge_screen_progress.csv` | screen-tier ledger of the campaign |
 | `data/sweep_agreement.csv` | per-recipe sizes from the baseline and swap sweeps |
@@ -622,6 +708,7 @@ Every size it contains is a claim.
 | `results/powerct_refix_result.txt` | log of the post-fix powerCT re-audit |
 | `findings/FINDING_CAN_3_128_6.md` | the cyclotomy finding |
 | `findings/FINDING_POWERCT_3_1584_2.md` | the powerCT finding |
+| `findings/CMMSSY_NOTES.md`, `findings/POWERCZ_NOTES.md`, `findings/DCAN_NOTES.md` | notes on the three papers read for the open families (the pdfs are not in the repository) |
 | `arith_measure.R` | the ceiling of the arithmetic tier: the UNRESOLVED entries by tag family |
 | `arith_formula_power.R` | Power CT and Power N-CT size law, calibrated on every power row |
 | `arith_formula_dp.R` | direct product law checked on the executed DPcat recipes |
@@ -635,17 +722,25 @@ Every size it contains is a claim.
 | `arith_formula_cmtw.R` | Colbourn-Martirosyan-TVT-Walker (strength 3 admitted, strength 4 open) |
 | `arith_formula_mtvt.R` | Martirosyan-TVT, even and odd k |
 | `arith_families_tail.R` | the last 39 rows outside the paper-blocked families |
-| `arith_tally.R` | the tally of every UNRESOLVED entry by arithmetic tier |
+| `arith_formula_cmmssy.R` | the PCA product and direct product families against Colbourn, Martirosyan, Mullen, Shasha, Sherwood and Yucas 2006 |
+| `arith_formula_powercz.R`, `cz_tables.R` | Power CZ against Colbourn and Zhou 2012, with their Tables 1 and 2 |
+| `arith_formula_dcan.R` | Cohen-Colbourn-Ling and strength-4 CMTW with Yin's difference covering array numbers |
+| `mac_rename_check.R` | reruns the tally and the republish and prints the class counts against the expected numbers |
+| `arith_tally.R` | the class of every UNRESOLVED entry, joined from the family csvs |
 | `arith_laws.R` | the law evaluators, one per admitted family (sourced by the engine) |
 | `arith_engine.R` | identity test, arithmetic edges, and two-mode propagation to closure |
 | `arith_coverage_republish.R` | coverage accounting with the arithmetic tier counted apart |
-| `data/arith_formula_power.csv`, `data/arith_power_Mtable.csv` | per-row power calibration and the fitted N-CT hash family table |
+| `data/arith_formula_power.csv`, `data/arith_power_Mtable.csv` | per-row power calibration and the fitted N-CT hash family table, with the `nct_status` column |
+| `data/nct_key_status.csv` | CERTIFIED, REFUTED or OPEN for each of the 39 N-CT keys |
 | `data/arith_formula_dp_table.csv` | per-row direct product calibration |
 | `data/arith_probe_powerCZ.csv` | per-row Power CZ probe |
 | `data/arith_formula_small.csv`, `data/arith_families_probe.csv`, `data/arith_families_tail.csv` | per-row calibration of the smaller families, the probe and the tail |
 | `data/arith_formula_addn.csv`, `data/arith_formula_mc.csv`, `data/arith_formula_fuse.csv`, `data/arith_formula_cmtw.csv`, `data/arith_formula_mtvt.csv` | per-row calibration of the Add, Martirosyan-Colbourn, fuse, CMTW and Martirosyan-TVT families |
-| `data/arith_tally.csv` | every UNRESOLVED entry with its arithmetic tier and family |
-| `data/arith_edges.csv` | entry-to-lookup edges of the ARITHMETIC entries with the answering table row |
+| `data/arith_formula_cmmssy.csv`, `data/arith_pcax_recipes.csv` | per-row classes of the PCA product rows and the 44 exact product recipes as table lookups |
+| `data/arith_formula_powercz.csv` | per-row Power CZ reading |
+| `data/arith_formula_dcan.csv`, `data/dcan_table.csv` | per-row DCAN calibration and Yin's values in the CMTW convention |
+| `data/arith_tally.csv` | every UNRESOLVED entry with its class and family |
+| `data/arith_edges.csv` | entry-to-lookup edges of the RECURSIVE entries with the answering table row |
 | `data/arith_cascade.csv` | the demo closure (two entries) |
 | `data/engine_coverage_v2.csv` | coverage class of every entry with the arithmetic tier apart |
 | `results/arith_*_result.txt` | the log of each arithmetic-tier script above (identity and demo logs for the engine) |

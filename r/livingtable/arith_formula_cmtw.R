@@ -21,7 +21,7 @@
 ## tested below and fit none of the 583 rows; the remaining forms
 ## carry DCAN (difference covering array) or CODN (covering ordered
 ## design) numbers the table does not hold. No law admitted, all 583
-## ARITH_OPEN. Observation recorded, not admitted: on the 304 rows
+## OPEN. Observation recorded, not admitted: on the 304 rows
 ## with v | k, the residual N - eCAN(4, k/v, v) - (v - 1) eCAN(3, k/v, v)
 ## takes few values across k/v at v = 7, 8, 9, 11, 23, 25 (one value on
 ## all five rows at v = 8, four on 17 rows at v = 7) and varies almost
@@ -47,14 +47,14 @@ d$N_pred[i3] <- mapply(function(k, v) { kk <- ceiling(k / v); e3 <- ec(3, kk, v)
 i3f <- d$t == 3 & !d$pp
 d$route[i3f] <- "3.4 at v+1, fused"
 d$N_pred[i3f] <- mapply(function(k, v) { if (!is_pp(v + 1)) return(NA); e <- ec(3, k, v + 1); if (is.na(e)) NA else e - 2 }, d$k[i3f], d$v[i3f])
-d$tier <- ifelse(d$t != 3 | is.na(d$N_pred), "ARITH_OPEN", ifelse(d$N == d$N_pred, "ARITHMETIC", ifelse(d$N > d$N_pred, "ARITH_ABOVE", "ARITH_BELOW")))
+d$tier <- ifelse(d$t != 3 | is.na(d$N_pred), "OPEN", ifelse(d$N == d$N_pred, "RECURSIVE", ifelse(d$N > d$N_pred, "RECURSIVE_STALE", "RECURSIVE_BELOW")))
 cat("\n== strength 3:", sum(d$t == 3), "rows ==\n"); print(table(route = d$route[d$t == 3], tier = d$tier[d$t == 3]))
 s3 <- d[d$t == 3, ]; s3$kk <- ceiling(s3$k / s3$v)
 print(s3[, c("v","k","N","kk","route","N_pred","tier")], row.names = FALSE)
 
 ## strength 4: the pure-CAN forms, tested
 s4 <- d[d$t == 4, ]
-cat("\n== strength 4:", nrow(s4), "rows, all ARITH_OPEN ==\n")
+cat("\n== strength 4:", nrow(s4), "rows, all OPEN ==\n")
 h <- ceiling(s4$k / 2)
 f47 <- mapply(function(k, v, h) if (k %% 2 == 0 && v^2 <= 25) ec(4, h, v) + (v - 1) * ec(3, h, v) + ec(2, h, v^2) else NA, s4$k, s4$v, h)
 f49 <- mapply(function(k, v, h) if (k %% 2 == 0 && is_pp(v)) ec(4, h, v) + (v - 1) * ec(3, h, v) + v^2 * ec(2, h, v) - v^2 else NA, s4$k, s4$v, h)

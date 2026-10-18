@@ -1,0 +1,285 @@
+Power CZ rows: 215 
+   v
+t     2   3   6
+  3   0  27   0
+  4  25   0   0
+  5   2   0 117
+  6  41   3   0
+M = sum u_i equals the Turan row count (e-1) T(t,v) + 1 on 188 rows; one less on 27 (all t = 3, v = 3: 27 )
+DP time 1.4 s
+
+== Lemma 2.3 min-cost readings: exact / record above / record below, by (t, v, e) block ==
+    block rows evaluable     L1     L2      L3      L4    L4f
+ t3 v3 e3   27         0  0/0/0  0/0/0   0/0/0   0/0/0  0/0/0
+ t4 v2 e2    3         3  3/0/0  2/0/1   2/0/1   3/0/0  3/0/0
+ t4 v2 e3   17        17 12/2/3 7/0/10   9/0/8  14/0/3 14/0/3
+ t4 v2 e4    5         5  0/5/0  5/0/0   5/0/0   5/0/0  5/0/0
+ t5 v2 e3    2         2  2/0/0  0/0/2   0/0/2   2/0/0  2/0/0
+ t5 v6 e3  117         0  0/0/0  0/0/0   0/0/0   0/0/0  0/0/0
+ t6 v2 e3   41        41 0/41/0 0/41/0 0/23/18 17/23/1 41/0/0
+ t6 v3 e2    3         1  0/0/1  0/0/1   0/0/1   0/0/1  0/0/1
+L1   exact 17  above 48  below  4  (of 69 evaluable, 215 rows)
+L2   exact 14  above 41  below 14  (of 69 evaluable, 215 rows)
+L3   exact 16  above 23  below 30  (of 69 evaluable, 215 rows)
+L4   exact 41  above 23  below  5  (of 69 evaluable, 215 rows)
+L4f  exact 65  above  0  below  4  (of 69 evaluable, 215 rows)
+
+binary rows: the record against L4 (paper sizes as printed) and L4f (two fitted sizes); d = N - law
+ t     k    N                         Source  M N_L1 dL1 N_L4 dL4 N_L4f dL4f
+ 4   120  110            Power CZ2-12.4-10.1  5  110   0  110   0   110    0
+ 4   256  160                 Power CZ2-16.5  5  160   0  160   0   160    0
+ 4   272  162            Power CZ2-17.4-16.1  5  162   0  162   0   162    0
+ 4   405  176              Power CZ3-9.8-5.1  9  183  -7  184  -8   184   -8
+ 4   486  180              Power CZ3-9.8-6.1  9  187  -7  188  -8   188   -8
+ 4   729  184                  Power CZ3-9.9  9  192  -8  192  -8   192   -8
+ 4   792  188         Power CZ3-11.7-8.1-9.1  9  188   0  188   0   188    0
+ 4   880  190        Power CZ3-11.7-8.1-10.1  9  190   0  190   0   190    0
+ 4   968  192             Power CZ3-11.8-8.1  9  190   2  192   0   192    0
+ 4   990  194        Power CZ3-11.7-9.1-10.1  9  194   0  194   0   194    0
+ 4  1100  196       Power CZ3-11.7-10.1-10.1  9  196   0  196   0   196    0
+ 4  1210  198            Power CZ3-11.8-10.1  9  196   2  198   0   198    0
+ 4  1368  216            Power CZ3-13.3-12.6  9  216   0  216   0   216    0
+ 4  1476  224            Power CZ3-13.4-12.5  9  224   0  224   0   224    0
+ 4  1596  233            Power CZ3-13.5-12.4  9  233   0  233   0   233    0
+ 4  1728  242            Power CZ3-13.6-12.3  9  242   0  242   0   242    0
+ 4  1872  251       Power CZ3-13.7-12.1-12.1  9  251   0  251   0   251    0
+ 4  2028  260            Power CZ3-13.8-12.1  9  260   0  260   0   260    0
+ 4  2304  263       Power CZ3-16.7-12.1-12.1  9  263   0  263   0   263    0
+ 4  2496  271       Power CZ3-16.7-12.1-13.1  9  271   0  271   0   271    0
+ 4  3395  272       Power CZ4-13.0-12.12-4.1 13  270   2  272   0   272    0
+ 4  4248  276       Power CZ4-13.0-12.12-5.1 13  274   2  276   0   276    0
+ 4  6781  280       Power CZ4-13.0-12.12-8.1 13  278   2  280   0   280    0
+ 4  7625  284       Power CZ4-13.0-12.12-9.1 13  282   2  284   0   284    0
+ 4  8466  286      Power CZ4-13.0-12.12-10.1 13  284   2  286   0   286    0
+ 5  1690  792           Power CZ3-13.12-10.1 13  792   0  792   0   792    0
+ 5  1859  814           Power CZ3-13.12-11.1 13  814   0  814   0   814    0
+ 6  2673 4721           Power CZ3-19.15-15.4 19 4664  57 4714   7  4721    0
+ 6  2839 4889      Power CZ3-19.11-18.0-17.8 19 4836  53 4886   3  4889    0
+ 6  3375 4893 Power CZ3-19.16-15.1-15.1-15.1 19 4835  58 4885   8  4893    0
+ 6  3600 4943 Power CZ3-19.16-15.1-15.1-16.1 19 4885  58 4935   8  4943    0
+ 6  3840 4993 Power CZ3-19.16-15.1-16.1-16.1 19 4935  58 4985   8  4993    0
+ 6  4050 5041 Power CZ3-19.16-15.1-15.1-18.1 19 4987  54 5037   4  5041    0
+ 6  4096 5043 Power CZ3-19.16-16.1-16.1-16.1 19 4985  58 5035   8  5043    0
+ 6  4275 5065      Power CZ3-19.17-15.1-15.1 19 5006  59 5056   9  5065    0
+ 6  4320 5091 Power CZ3-19.16-15.1-16.1-18.1 19 5037  54 5087   4  5091    0
+ 6  4352 5100 Power CZ3-19.16-16.1-16.1-17.1 19 5042  58 5092   8  5100    0
+ 6  4560 5115      Power CZ3-19.17-15.1-16.1 19 5056  59 5106   9  5115    0
+ 6  4608 5141 Power CZ3-19.16-16.1-16.1-18.1 19 5087  54 5137   4  5141    0
+ 6  4624 5157 Power CZ3-19.16-16.1-17.1-17.1 19 5099  58 5149   8  5157    0
+ 6  4864 5165      Power CZ3-19.17-16.1-16.1 19 5106  59 5156   9  5165    0
+ 6  4896 5198 Power CZ3-19.16-16.1-17.1-18.1 19 5144  54 5194   4  5198    0
+ 6  5130 5213      Power CZ3-19.17-15.1-18.1 19 5158  55 5208   5  5213    0
+ 6  5168 5222      Power CZ3-19.17-16.1-17.1 19 5163  59 5213   9  5222    0
+ 6  5415 5237           Power CZ3-19.18-15.1 19 5177  60 5227  10  5237    0
+ 6  5472 5263      Power CZ3-19.17-16.1-18.1 19 5208  55 5258   5  5263    0
+ 6  5491 5279      Power CZ3-19.17-17.1-17.1 19 5220  59 5270   9  5279    0
+ 6  5776 5287           Power CZ3-19.18-16.1 19 5227  60 5277  10  5287    0
+ 6  5814 5320      Power CZ3-19.17-17.1-18.1 19 5265  55 5315   5  5320    0
+ 6  6137 5344           Power CZ3-19.18-17.1 19 5284  60 5334  10  5344    0
+ 6  6861 5975                Power CZ3-21.19 19 5913  62 5975   0  5975    0
+ 6  6930 6245 Power CZ3-23.16-15.1-21.1-22.1 19 6175  70 6245   0  6245    0
+ 6  6945 6252      Power CZ3-23.15-22.3-15.1 19 6182  70 6252   0  6252    0
+ 6  7245 6258      Power CZ3-23.17-15.1-21.1 19 6188  70 6258   0  6258    0
+ 6  7260 6265      Power CZ3-23.16-22.2-15.1 19 6195  70 6265   0  6265    0
+ 6  7590 6278      Power CZ3-23.17-15.1-22.1 19 6208  70 6278   0  6278    0
+ 6  7935 6291           Power CZ3-23.18-15.1 19 6221  70 6291   0  6291    0
+ 6  8096 6328      Power CZ3-23.17-16.1-22.1 19 6258  70 6328   0  6328    0
+ 6  8464 6341           Power CZ3-23.18-16.1 19 6271  70 6341   0  6341    0
+ 6  8602 6385      Power CZ3-23.17-17.1-22.1 19 6315  70 6385   0  6385    0
+ 6  8993 6398           Power CZ3-23.18-17.1 19 6328  70 6398   0  6398    0
+ 6  9261 6421      Power CZ3-23.16-22.0-21.3 19 6351  70 6421   0  6421    0
+ 6  9282 6428      Power CZ3-23.15-22.2-21.2 19 6358  70 6428   0  6428    0
+ 6  9303 6435      Power CZ3-23.14-22.4-21.1 19 6365  70 6435   0  6435    0
+ 6  9522 6439           Power CZ3-23.18-18.1 19 6373  66 6443  -4  6439    0
+ 6  9702 6441      Power CZ3-23.16-22.1-21.2 19 6371  70 6441   0  6441    0
+ 6  9723 6448      Power CZ3-23.15-22.3-21.1 19 6378  70 6448   0  6448    0
+ 6 10000 6454      Power CZ3-23.17-21.1-21.1 19 6384  70 6454   0  6454    0
+
+L4f decompositions (width:set x rows; +c = appended constant rows) of the binary rows:
+  Power CZ2-12.4-10.1              N=  110 L4f=  110  10:S22x1 12:S13x4 +2
+  Power CZ2-16.5                   N=  160 L4f=  160  16:S13x4 16:S22x1 +2
+  Power CZ2-17.4-16.1              N=  162 L4f=  162  16:S22x1 17:S03x3 17:S14x1
+  Power CZ3-9.8-5.1                N=  176 L4f=  184  5:S22x1 9:S13x7 9:S22x1 +2
+  Power CZ3-9.8-6.1                N=  180 L4f=  188  6:S22x1 9:S13x7 9:S22x1 +2
+  Power CZ3-9.9                    N=  184 L4f=  192  9:S13x7 9:S22x2 +2
+  Power CZ3-11.7-8.1-9.1           N=  188 L4f=  188  11:S13x7 8:S22x1 9:S22x1 +2
+  Power CZ3-11.7-8.1-10.1          N=  190 L4f=  190  10:S22x1 11:S13x7 8:S22x1 +2
+  Power CZ3-11.8-8.1               N=  192 L4f=  192  11:S13x8 8:S22x1 +2
+  Power CZ3-11.7-9.1-10.1          N=  194 L4f=  194  10:S22x1 11:S13x7 9:S22x1 +2
+  Power CZ3-11.7-10.1-10.1         N=  196 L4f=  196  10:S22x2 11:S13x7 +2
+  Power CZ3-11.8-10.1              N=  198 L4f=  198  10:S22x1 11:S13x8 +2
+  Power CZ3-13.3-12.6              N=  216 L4f=  216  12:S13x6 13:S03x1 13:S22x2 +1
+  Power CZ3-13.4-12.5              N=  224 L4f=  224  12:S13x5 13:S03x1 13:S14x1 13:S22x2
+  Power CZ3-13.5-12.4              N=  233 L4f=  233  12:S13x4 13:S03x2 13:S14x1 13:S22x2
+  Power CZ3-13.6-12.3              N=  242 L4f=  242  12:S13x3 13:S03x3 13:S14x1 13:S22x2
+  Power CZ3-13.7-12.1-12.1         N=  251 L4f=  251  12:S13x2 13:S03x4 13:S14x1 13:S22x2
+  Power CZ3-13.8-12.1              N=  260 L4f=  260  12:S13x1 13:S03x5 13:S14x1 13:S22x2
+  Power CZ3-16.7-12.1-12.1         N=  263 L4f=  263  12:S13x2 16:S13x5 16:S22x2 +2
+  Power CZ3-16.7-12.1-13.1         N=  271 L4f=  271  12:S13x1 13:S03x1 16:S13x5 16:S22x2 +1
+  Power CZ4-13.0-12.12-4.1         N=  272 L4f=  272  12:S13x12 4:S22x1 +2
+  Power CZ4-13.0-12.12-5.1         N=  276 L4f=  276  12:S13x12 5:S22x1 +2
+  Power CZ4-13.0-12.12-8.1         N=  280 L4f=  280  12:S13x12 8:S22x1 +2
+  Power CZ4-13.0-12.12-9.1         N=  284 L4f=  284  12:S13x12 9:S22x1 +2
+  Power CZ4-13.0-12.12-10.1        N=  286 L4f=  286  10:S22x1 12:S13x12 +2
+  Power CZ3-13.12-10.1             N=  792 L4f=  792  10:S23x1 13:S04x11 13:S15x1
+  Power CZ3-13.12-11.1             N=  814 L4f=  814  11:S23x1 13:S04x11 13:S15x1
+  Power CZ3-19.15-15.4             N= 4721 L4f= 4721  15:S05x4 19:S06x7 19:S24x6 19:S33x2
+  Power CZ3-19.11-18.0-17.8        N= 4889 L4f= 4889  17:S05x8 19:S06x3 19:S24x6 19:S33x2
+  Power CZ3-19.16-15.1-15.1-15.1   N= 4893 L4f= 4893  15:S05x3 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.16-15.1-15.1-16.1   N= 4943 L4f= 4943  15:S05x2 16:S15x1 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.16-15.1-16.1-16.1   N= 4993 L4f= 4993  15:S05x1 16:S15x2 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.16-15.1-15.1-18.1   N= 5041 L4f= 5041  15:S05x2 18:S05x1 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.16-16.1-16.1-16.1   N= 5043 L4f= 5043  16:S15x3 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.17-15.1-15.1        N= 5065 L4f= 5065  15:S05x2 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.16-15.1-16.1-18.1   N= 5091 L4f= 5091  15:S05x1 16:S15x1 18:S05x1 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.16-16.1-16.1-17.1   N= 5100 L4f= 5100  16:S15x2 17:S05x1 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.17-15.1-16.1        N= 5115 L4f= 5115  15:S05x1 16:S15x1 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.16-16.1-16.1-18.1   N= 5141 L4f= 5141  16:S15x2 18:S05x1 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.16-16.1-17.1-17.1   N= 5157 L4f= 5157  16:S15x1 17:S05x2 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.17-16.1-16.1        N= 5165 L4f= 5165  16:S15x2 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.16-16.1-17.1-18.1   N= 5198 L4f= 5198  16:S15x1 17:S05x1 18:S05x1 19:S06x8 19:S24x6 19:S33x2
+  Power CZ3-19.17-15.1-18.1        N= 5213 L4f= 5213  15:S05x1 18:S05x1 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.17-16.1-17.1        N= 5222 L4f= 5222  16:S15x1 17:S05x1 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.18-15.1             N= 5237 L4f= 5237  15:S05x1 19:S06x10 19:S24x6 19:S33x2
+  Power CZ3-19.17-16.1-18.1        N= 5263 L4f= 5263  16:S15x1 18:S05x1 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.17-17.1-17.1        N= 5279 L4f= 5279  17:S05x2 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.18-16.1             N= 5287 L4f= 5287  16:S15x1 19:S06x10 19:S24x6 19:S33x2
+  Power CZ3-19.17-17.1-18.1        N= 5320 L4f= 5320  17:S05x1 18:S05x1 19:S06x9 19:S24x6 19:S33x2
+  Power CZ3-19.18-17.1             N= 5344 L4f= 5344  17:S05x1 19:S06x10 19:S24x6 19:S33x2
+  Power CZ3-21.19                  N= 5975 L4f= 5975  21:S05x10 21:S16x1 21:S24x6 21:S33x2
+  Power CZ3-23.16-15.1-21.1-22.1   N= 6245 L4f= 6245  15:S05x1 21:S24x1 22:S05x1 23:S05x8 23:S16x1 23:S24x5 23:S33x2
+  Power CZ3-23.15-22.3-15.1        N= 6252 L4f= 6252  15:S05x1 22:S05x3 23:S05x6 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.17-15.1-21.1        N= 6258 L4f= 6258  15:S05x1 21:S24x1 23:S05x9 23:S16x1 23:S24x5 23:S33x2
+  Power CZ3-23.16-22.2-15.1        N= 6265 L4f= 6265  15:S05x1 22:S05x2 23:S05x7 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.17-15.1-22.1        N= 6278 L4f= 6278  15:S05x1 22:S05x1 23:S05x8 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.18-15.1             N= 6291 L4f= 6291  15:S05x1 23:S05x9 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.17-16.1-22.1        N= 6328 L4f= 6328  16:S15x1 22:S05x1 23:S05x8 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.18-16.1             N= 6341 L4f= 6341  16:S15x1 23:S05x9 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.17-17.1-22.1        N= 6385 L4f= 6385  17:S05x1 22:S05x1 23:S05x8 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.18-17.1             N= 6398 L4f= 6398  17:S05x1 23:S05x9 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.16-22.0-21.3        N= 6421 L4f= 6421  21:S24x3 23:S05x10 23:S16x1 23:S24x3 23:S33x2
+  Power CZ3-23.15-22.2-21.2        N= 6428 L4f= 6428  21:S24x2 22:S05x2 23:S05x8 23:S16x1 23:S24x4 23:S33x2
+  Power CZ3-23.14-22.4-21.1        N= 6435 L4f= 6435  21:S24x1 22:S05x4 23:S05x6 23:S16x1 23:S24x5 23:S33x2
+  Power CZ3-23.18-18.1             N= 6439 L4f= 6439  18:S05x1 23:S05x9 23:S16x1 23:S24x6 23:S33x2
+  Power CZ3-23.16-22.1-21.2        N= 6441 L4f= 6441  21:S24x2 22:S05x1 23:S05x9 23:S16x1 23:S24x4 23:S33x2
+  Power CZ3-23.15-22.3-21.1        N= 6448 L4f= 6448  21:S24x1 22:S05x3 23:S05x7 23:S16x1 23:S24x5 23:S33x2
+  Power CZ3-23.17-21.1-21.1        N= 6454 L4f= 6454  21:S24x2 23:S05x10 23:S16x1 23:S24x4 23:S33x2
+
+the q = 19 pattern behind L4f: N - N_L4 against the number of S_{1,5}-type rows at width 19 and at width 18 in the L4 optimum
+  rows: 24   N - N_L4 == n19 - 4 n18 on 24 of them
+
+ternary rows (t = 3: M = 6 < 7 rows that Lemma 2.3 needs for the all-distinct species, so no assignment exists; t = 6: width 27 is outside Table 2):
+ t    k     N                        Source  M Mct wmax  N_L1  N_L2
+ 3  702   225        Power CZ3-13.4-6.1-9.1  6   7   13    NA    NA
+ 3 1014   228            Power CZ3-13.5-6.1  6   7   13    NA    NA
+ 3 1352   234            Power CZ3-13.5-8.1  6   7   13    NA    NA
+ 3 1521   237            Power CZ3-13.5-9.1  6   7   13    NA    NA
+ 3 1690   240           Power CZ3-13.5-10.1  6   7   13    NA    NA
+ 3 2028   246           Power CZ3-13.5-12.1  6   7   13    NA    NA
+ 3 2198   249                Power CZ3-14.6  6   7   14    NA    NA
+ 3 2744   264 Power CZ3-16.3-14.1-14.1-14.1  6   7   16    NA    NA
+ 3 3136   270      Power CZ3-16.4-14.1-14.1  6   7   16    NA    NA
+ 3 3584   276           Power CZ3-16.5-14.1  6   7   16    NA    NA
+ 3 4096   282                Power CZ3-16.6  6   7   16    NA    NA
+ 3 4352   303      Power CZ3-17.4-16.1-16.1  6   7   17    NA    NA
+ 3 4608   306 Power CZ3-19.3-16.1-16.1-18.1  6   7   19    NA    NA
+ 3 4788   308      Power CZ3-19.4-14.1-18.1  6   7   19    NA    NA
+ 3 4864   312      Power CZ3-19.4-16.1-16.1  6   7   19    NA    NA
+ 3 4896   313 Power CZ3-19.3-16.1-17.1-18.1  6   7   19    NA    NA
+ 3 5472   314      Power CZ3-19.4-16.1-18.1  6   7   19    NA    NA
+ 3 5776   320           Power CZ3-19.5-16.1  6   7   19    NA    NA
+ 3 5814   321      Power CZ3-19.4-17.1-18.1  6   7   19    NA    NA
+ 3 6498   322           Power CZ3-19.5-18.1  6   7   19    NA    NA
+ 3 6859   328                Power CZ3-19.6  6   7   19    NA    NA
+ 3 6860   330                Power CZ3-20.6  6   7   20    NA    NA
+ 3 8000   350 Power CZ3-23.3-20.1-20.1-20.1  6   7   23    NA    NA
+ 3 8800   357 Power CZ3-23.3-20.1-20.1-22.1  6   7   23    NA    NA
+ 3 8860   358      Power CZ3-23.1-22.4-20.1  6   7   23    NA    NA
+ 3 9680   364      Power CZ3-23.3-22.2-20.1  6   7   23    NA    NA
+ 3 9746   365           Power CZ3-23.1-22.5  6   7   23    NA    NA
+ 6  361 49598               Power CZ2-19.13 13  13   19 50273 50274
+ 6  702 67327          Power CZ2-27.12-26.1 13  13   27    NA    NA
+ 6  729 67477               Power CZ2-27.13 13  13   27    NA    NA
+
+t = 3, v = 3: decompositions of the record into Table 2 arrays (counts of T0,T2,T3 per width; +c constant rows); any row requirement ignored
+  Power CZ3-13.4-6.1-9.1           N=225 widths 13x4 6x1 9x1       5 decomposition(s)
+  Power CZ3-13.5-6.1               N=228 widths 13x5 6x1           1 decomposition(s): 1,0,4 | 0,0,1 +2
+  Power CZ3-13.5-8.1               N=234 widths 13x5 8x1           1 decomposition(s): 0,1,4 | 0,0,1 +2
+  Power CZ3-13.5-9.1               N=237 widths 13x5 9x1           1 decomposition(s): 1,0,4 | 0,0,1 +2
+  Power CZ3-13.5-10.1              N=240 widths 13x5 10x1          1 decomposition(s): 0,1,4 | 0,0,1 +2
+  Power CZ3-13.5-12.1              N=246 widths 13x5 12x1          2 decomposition(s): 0,0,5 | 1,0,0 +1; 0,1,4 | 0,0,1 +2
+  Power CZ3-14.6                   N=249 widths 14x6               1 decomposition(s): 0,0,6 +3
+  Power CZ3-16.3-14.1-14.1-14.1    N=264 widths 16x3 14x1 14x1 14x1 4 decomposition(s)
+  Power CZ3-16.4-14.1-14.1         N=270 widths 16x4 14x1 14x1     4 decomposition(s)
+  Power CZ3-16.5-14.1              N=276 widths 16x5 14x1          3 decomposition(s): 0,1,4 | 1,0,0 +0; 1,0,4 | 0,1,0 +0; 0,1,4 | 0,1,0 +3
+  Power CZ3-16.6                   N=282 widths 16x6               1 decomposition(s): 0,2,4 +0
+  Power CZ3-17.4-16.1-16.1         N=303 widths 17x4 16x1 16x1     5 decomposition(s)
+  Power CZ3-19.3-16.1-16.1-18.1    N=306 widths 19x3 16x1 16x1 18x1 18 decomposition(s)
+  Power CZ3-19.4-14.1-18.1         N=308 widths 19x4 14x1 18x1     7 decomposition(s)
+  Power CZ3-19.4-16.1-16.1         N=312 widths 19x4 16x1 16x1     12 decomposition(s)
+  Power CZ3-19.3-16.1-17.1-18.1    N=313 widths 19x3 16x1 17x1 18x1 12 decomposition(s)
+  Power CZ3-19.4-16.1-18.1         N=314 widths 19x4 16x1 18x1     5 decomposition(s)
+  Power CZ3-19.5-16.1              N=320 widths 19x5 16x1          4 decomposition(s)
+  Power CZ3-19.4-17.1-18.1         N=321 widths 19x4 17x1 18x1     17 decomposition(s)
+  Power CZ3-19.5-18.1              N=322 widths 19x5 18x1          4 decomposition(s)
+  Power CZ3-19.6                   N=328 widths 19x6               1 decomposition(s): 1,3,2 +1
+  Power CZ3-20.6                   N=330 widths 20x6               2 decomposition(s): 0,3,3 +0; 1,1,4 +1
+  Power CZ3-23.3-20.1-20.1-20.1    N=350 widths 23x3 20x1 20x1 20x1 15 decomposition(s)
+  Power CZ3-23.3-20.1-20.1-22.1    N=357 widths 23x3 20x1 20x1 22x1 8 decomposition(s)
+  Power CZ3-23.1-22.4-20.1         N=358 widths 23x1 22x4 20x1     0 decomposition(s)
+  Power CZ3-23.3-22.2-20.1         N=364 widths 23x3 22x2 20x1     7 decomposition(s)
+  Power CZ3-23.1-22.5              N=365 widths 23x1 22x5          3 decomposition(s): 0,0,1 | 1,1,3 +2; 0,1,0 | 1,0,4 +2; 1,0,0 | 0,1,4 +2
+  rows with no decomposition: 1 ; the single-decomposition rows disagree on the constant rows (14^6 = 6 T_3 + 3; 16^6 = 2 T_2 + 4 T_3 + 0), so Table 2 is not the ingredient library of these rows
+  the Theorem 2.1 accounting with the living table's eCAN (every row eCAN(3, w, 3) - 3, plus 3): 0 exact; record below it on all 27 rows by 6..19
+
+the paper's own Tables 3-4 (New column) against L1 / L4 with its own Table 1-2 sizes:
+ t v e       type  New   L1   L4
+ 4 2 3        9^9  184  192  192
+ 4 2 3  11^8 10^1  196  196  198
+ 4 2 4 12^12 10^1  284  284  286
+ 4 2 3  13^3 12^6  216  216  216
+ 6 2 3      19^19 4969 5348 5398
+ 6 2 3 19^18 17^1 4904 5284 5334
+ 3 3 3       20^6  333   NA   NA
+ 3 3 3       19^6  318   NA   NA
+ 3 3 4  11^6 10^4  354  387  387
+(9^9, the t = 6 entries and 11^6 10^4 lie BELOW the Lemma 2.3 minimum with the paper's own sizes, so the paper's own Table 3-4 assignment
+  is looser than Lemma 2.3 as stated (11^6 10^4 = 3 T_2 + 3 T_3 at 11, 4 T_3 at 10, + 3 puts the tau = 2 species in 3 rows where Lemma 2.3 wants 7);
+  20^6 and 19^6 have 6 rows where Lemma 2.3 needs 7. The living table's rows, unlike the paper's, sit at or above the Lemma 2.3 minimum except at q = 9)
+
+== v = 6 rows (t = 5, e = 3, M = 21): no v = 6 quilting arrays anywhere in the paper ==
+residual N - Power CT law (eCAN - 1 per row, chi): range -77874..-76444  distinct values 45 on 117 rows
+residual by n22 on the rows with widths 23, 22, 21 only, n23 >= 8, n21 >= 2 (a per-row saving that depends on the row's set, not one number per width):
+ n22    res
+   0 -77598
+   1 -77652
+   2 -77706
+   3 -77760
+   4 -77814
+   5 -77844
+   6 -77874
+   7 -77874
+   8 -77874
+   9 -77874
+  10 -77874
+  11 -77874
+an additive per-width fit N = a + b23 n23 + b22 n22 + b21 n21 misses by up to 3519 rows
+
+== TIERS over all 215 Power CZ rows (law L4f on v = 2, L1 on v = 3; ingredients = the paper's Tables 1-2, two values fitted) ==
+          
+           RECURSIVE_TENTATIVE OPEN
+  t3 v3 e3              0         27
+  t4 v2 e2              3          0
+  t4 v2 e3             14          3
+  t4 v2 e4              5          0
+  t5 v2 e3              2          0
+  t5 v6 e3              0        117
+  t6 v2 e3             41          0
+  t6 v3 e2              0          3
+exact under L4 alone (no fitted value): 41 ; exact only with a fitted value: 24 
+unresolved Power CZ entries: 212  matched: 212 
+
+RECURSIVE_TENTATIVE     OPEN 
+            62            150 
+
+POWER CZ FORMULA RUN DONE

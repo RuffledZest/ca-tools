@@ -20,7 +20,7 @@
 ## rows end at h = 1407 = 37^2 + 37 + 1. At t = 6 the table holds no
 ## strength-4 analogue, so the (6, 6) constant is fitted only. Those
 ## 117 rows reproduce exactly but their third ingredient is not a
-## table entry, so they are ARITH_INFERRED, not ARITHMETIC, and they
+## table entry, so they are RECURSIVE_TENTATIVE, not RECURSIVE, and they
 ## are not wired into the engine; a change to eCAN(t, h, v) or
 ## eCAN(t - 1, h, v) would still move them by the same sum, noted for
 ## the engine as a later option.
@@ -43,9 +43,9 @@ d$resid <- d$N - d$e_t - (d$v - 1) * d$e_t1
 
 ## rows with the third ingredient in the table (v <= 5)
 d$N_pred <- d$e_t + (d$v - 1) * d$e_t1 + d$e_t2sq
-d$tier <- ifelse(is.na(d$N_pred), NA, ifelse(d$N == d$N_pred, "ARITHMETIC", ifelse(d$N > d$N_pred, "ARITH_ABOVE", "ARITH_BELOW")))
+d$tier <- ifelse(is.na(d$N_pred), NA, ifelse(d$N == d$N_pred, "RECURSIVE", ifelse(d$N > d$N_pred, "RECURSIVE_STALE", "RECURSIVE_BELOW")))
 cat("\n== v <= 5, third ingredient eCAN(t-2, h, v^2) from the table:", sum(!is.na(d$N_pred)), "rows ==\n"); print(table(d$tier[!is.na(d$N_pred)]))
-ab <- d[!is.na(d$tier) & d$tier != "ARITHMETIC", ]
+ab <- d[!is.na(d$tier) & d$tier != "RECURSIVE", ]
 if (nrow(ab)) { ab$diff <- ab$N - ab$N_pred; print(ab[, c("t","v","k","N","N_pred","diff","e_t","e_t1","e_t2sq")], row.names = FALSE) }
 
 ## rows with v >= 6: the residual is one constant per (t, v)
@@ -62,8 +62,8 @@ cat("\nthe seven constants, each against 2 q^(t-2) - 1 - 2 (q - v^2), q the leas
 cat("constants equal to the closed form:", sum(K$C == K$closed), "of", nrow(K), "\n")
 big$C <- K$C[match(paste(big$t, big$v), paste(K$t, K$v))]
 big$N_pred <- big$e_t + (big$v - 1) * big$e_t1 + big$C
-big$tier <- ifelse(big$N == big$N_pred, "ARITH_INFERRED", ifelse(big$N > big$N_pred, "ARITH_ABOVE", "ARITH_BELOW"))
-cat("v >= 6 rows reproduced with the constant:", sum(big$tier == "ARITH_INFERRED"), "of", nrow(big), "\n")
+big$tier <- ifelse(big$N == big$N_pred, "RECURSIVE_TENTATIVE", ifelse(big$N > big$N_pred, "RECURSIVE_STALE", "RECURSIVE_BELOW"))
+cat("v >= 6 rows reproduced with the constant:", sum(big$tier == "RECURSIVE_TENTATIVE"), "of", nrow(big), "\n")
 d[is.na(d$tier), c("N_pred", "tier")] <- big[, c("N_pred", "tier")]
 
 cat("\n== all rows by tier ==\n"); print(table(d$tier))

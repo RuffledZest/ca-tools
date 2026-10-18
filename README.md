@@ -72,6 +72,24 @@ r/INTEGRATION.md
     into an existing package, or depending on the demonstration
     package.
 
+r/livingtable/
+:   A dependency-propagation engine over the CAs catalogues, with the
+    ledgers of the reproduction and verification campaign and an
+    accounting of all 13,641 catalogue entries in nine classes.
+    VERIFIED 987 and VERIFIED_IMPROVED 24 are arrays CAs rebuilt and
+    caverify checked. RECURSIVE 4,425 are sizes a calibrated
+    construction law reproduces exactly from table ingredients,
+    nothing built, with RECURSIVE_TENTATIVE 531 where the reading may
+    be coincidental and RECURSIVE_STALE 10 where the law now gives
+    fewer rows than the entry. POST_OPTIMIZED 380 were finished by a
+    search after a construction, SEARCH 3,623 are search-tagged with
+    no table ingredient, DIRECT_ONLY 339 are published one-off
+    constructions with no builder, and OPEN 3,322 wait on ingredients
+    the tables never published. The one distinction that matters is
+    between an array that exists and has been checked and a size
+    that only a construction accounts for. Details, laws and logs in
+    r/livingtable/README.md.
+
 ## Validation
 
 The verifier was tested against all 77 covering arrays shipped in the CAs

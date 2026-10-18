@@ -1,4 +1,4 @@
-## arith_measure.R - the ceiling of the ARITHMETIC tier. Tallies the 9,007 UNRESOLVED entries by construction
+## arith_measure.R - the ceiling of the RECURSIVE tier. Tallies the 9,007 UNRESOLVED entries by construction
 ## family from their source tags, and counts the modifier tags (fuse,
 ## postop NCK, Arc, T) that qualify a formula. Run from r/livingtable/ (paths adjusted for
 ## the repository layout):

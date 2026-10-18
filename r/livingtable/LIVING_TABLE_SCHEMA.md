@@ -43,7 +43,10 @@ One row per derivation claim:
 
 Every edge starts CLAIMED (from the Source tag), gets upgraded to
 ARITHMETIC when a size reproduction pins the ingredients, and to
-EXECUTED when the construction runs and the output verifies.
+EXECUTED when the construction runs and the output verifies. (The
+entry classes of the engine, VERIFIED, VERIFIED_IMPROVED, RECURSIVE
+and the rest, are described in README.md. An entry whose edges are
+ARITHMETIC is RECURSIVE there.)
 Upgrades are new rows (append-only); the highest confidence row
 for an edge is current, matching the table's tier convention.
 

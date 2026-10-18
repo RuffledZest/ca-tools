@@ -63,12 +63,12 @@ rows with a rule: 2303  exact: 2275  capped at k=10000: 24  other misses: 4
 
 == TIERS over all 2564 power rows ==
       
-       ARITHMETIC ARITH_OPEN
+       RECURSIVE OPEN
   CT          469          2
   N-CT       2033         60
 unresolved power CT/N-CT entries: 2540  matched to a table row: 2540 
 
-ARITHMETIC ARITH_OPEN 
+RECURSIVE OPEN 
       2478         62 
 
 POWER FAMILY FORMULA RUN DONE

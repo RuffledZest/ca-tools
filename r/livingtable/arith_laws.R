@@ -1,4 +1,4 @@
-## arith_laws.R - the ARITHMETIC tier's law evaluators, one per
+## arith_laws.R - the RECURSIVE tier's law evaluators, one per
 ## calibrated family, each a function of the entry (t, v, k, Source)
 ## and a lookup function ecan(t, w, v) over the CURRENT living table
 ## (frozen record plus verified improvements), plus ncan(t, w, v), the
@@ -14,9 +14,9 @@
 ## The laws are the ones calibrated in arith_formula_power.R,
 ## arith_formula_dp_table.R, arith_formula_small.R,
 ## arith_families_probe.R, arith_formula_addn.R, arith_formula_mc.R,
-## arith_formula_fuse.R, arith_formula_cmtw.R and arith_formula_mtvt.R;
+## arith_formula_fuse.R, arith_formula_cmtw.R, arith_formula_mtvt.R, arith_formula_cmmssy.R (law_pcax) and arith_formula_dcan.R (the strength-4 branch of law_cmtw);
 ## the identity test in arith_engine.R
-## requires this file to reproduce every ARITHMETIC entry's recorded
+## requires this file to reproduce every RECURSIVE entry's recorded
 ## N from the frozen record, which pins the two implementations to
 ## each other. Sourced by arith_engine.R.
 Turan <- function(t, v) { if (v >= t) return(t * (t - 1) / 2)
@@ -104,7 +104,7 @@ law_addn <- function(t, v, k, Source, ecan) {
     list(N = N, deps = deps) }
 ## Martirosyan-Colbourn (t = 5, 6, k even, h = k/2): N = ecan(t, h, v) +
 ## (v-1) ecan(t-1, h, v) + ecan(t-2, h, v^2); the third ingredient is a
-## table entry only for v <= 5, so only those rows are ARITHMETIC and
+## table entry only for v <= 5, so only those rows are RECURSIVE and
 ## wired (arith_formula_mc.R)
 law_mc <- function(t, v, k, Source, ecan) { if (k %% 2 != 0 || v^2 > 25) return(list(N = NA, deps = NULL)); h <- k / 2
     list(N = ecan(t, h, v) + (v - 1) * ecan(t - 1, h, v) + ecan(t - 2, h, v^2),
@@ -118,7 +118,13 @@ law_fuse <- function(t, v, k, Source, ecan) { m <- lengths(regmatches(Source, gr
 ## ---- Colbourn-Martirosyan-TVT-Walker, strength 3 only (arith_formula_cmtw.R):
 ## Theorem 3.4 at prime power v, k' = ceiling(k / v); at v + 1 prime power, that row fused ----
 is_pp <- function(v) { p <- 2; while (v %% p != 0) p <- p + 1; while (v %% p == 0) v <- v / p; v == 1 }
-law_cmtw <- function(t, v, k, Source, ecan) { if (t != 3) return(list(N = NA, deps = NULL))
+## strength 4, k = v^2 only (arith_formula_dcan.R; calibrated on the seven rows at v = 11, 13, 16, 17, 19, 23, 25, the only such rows): Theorem 4.13 at k' = v with DCAN(2, v, v) = v - 1 (Yin 2003)
+## and CODN(2, v, v^2) = v^4 - v^2 (CMTW's Bush bound CODN(2, w, w) <= w^2 - w applied at w = v^2 by this pass, exact by the count; not a statement in CMTW); N = ecan(4, v, v) + (v-1) ecan(3, v, v) + (v^3 - v^2)(v - 1) + 2 (v^4 - v^2)
+law_cmtw <- function(t, v, k, Source, ecan) {
+    if (t == 4) { if (!(is_pp(v) && v >= 4 && k == v^2)) return(list(N = NA, deps = NULL))
+        return(list(N = ecan(4, v, v) + (v - 1) * ecan(3, v, v) + (v^3 - v^2) * (v - 1) + 2 * (v^4 - v^2),
+                    deps = data.frame(t = c(4, 3), w = v, v = v, range = FALSE))) }
+    if (t != 3) return(list(N = NA, deps = NULL))
     if (is_pp(v)) { kk <- ceiling(k / v)
         list(N = ecan(3, kk, v) + (v - 1) * ecan(2, kk, v) + v^3 - v^2, deps = data.frame(t = c(3, 2), w = kk, v = v, range = FALSE)) }
     else if (is_pp(v + 1)) list(N = ecan(3, k, v + 1) - 2, deps = data.frame(t = 3, w = k, v = v + 1, range = FALSE))
@@ -132,9 +138,26 @@ law_mtvt <- function(t, v, k, Source, ecan) { if (!(t %in% c(5, 6)) || grepl("po
     deps <- unique(data.frame(t = c(t, t - 1, 2, rep(3:(t - 2), 2)), w = c(k1, k1, k2, rep(c(k1, k2), each = t - 4)), v = v, range = FALSE))
     list(N = N, deps = deps) }
 
+## ---- PCAx (tags "PCAxPCA" and "PCAx2PCA"; arith_formula_cmmssy.R): the record row is a
+## Theorem 3.2 / 3.3 product of two table entries of the CMMSSY 2006 paper, N = ecan(2, w1, v)
+## + ecan(2, w2, v) - v, the two widths w1, w2 read from the recipe table arith_pcax_recipes.csv
+## (one row per exact match, keyed by t, v, k, Source; the Source decides, postop rows are absent).
+## Rtab is that table (read from the csv when not supplied); NA for a row not in it ----
+pcax_Rtab <- NULL
+law_pcax <- function(t, v, k, Source, ecan, Rtab = NULL) {
+    if (!grepl("^PCAx(2)?PCA$", Source)) return(list(N = NA, deps = NULL))
+    if (is.null(Rtab)) { if (is.null(pcax_Rtab)) pcax_Rtab <<- read.csv("data/arith_pcax_recipes.csv", stringsAsFactors = FALSE); Rtab <- pcax_Rtab }
+    i <- which(Rtab$t == t & Rtab$v == v & Rtab$k == k & Rtab$Source == Source)
+    if (length(i) != 1) return(list(N = NA, deps = NULL))
+    r <- Rtab[i, ]
+    list(N = ecan(r$ing1_t, r$ing1_w, r$ing1_v) + ecan(r$ing2_t, r$ing2_w, r$ing2_v) - v,
+         deps = data.frame(t = c(r$ing1_t, r$ing2_t), w = c(r$ing1_w, r$ing2_w), v = c(r$ing1_v, r$ing2_v), range = FALSE))
+}
+
 ## ---- dispatcher ----
-eval_law <- function(family, t, v, k, Source, ecan, ncan, Mtab, kmax2) {
+eval_law <- function(family, t, v, k, Source, ecan, ncan, Mtab, kmax2, Rtab = NULL) {
     switch(family,
+        "PCAx" = law_pcax(t, v, k, Source, ecan, Rtab),
         "Power CT" = , "Power N-CT" = law_power(t, v, k, Source, ecan, ncan, Mtab),
         "perfect hash family" = law_phf(t, v, k, Source, ecan, ncan),
         "Direct product" = law_dp(t, v, k, Source, ecan, ncan, kmax2[[as.character(v)]]),

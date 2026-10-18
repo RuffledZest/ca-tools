@@ -82,7 +82,8 @@ mode: incremental propagation along ca_edges_v2 when an
 ingredient improves, the fast path and explanation layer. They
 must agree; disagreement is a bug and sweep wins. Every array an
 engine produces is verified by caverify before it is stamped
-(tier EXECUTED), sizes-only recomputations are tier ARITHMETIC.
+(tier EXECUTED), sizes-only recomputations carry the edge confidence
+ARITHMETIC of LIVING_TABLE_SCHEMA.md and the class RECURSIVE.
 
 12. engine_closure.R -> data/engine_nodes.csv, data/engine_links.csv
     (recipe nodes and recipe-to-recipe links, from 9).
@@ -96,9 +97,10 @@ engine produces is verified by caverify before it is stamped
     Live propagation with every rebuilt array verified, plus the
     change-and-restore replay.
 16. engine_coverage.R -> data/engine_coverage.csv
-    Coverage accounting of all 13,641 entries.
+    Coverage accounting of all 13,641 entries: VERIFIED 987,
+    VERIFIED_IMPROVED 24, SEARCH 3,623, UNRESOLVED 9,007.
 
-## Stage 5: the ARITHMETIC tier (size laws over the unresolved entries)
+## Stage 5: the recursive classes (size laws over the unresolved entries)
 
 Size laws recovered from the Source tags of the UNRESOLVED entries,
 calibrated on every row of each family in the frozen table (the
@@ -132,18 +134,33 @@ log to results/<script>_result.txt; run in this order.
     tested); arith_formula_mtvt.R (Martirosyan-TVT, even and odd k);
     arith_families_tail.R (the last 39 rows outside the
     paper-blocked families, 8 heterogeneous hash family rows
-    admitted, 5 postop bound-only, 26 terminal).
+    admitted, 5 postop, 26 terminal).
+    Then the three paper passes, after the family scripts and before
+    the tally: arith_formula_cmmssy.R -> data/arith_formula_cmmssy.csv
+    and data/arith_pcax_recipes.csv (Colbourn, Martirosyan, Mullen,
+    Shasha, Sherwood and Yucas 2006, the PCA product families, 44
+    exact recipes, the floor argument for the generalized product;
+    reads the shipped data/arith_tally.csv to mark the rows open
+    before the pass; notes in findings/CMMSSY_NOTES.md);
+    arith_formula_powercz.R with cz_tables.R ->
+    data/arith_formula_powercz.csv (Colbourn and Zhou 2012, a reading
+    only, nothing wired; findings/POWERCZ_NOTES.md);
+    arith_formula_dcan.R -> data/arith_formula_dcan.csv and
+    data/dcan_table.csv (Yin 2003, DCAN values to k = 25, seven CMTW
+    strength-4 rows admitted, Cohen-Colbourn-Ling open;
+    findings/DCAN_NOTES.md).
 19. arith_tally.R -> data/arith_tally.csv
-    The arithmetic tier of every UNRESOLVED entry, ARITHMETIC 4,401,
-    ARITH_INFERRED 149, ARITH_ABOVE 10, ARITH_BELOW 0,
-    ARITH_BOUND_ONLY 13, TERMINAL_CLAIMED 700, ARITH_OPEN 2,901,
-    NOT_ATTEMPTED 833.
+    The class of every UNRESOLVED entry, RECURSIVE 4,425,
+    RECURSIVE_TENTATIVE 531, RECURSIVE_STALE 10, POST_OPTIMIZED 380,
+    DIRECT_ONLY 339, OPEN 3,322. The 700 terminal rows split on the
+    tag: a postop suffix makes a row POST_OPTIMIZED (361), the rest
+    are DIRECT_ONLY (339).
 20. arith_laws.R (sourced) and arith_engine.R identity ->
     data/arith_edges.csv, results/arith_engine_identity_result.txt
     The law evaluators and the engine organ; the identity run
-    requires the frozen record to reproduce itself (4,401 of 4,401)
-    and writes the arithmetic edges (10,328 distinct entry-to-lookup
-    edges, 1,902 answering rows).
+    requires the frozen record to reproduce itself (4,425 of 4,425)
+    and writes the arithmetic edges (10,376 distinct entry-to-lookup
+    edges, 1,929 answering rows).
 21. arith_engine.R demo -> data/arith_cascade.csv,
     results/arith_engine_demo_result.txt
     Propagation of the 17 verified improvements of
@@ -155,8 +172,18 @@ log to results/<script>_result.txt; run in this order.
 22. arith_coverage_republish.R -> data/engine_coverage_v2.csv,
     results/arith_coverage_republish_result.txt
     The coverage accounting over all 13,641 entries with the
-    arithmetic tier counted apart (entries with a handle 9,035,
-    66.2 percent).
+    recursive classes counted apart (entries with a handle 9,059,
+    66.4 percent): VERIFIED 987, VERIFIED_IMPROVED 24, RECURSIVE
+    4,425, RECURSIVE_TENTATIVE 531, RECURSIVE_STALE 10,
+    POST_OPTIMIZED 380, SEARCH 3,623, DIRECT_ONLY 339, OPEN 3,322.
+23. mac_rename_check.R
+    Reruns 19 and 22 and prints the class counts against the
+    expected numbers above.
+24. data/nct_key_status.csv
+    The N-CT construction status of the 39 hash family keys
+    (CERTIFIED 32, REFUTED 4, OPEN 3), carried into
+    data/arith_power_Mtable.csv by arith_formula_power.R. The runs
+    behind it are not part of this directory.
 
 ## Provenance note
 

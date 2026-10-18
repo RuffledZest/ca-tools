@@ -10,22 +10,22 @@ PHF D rows: 8 ; M = 16 on 8 ; na + nb = M on 8 ; tag k equals row k on 8
  6 24 1458 12674992453 perfect hash familyD16,1458,54^11 27^5 12674992453
  6 25 1458 12674992485 perfect hash familyD16,1458,54^11 27^5 12674992485
        tier
- ARITHMETIC
- ARITHMETIC
- ARITHMETIC
- ARITHMETIC
- ARITHMETIC
- ARITHMETIC
- ARITHMETIC
- ARITHMETIC
+ RECURSIVE
+ RECURSIVE
+ RECURSIVE
+ RECURSIVE
+ RECURSIVE
+ RECURSIVE
+ RECURSIVE
+ RECURSIVE
 
 CK doubling postop rows: 5 ; record below the doubling bound on 5 
  t  v  k    N                                 Source N_pred             tier
- 3  6 14  498 Chateauneuf-Kreher doubling postop NCK    500 ARITH_BOUND_ONLY
- 3  6 15  506 Chateauneuf-Kreher doubling postop NCK    511 ARITH_BOUND_ONLY
- 3  6 16  510 Chateauneuf-Kreher doubling postop NCK    511 ARITH_BOUND_ONLY
- 3 10 21 2334 Chateauneuf-Kreher doubling postop NCK   2336 ARITH_BOUND_ONLY
- 3 10 22 2335 Chateauneuf-Kreher doubling postop NCK   2336 ARITH_BOUND_ONLY
+ 3  6 14  498 Chateauneuf-Kreher doubling postop NCK    500 POST_OPTIMIZED
+ 3  6 15  506 Chateauneuf-Kreher doubling postop NCK    511 POST_OPTIMIZED
+ 3  6 16  510 Chateauneuf-Kreher doubling postop NCK    511 POST_OPTIMIZED
+ 3 10 21 2334 Chateauneuf-Kreher doubling postop NCK   2336 POST_OPTIMIZED
+ 3 10 22 2335 Chateauneuf-Kreher doubling postop NCK   2336 POST_OPTIMIZED
 
 Cyclic, derived: 5 2 503 N 503 ; floor(eCAN(t+1, k+1, v) / v) = 504 
 
@@ -56,7 +56,7 @@ PGL (Maity-Akhtar-Chandrasekharan-Colbourn)
 
 == tiers ==
 
-      ARITHMETIC ARITH_BOUND_ONLY TERMINAL_CLAIMED 
-               8                5               26 
+   DIRECT_ONLY POST_OPTIMIZED      RECURSIVE 
+            22              9              8 
 
 TAIL RUN DONE

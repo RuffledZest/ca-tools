@@ -1,9 +1,10 @@
-## arith_tally.R - the running tally of the ARITHMETIC tier: joins every family csv to the
-## 9,007 UNRESOLVED entries of engine_coverage.csv and counts the tiers.
+## arith_tally.R - the running tally of the recursive tier: joins every family csv to the
+## 9,007 UNRESOLVED entries of engine_coverage.csv and counts the classes (RECURSIVE,
+## RECURSIVE_TENTATIVE, RECURSIVE_STALE, RECURSIVE_BELOW, POST_OPTIMIZED, DIRECT_ONLY, OPEN).
 ## The Add tags come from arith_formula_addn.csv (all n), which
 ## supersedes the n = 1 rows of arith_formula_small.csv and the
 ## "Add a factor" rows of arith_families_probe.csv; fused rows come
-## from arith_formula_fuse.csv, which supersedes the probe's TERMINAL
+## from arith_formula_fuse.csv, which supersedes the probe's terminal
 ## classification on fused rows that have their unfused base in the
 ## table (22 Raaphorst-Moura-Stevens, 7 extended OA special, 1
 ## Cyclotomy, 30 in all); a fused row whose base is outside the table
@@ -26,28 +27,40 @@ fam <- list(
     cmtw   = { x <- read.csv("data/arith_formula_cmtw.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = x$tier, family = x$family) },
     mtvt   = { x <- read.csv("data/arith_formula_mtvt.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = x$tier, family = x$family) },
     tail   = { x <- read.csv("data/arith_families_tail.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = x$tier, family = x$family) },
-    cz     = { x <- read.csv("data/arith_probe_powerCZ.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = "ARITH_OPEN", family = "Power CZ") },
+    pcax   = { x <- read.csv("data/arith_formula_cmmssy.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = x$tier, family = x$family) },
+    cz2    = { x <- read.csv("data/arith_formula_powercz.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = x$tier, family = "Power CZ") },
+    dcan   = { x <- read.csv("data/arith_formula_dcan.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = x$tier, family = x$family) },
+    cz     = { x <- read.csv("data/arith_probe_powerCZ.csv", stringsAsFactors = FALSE); data.frame(key = paste(x$t, x$v, x$k, x$Source), tier = "OPEN", family = "Power CZ") },
     probe  = { x <- read.csv("data/arith_families_probe.csv", stringsAsFactors = FALSE); x <- x[x$family != "Add a factor", ]; data.frame(key = x$key, tier = x$tier, family = x$family) })
 ## the fuse family takes precedence over the probe's classification for a fused row whose
 ## unfused base is in the table, and only there
 fam$probe <- fam$probe[!(fam$probe$key %in% fam$fuse$key), ]
+## the paper-based passes take precedence: the Power CZ calibration over the earlier probe, and the DCAN pass
+## over the strength-4 CMTW rows of arith_formula_cmtw.csv (strength 3 stays there)
+fam$cz <- fam$cz[!(fam$cz$key %in% fam$cz2$key), ]
+fam$cmtw <- fam$cmtw[!(fam$cmtw$key %in% fam$dcan$key), ]
 all <- do.call(rbind, fam)
 stopifnot(!any(duplicated(all$key)))
 u$arith_tier <- all$tier[match(u$key, all$key)]
 u$arith_family <- all$family[match(u$key, all$key)]
-u$arith_tier[is.na(u$arith_tier)] <- "NOT_ATTEMPTED"
-cat("unresolved entries:", nrow(u), "\n\n== by tier ==\n"); print(table(u$arith_tier))
-cat("\n== by family and tier ==\n"); print(table(u$arith_family, u$arith_tier, useNA = "ifany"))
-cat("\nARITHMETIC (formula reproduces the record exactly, ingredients from the table):", sum(u$arith_tier == "ARITHMETIC"),
-    "\nARITH_INFERRED (exact, but the reading may be coincidental):", sum(u$arith_tier == "ARITH_INFERRED"),
-    "\nARITH_ABOVE (record above the law: stale-record leads):", sum(u$arith_tier == "ARITH_ABOVE"),
-    "\nARITH_BOUND_ONLY (postop tags; formula gives a bound):", sum(u$arith_tier == "ARITH_BOUND_ONLY"),
-    "\nARITH_BELOW (record below the law: a better ingredient reading exists):", sum(u$arith_tier == "ARITH_BELOW"),
-    "\nTERMINAL_CLAIMED (search results or published arrays, no table ingredient; propagation can never reach them):", sum(u$arith_tier == "TERMINAL_CLAIMED"),
-    "\nARITH_OPEN (attempted, law not recovered):", sum(u$arith_tier == "ARITH_OPEN"),
-    "\nNOT_ATTEMPTED:", sum(u$arith_tier == "NOT_ATTEMPTED"), "\n")
-cat("\nlargest families not yet attempted:\n")
-na <- u[u$arith_tier == "NOT_ATTEMPTED", ]
-print(head(sort(table(sub("^(Colbourn-Martirosyan-TVT-Walker|Martirosyan-TVT|Martirosyan-Colbourn|Cohen-Colbourn-Ling|PCAx2PCA|PCAxPCA|orthogonal array|projection|Augment OA|Add [a-z ]+|Raaphorst-Moura-Stevens|extended OA|Cyclotomy|Torres-Jimenez|Torres|cover starter|Cover|Ji-Li-Yin|Fix|[A-Za-z-]+).*", "\\1", na$Source)), decreasing = TRUE), 20))
+## every unresolved entry is covered by some family csv (the three paper passes closed the last
+## families, so the earlier NOT_ATTEMPTED fallback is gone); a gap here is a missing csv
+stopifnot(!any(is.na(u$arith_tier)))
+classes <- c(RECURSIVE = "a construction reproduces the recorded size exactly from table ingredients, nothing built",
+             RECURSIVE_TENTATIVE = "the same, but the reading may be coincidental or one ingredient is not a table quantity",
+             RECURSIVE_STALE = "the construction now gives fewer rows than the entry, so the entry is stale",
+             RECURSIVE_BELOW = "the record sits below the law (a better ingredient reading exists)",
+             POST_OPTIMIZED = "a construction started the array and a post-optimization search finished it; the law gives the size before the search",
+             DIRECT_ONLY = "a published one-off construction or search result with no table ingredient and no builder",
+             OPEN = "attempted, construction not recovered (ingredients the tables do not publish)")
+stopifnot(all(u$arith_tier %in% names(classes)))
+cat("unresolved entries:", nrow(u), "\n\n== by class ==\n")
+for (cl in names(classes)) cat(sprintf("  %-20s %5d  %s\n", cl, sum(u$arith_tier == cl), classes[cl]))
+cat("\n== by family and class (families in alphabetical order, classes with a nonzero count) ==\n")
+for (f in sort(unique(u$arith_family))) {
+    tt <- table(u$arith_tier[u$arith_family == f]); tt <- tt[names(classes)[names(classes) %in% names(tt)]]
+    cat(sprintf("  %-36s %s\n", f, paste(names(tt), tt, collapse = ", ")))
+}
+cat("\nsanity: classes sum to", sum(u$arith_tier %in% names(classes)), "of", nrow(u), "\n")
 write.csv(u[, c("t","v","k","N","Source","arith_family","arith_tier")], "data/arith_tally.csv", row.names = FALSE)
 cat("\nTALLY DONE\n")

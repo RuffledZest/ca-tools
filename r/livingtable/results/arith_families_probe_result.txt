@@ -41,7 +41,7 @@
 Reading: CMTW t = 3 has one form on 23 of 28 rows, N3(k2) + (v-1)(N2(k1) + N2(k2)) with k = k1 k2,
  a LEAD to check against the paper; t = 4 and CCL show no dominant form. Nothing admitted.
 
-== TERMINAL families among the unresolved (search results or published arrays, no table ingredient): 704 entries ==
+== terminal families among the unresolved (search results or published arrays, no table ingredient; POST_OPTIMIZED where the tag carries a postop suffix, DIRECT_ONLY otherwise): 704 entries ==
 
             orthogonal array                   projection 
                          196                          137 

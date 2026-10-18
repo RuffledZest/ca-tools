@@ -30,14 +30,14 @@ PHF rows with fuse (not attempted): 18
 
 == TIERS ==
                              
-                              ARITHMETIC ARITH_ABOVE ARITH_OPEN
+                              RECURSIVE RECURSIVE_STALE OPEN
   Add n factors                      133           0        415
   Chateauneuf-Kreher doubling        111           3          0
   Derive                              71           0          0
   perfect hash family                612           0          0
 unresolved entries covered by these families: 1291 
 
- ARITHMETIC ARITH_ABOVE  ARITH_OPEN 
+ RECURSIVE RECURSIVE_STALE  OPEN 
         873           3         415 
 
 SMALL FAMILIES RUN DONE

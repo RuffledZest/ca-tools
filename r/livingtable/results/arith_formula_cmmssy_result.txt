@@ -1,0 +1,523 @@
+== Part 1: PCAcat calibration ==
+PCAcat rows: 447  N exact: 447  k exact: 447  k1 exact: 447  all three: 447  of 447 
+recipes using the one-argument (Bose 2PCA, Theorem 3.3) form of productPCA: 0 
+recipes by stage: 2:179 3:168 4:63 5:26 6:11 
+leaf ingredients: 106 ; cover-starter leaves: 85  of which N = (k-1)(v-1) + v and k1 = k - 1 (the Section 5 SCA form): 85 
+time after Part 1: 15 s
+
+== targets ==
+                            
+                             POST_OPTIMIZED RECURSIVE_TENTATIVE OPEN
+  Direct product                            0              0        320
+  Direct product generalized                0             32       1541
+  PCAx                                      6            310        182
+                            
+                             RECURSIVE not in tally
+  Direct product                    206           19
+  Direct product generalized          0            0
+  PCAx                               17           30
+
+== Part 2: closure of Theorems 3.2 and 3.3, up to 5 products over the base, per v ==
+v =  4: targets   30, Nmax   79, kmax 20000, base  24, closure   133 arrays,   0 s
+v =  5: targets   50, Nmax  120, kmax 20000, base  13, closure    76 arrays,   0 s
+v =  6: targets   89, Nmax  177, kmax 20000, base  47, closure    66 arrays,   0 s
+v =  7: targets   77, Nmax  217, kmax 20000, base  12, closure    46 arrays,   0 s
+v =  8: targets   83, Nmax  283, kmax 20000, base  19, closure    63 arrays,   0 s
+v =  9: targets   65, Nmax  349, kmax 20000, base  14, closure    39 arrays,   0 s
+v = 10: targets  110, Nmax  418, kmax 20000, base  30, closure    34 arrays,   0 s
+v = 11: targets   86, Nmax  451, kmax 20000, base  15, closure    35 arrays,   0 s
+v = 12: targets  122, Nmax  583, kmax 20000, base  32, closure    32 arrays,   0 s
+v = 13: targets   59, Nmax  637, kmax 20000, base  21, closure    47 arrays,   0 s
+v = 14: targets  176, Nmax  817, kmax 20000, base  28, closure    28 arrays,   0 s
+v = 15: targets  172, Nmax  900, kmax 20000, base  23, closure    23 arrays,   0 s
+v = 16: targets  106, Nmax  976, kmax 20000, base  10, closure    27 arrays,   0 s
+v = 17: targets  121, Nmax 1105, kmax 20000, base   6, closure    17 arrays,   0 s
+v = 18: targets  200, Nmax 1279, kmax 20000, base  15, closure    15 arrays,   0 s
+v = 19: targets  140, Nmax 1387, kmax 20000, base   3, closure     8 arrays,   0 s
+v = 20: targets  258, Nmax 1514, kmax 20000, base   5, closure     5 arrays,   0 s
+v = 21: targets  220, Nmax 1609, kmax 20000, base   1, closure     1 arrays,   0 s
+v = 22: targets  157, Nmax 1669, kmax 20000, base   1, closure     1 arrays,   0 s
+v = 23: targets  140, Nmax 1768, kmax 20000, base   1, closure     3 arrays,   0 s
+v = 24: targets  137, Nmax 1845, kmax 20000, base   0, closure     0 arrays,   0 s
+v = 25: targets   65, Nmax 1926, kmax 20000, base   1, closure     3 arrays,   0 s
+
+== closure against the record, all rows in the three tag groups ==
+                            
+                             exact not reached reached only above the record
+  Direct product                 5         180                           360
+  Direct product generalized     0         801                           772
+  PCAx                          44          58                           443
+
+== the same on the open rows only (OPEN / not in tally) ==
+                            
+                             exact not reached reached only above the record
+  Direct product                 5         113                           221
+  Direct product generalized     0         791                           750
+  PCAx                          27          15                           170
+
+== tiers, all rows ==
+                            
+                             POST_OPTIMIZED OPEN RECURSIVE
+  Direct product                            0        540          5
+  Direct product generalized                0       1573          0
+  PCAx                                      6        495         44
+
+exact matches by flag (0 = OA, PCAcat rows and table-size package ingredients only; 1 = a package ingredient whose size is not a table entry; 2/3 = paper-only base needed):
+                
+                  0
+  Direct product  5
+  PCAx           44
+exact matches by v:
+                
+                  4  5  7  8  9 11 13 14 16 17 19 23 25
+  Direct product  0  0  1  0  0  0  1  0  1  1  1  0  0
+  PCAx            1  1  3  3  4  7 13  1  3  2  2  2  2
+
+every exact match with its route (base arrays as src(N;k1+k2); x = Theorem 3.2, x3.3 = Theorem 3.3 with the second factor's eta):
+  v     k    N         Source       tier
+  7 20000  217 Direct product RECURSIVE
+ 13 20000  637 Direct product RECURSIVE
+ 16 20000  976 Direct product RECURSIVE
+ 17 20000 1105 Direct product RECURSIVE
+ 19 20000 1387 Direct product RECURSIVE
+  4    24   28       PCAx2PCA RECURSIVE
+  5    35   45       PCAx2PCA RECURSIVE
+  7    63   91       PCAx2PCA RECURSIVE
+  7    79  103       PCAx2PCA RECURSIVE
+  7   497  133       PCAx2PCA RECURSIVE
+  8    80  120       PCAx2PCA RECURSIVE
+  8    98  134       PCAx2PCA RECURSIVE
+  8   712  176       PCAx2PCA RECURSIVE
+  9    99  153       PCAx2PCA RECURSIVE
+  9   129  177       PCAx2PCA RECURSIVE
+  9   981  225       PCAx2PCA RECURSIVE
+  9  1278  249       PCAx2PCA RECURSIVE
+ 11   143  231       PCAx2PCA RECURSIVE
+ 11   191  271       PCAx2PCA RECURSIVE
+ 11   203  281       PCAx2PCA RECURSIVE
+ 11  1705  341       PCAx2PCA RECURSIVE
+ 11  2277  381       PCAx2PCA RECURSIVE
+ 11  2420  391       PCAx2PCA RECURSIVE
+ 11 20000  451       PCAx2PCA RECURSIVE
+ 13   195  325       PCAx2PCA RECURSIVE
+ 13   251  373       PCAx2PCA RECURSIVE
+ 13   265  385       PCAx2PCA RECURSIVE
+ 13   279  397       PCAx2PCA RECURSIVE
+ 13   293  409       PCAx2PCA RECURSIVE
+ 13   323  421        PCAxPCA RECURSIVE
+ 13   341  433        PCAxPCA RECURSIVE
+ 13  2717  481       PCAx2PCA RECURSIVE
+ 13  3497  529       PCAx2PCA RECURSIVE
+ 13  3692  541       PCAx2PCA RECURSIVE
+ 13  3887  553       PCAx2PCA RECURSIVE
+ 13  4501  577        PCAxPCA RECURSIVE
+ 13  4752  589        PCAxPCA RECURSIVE
+ 14   440  534        PCAxPCA RECURSIVE
+ 16   288  496       PCAx2PCA RECURSIVE
+ 16   424  616       PCAx2PCA RECURSIVE
+ 16  4880  736       PCAx2PCA RECURSIVE
+ 17   323  561       PCAx2PCA RECURSIVE
+ 17  5797  833       PCAx2PCA RECURSIVE
+ 19   399  703       PCAx2PCA RECURSIVE
+ 19  7961 1045       PCAx2PCA RECURSIVE
+ 23   575 1035       PCAx2PCA RECURSIVE
+ 23 13777 1541       PCAx2PCA RECURSIVE
+ 25   675 1225       PCAx2PCA RECURSIVE
+ 25 17525 1825       PCAx2PCA RECURSIVE
+                                                                               trace
+                                                             PCAcat(217;16807+12005)
+               [[OA(169;13+1) x3.3 OA(169;13+1)] x [OA(169;13+1) x3.3 OA(169;13+1)]]
+               [[OA(256;16+1) x3.3 OA(256;16+1)] x [OA(256;16+1) x3.3 OA(256;16+1)]]
+               [[OA(289;17+1) x3.3 OA(289;17+1)] x [OA(289;17+1) x3.3 OA(289;17+1)]]
+               [[OA(361;19+1) x3.3 OA(361;19+1)] x [OA(361;19+1) x3.3 OA(361;19+1)]]
+                                                        [OA(16;4+1) x3.3 OA(16;4+1)]
+                                                        [OA(25;5+1) x3.3 OA(25;5+1)]
+                                                        [OA(49;7+1) x3.3 OA(49;7+1)]
+                                       [pkg leaf table-size(61;9+1) x3.3 OA(49;7+1)]
+                                      [[OA(49;7+1) x3.3 OA(49;7+1)] x3.3 OA(49;7+1)]
+                                                        [OA(64;8+1) x3.3 OA(64;8+1)]
+                                      [pkg leaf table-size(78;10+1) x3.3 OA(64;8+1)]
+                                      [[OA(64;8+1) x3.3 OA(64;8+1)] x3.3 OA(64;8+1)]
+                                                        [OA(81;9+1) x3.3 OA(81;9+1)]
+                                     [pkg leaf table-size(105;12+1) x3.3 OA(81;9+1)]
+                                      [[OA(81;9+1) x3.3 OA(81;9+1)] x3.3 OA(81;9+1)]
+                   [[pkg leaf table-size(105;12+1) x3.3 OA(81;9+1)] x3.3 OA(81;9+1)]
+                                                    [OA(121;11+1) x3.3 OA(121;11+1)]
+                                   [pkg leaf table-size(161;15+1) x3.3 OA(121;11+1)]
+                                   [pkg leaf table-size(171;16+1) x3.3 OA(121;11+1)]
+                                [[OA(121;11+1) x3.3 OA(121;11+1)] x3.3 OA(121;11+1)]
+               [[pkg leaf table-size(161;15+1) x3.3 OA(121;11+1)] x3.3 OA(121;11+1)]
+               [[pkg leaf table-size(171;16+1) x3.3 OA(121;11+1)] x3.3 OA(121;11+1)]
+            [[[OA(121;11+1) x3.3 OA(121;11+1)] x3.3 OA(121;11+1)] x3.3 OA(121;11+1)]
+                                                    [OA(169;13+1) x3.3 OA(169;13+1)]
+                                   [pkg leaf table-size(217;17+1) x3.3 OA(169;13+1)]
+                                   [pkg leaf table-size(229;18+1) x3.3 OA(169;13+1)]
+                                   [pkg leaf table-size(241;19+1) x3.3 OA(169;13+1)]
+                                   [pkg leaf table-size(253;20+1) x3.3 OA(169;13+1)]
+                                                                  PCAcat(421;289+34)
+                                                                  PCAcat(433;306+35)
+                                [[OA(169;13+1) x3.3 OA(169;13+1)] x3.3 OA(169;13+1)]
+               [[pkg leaf table-size(217;17+1) x3.3 OA(169;13+1)] x3.3 OA(169;13+1)]
+               [[pkg leaf table-size(229;18+1) x3.3 OA(169;13+1)] x3.3 OA(169;13+1)]
+               [[pkg leaf table-size(241;19+1) x3.3 OA(169;13+1)] x3.3 OA(169;13+1)]
+ [pkg leaf table-size(217;17+1) x [pkg leaf table-size(217;17+1) x3.3 OA(169;13+1)]]
+ [pkg leaf table-size(229;18+1) x [pkg leaf table-size(217;17+1) x3.3 OA(169;13+1)]]
+                                                                  PCAcat(534;400+40)
+                                                    [OA(256;16+1) x3.3 OA(256;16+1)]
+                                   [pkg leaf table-size(376;24+1) x3.3 OA(256;16+1)]
+                                [[OA(256;16+1) x3.3 OA(256;16+1)] x3.3 OA(256;16+1)]
+                                                    [OA(289;17+1) x3.3 OA(289;17+1)]
+                                [[OA(289;17+1) x3.3 OA(289;17+1)] x3.3 OA(289;17+1)]
+                                                    [OA(361;19+1) x3.3 OA(361;19+1)]
+                                [[OA(361;19+1) x3.3 OA(361;19+1)] x3.3 OA(361;19+1)]
+                                                    [OA(529;23+1) x3.3 OA(529;23+1)]
+                                [[OA(529;23+1) x3.3 OA(529;23+1)] x3.3 OA(529;23+1)]
+                                                    [OA(625;25+1) x3.3 OA(625;25+1)]
+                                [[OA(625;25+1) x3.3 OA(625;25+1)] x3.3 OA(625;25+1)]
+
+base arrays other than OA / PCAcat rows used by the exact matches (pkg ... table-size: size a table entry, partition the package's; NOT table-size / paper: RECURSIVE_TENTATIVE):
+bs
+pkg leaf table-size(217;17+1) pkg leaf table-size(229;18+1) 
+                            5                             3 
+pkg leaf table-size(105;12+1) pkg leaf table-size(161;15+1) 
+                            2                             2 
+pkg leaf table-size(171;16+1) pkg leaf table-size(241;19+1) 
+                            2                             2 
+pkg leaf table-size(253;20+1) pkg leaf table-size(376;24+1) 
+                            1                             1 
+  pkg leaf table-size(61;9+1)  pkg leaf table-size(78;10+1) 
+                            1                             1 
+
+not reached at all (no closure array with k' >= k at N' <= Nmax(v)), by v:
+    
+     Direct product Direct product generalized PCAx
+  4               0                          0    4
+  5               1                          0    4
+  6               2                         12    3
+  8               1                          0    9
+  9               0                          0    2
+  10              3                         21    2
+  12              7                         18    1
+  14              2                          8    9
+  15              6                        101    4
+  18              3                        119    4
+  20             52                         66    7
+  21             50                        170    0
+  22             15                        141    1
+  23             10                         29    6
+  24             22                        114    1
+  25              6                          2    1
+reached only above the record, by v: median gap N_pred - N
+    v                        grp gap
+1   5             Direct product   8
+2   6             Direct product  11
+3   7             Direct product   5
+4   8             Direct product   6
+5   9             Direct product   8
+6  10             Direct product  44
+7  11             Direct product   9
+8  12             Direct product  41
+9  13             Direct product  11
+10 14             Direct product 102
+11 15             Direct product  62
+12 16             Direct product  41
+13 17             Direct product 140
+14 18             Direct product 212
+15 19             Direct product  88
+16 20             Direct product 552
+17 23             Direct product 324
+18 25             Direct product 327
+19  6 Direct product generalized  13
+20  7 Direct product generalized   4
+21  8 Direct product generalized   4
+22 10 Direct product generalized  49
+23 11 Direct product generalized   8
+24 12 Direct product generalized  68
+25 13 Direct product generalized   6
+26 14 Direct product generalized  61
+27 15 Direct product generalized  99
+28 16 Direct product generalized  27
+29 17 Direct product generalized  51
+30 18 Direct product generalized 228
+31 19 Direct product generalized 100
+32 20 Direct product generalized 354
+33 23 Direct product generalized 196
+34 25 Direct product generalized 130
+35  4                       PCAx   4
+36  5                       PCAx   4
+37  6                       PCAx  14
+38  7                       PCAx   6
+39  8                       PCAx   8
+40  9                       PCAx   7
+41 10                       PCAx  26
+42 11                       PCAx  13
+43 12                       PCAx  44
+44 13                       PCAx  15
+45 14                       PCAx  86
+46 16                       PCAx  46
+47 17                       PCAx  44
+48 19                       PCAx  52
+49 20                       PCAx 604
+50 23                       PCAx  13
+51 25                       PCAx  54
+time after Part 2: 15 s
+
+== Part 3: S_min = best pair eCAN(2, kA, v) + eCAN(2, kB, v) over kA kB >= k; implied d = S_min - N (Theorem 3.1 reading N = N1 + N2 - d) ==
+all rows, against the floor S_min - v:
+                            
+                             above the floor at the floor (plain law)
+  Direct product                         103                      212
+  Direct product generalized              19                       32
+  PCAx                                   182                      362
+                            
+                             below N+M-v floor
+  Direct product                           230
+  Direct product generalized              1522
+  PCAx                                       1
+rows whose N + v is exactly a pair sum eCAN(2, kA, v) + eCAN(2, kB, v), kA kB >= k (size-consistent with Theorem 3.2 on table-size arrays):
+                            
+                             FALSE TRUE
+  Direct product               295  250
+  Direct product generalized  1534   39
+  PCAx                          74  471
+
+open Direct product rows (OPEN in the tally): 320 ; implied d = S_min - N:
+
+ 2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 
+11 14  7  7  7 10  6  2  5  9  4  7  6 11  5  3  6  2  3  8 10  5 11 12  4 11 
+28 29 30 31 32 33 34 37 40 41 42 43 44 45 46 47 49 50 52 53 54 55 56 57 58 59 
+ 2  1  4  3  5  8  4  1  4  6  1  2  1  2  6  1  1  2  4  3  8 13  4 11  1  2 
+63 65 66 67 68 70 75 76 80 83 84 90 91 
+ 1  3  4  9  5  3  1  1  1  1  2  2  1 
+d in 0..v (a Theorem 3.1 profile of at most v don't-cares per column; d = v is the plain law): 90 ; d > v (needs more than v don't-cares per column in the first factor): 230 ; d < 0 (the best pair beats the record): 0 
+d - v by v on the open Direct product rows (0 = plain law; positive = record below it):
+    
+     -23 -21 -20 -17 -15 -14 -13 -12 -11 -10 -7 -6 -5 -4 -3 -2 -1  1  2  3  4
+  5    0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  3  0  0  0  0  0
+  7    0   0   0   0   0   0   0   0   0   0  0  0  0  1  0  3  4  1  0  0  0
+  8    0   0   0   0   0   0   0   0   0   0  0  0  0  3  1  1  4  0  0  0  1
+  9    0   0   0   0   0   0   0   0   0   0  1  3  2  0  2  2  2  0  0  0  2
+  10   0   0   0   0   0   0   0   0   0   0  0  2  1  0  0  1  1  0  0  2  3
+  11   0   0   0   0   0   0   0   0   0   0  0  2  0  0  2  1  5  0  0  1  0
+  12   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  3  2  0  1  0
+  13   0   0   0   0   0   0   0   0   1   3  0  0  0  0  0  1  2  0  0  0  0
+  14   0   0   0   0   0   0   0   0   0   0  0  0  0  0  5  1  1  6  0  1  1
+  15   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  2  4  0  4  0
+  16   0   0   0   0   0   1   2   0   0   0  0  0  0  0  0  0  0  0  0  0  1
+  17   0   0   0   0   3   0   0   0   0   0  0  0  0  0  0  0  0  0  2  0  0
+  18   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  1  0  0  0  0
+  19   0   0   0   2   0   0   0   4   0   0  0  0  0  0  0  0  1  0  1  2  0
+  20   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  0  0  0  1  2
+  21   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  0  0  0  2  5
+  22   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  1  0  0  1  0
+  23   0   1   2   0   0   0   0   0   0   0  0  0  0  0  0  0  2  2  0  0  4
+  24   0   0   0   0   0   0   0   0   0   0  0  0  0  0  0  0  1  0  0  0  0
+  25   2   0   0   0   0   0   0   0   0   0  0  0  0  0  0  1  0  0  2  0  1
+    
+      5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 29 30 31
+  5   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  7   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  8   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  9   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  10  4  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  11  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  12  1  0  0  1  4  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  13  0  0  0  0  0  0  2  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  14  0  1  2  4  1  3  3  1  0  0  0  1  1  3  5  2  0  0  0  0  0  0  0  0  0
+  15  0  0  0  0  0  1  0  4  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  16  0  0  0  0  0  0  0  0  0  1  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0
+  17  1  0  0  1  0  0  0  0  0  2  0  0  1  0  0  0  0  0  0  0  0  0  2  1  0
+  18  1  0  0  0  0  0  0  0  0  0  3  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  19  0  0  1  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0  0  0  0
+  20  1  2  1  2  0  0  0  1  0  0  0  0  0  0  0  0  0  1  0  1  1  0  1  0  0
+  21  0  0  0  0  0  0  0  0  1  0  0  0  0  0  1  1  0  1  0  0  1  0  1  0  1
+  22  0  0  0  0  0  0  0  0  0  0  0  0  0  2  5  0  0  0  1  0  0  0  0  0  0
+  23  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  1  0  0  0  0  0  0  0  0  0
+  24  0  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  2  0  0  0  1  0  0  0
+  25  1  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  0  0  0  0  0  0
+    
+     32 33 34 35 36 37 38 39 42 43 45 46 47 48 56 57 58 60 61 65 66 67
+  5   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  7   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  8   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  9   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  10  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  11  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  12  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  13  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  14  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  15  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  16  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  17  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  18  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  19  0  0  0  0  0  0  0  0  0  0  0  0  1  0  1  1  0  0  0  1  0  0
+  20  3  1  2  0  0  1  1  1  0  1  0  3  6  4  0  0  0  0  0  0  0  0
+  21  2  6 13  4 10  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  22  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  1  0  0  0
+  23  0  0  0  0  1  0  0  0  3  0  0  0  0  0  0  0  0  0  0  0  0  0
+  24  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  0  0  2  1
+  25  0  0  0  0  0  0  0  0  3  1  3  0  0  0  0  0  0  0  0  0  0  0
+
+the same on the 1573 Direct product generalized rows: d in 0..v: 51 ; d > v: 1522 ; d < 0: 0 
+d - v, quantiles over the rows with d > v: 1 5 14 22 75 
+d - v by v (median) on the rows with d > v:
+    v   dv
+1   6  1.5
+2   7  2.0
+3   8  1.0
+4  10  5.0
+5  11  2.0
+6  12  5.5
+7  13  3.0
+8  14  7.0
+9  15  9.0
+10 16 12.0
+11 17 14.0
+12 18 13.0
+13 19 15.0
+14 20 19.0
+15 21 21.0
+16 22 21.0
+17 23 22.0
+18 24 22.5
+19 25  2.0
+
+PCAx rows: 545 ; d - v distribution (0 = plain law; negative = above the floor):
+
+-17 -11  -9  -8  -7  -6  -5  -4  -3  -2  -1   0   1 
+  1   3   1   3   6  12  16   7  24  24  85 362   1 
+PCAx rows below the floor:
+  v   k   N               Source S_min  d
+ 12 270 354 PCAxPCA postop TJ-SA   367 13
+
+PCAx rows at the plain floor and not closure-exact, tiered RECURSIVE_TENTATIVE (plain best-pair reading): 313 
+PCAx rows above the plain floor (record worse than the best pair sum minus v; the partition loss k2 l2 in columns is the likely reason): 182 
+
+== final tiers, all rows ==
+                            
+                             POST_OPTIMIZED RECURSIVE_TENTATIVE OPEN
+  Direct product                            0              0        540
+  Direct product generalized                0              0       1573
+  PCAx                                      6            313        182
+                            
+                             RECURSIVE
+  Direct product                      5
+  Direct product generalized          0
+  PCAx                               44
+== final tiers, PCAx by tag ==
+                       
+                        POST_OPTIMIZED RECURSIVE_TENTATIVE OPEN RECURSIVE
+  PCAx2PCA                             0            176        105         39
+  PCAx2PCA postop TJ-SA                1              0          0          0
+  PCAxPCA                              0            137         77          5
+  PCAxPCA postop TJ-SA                 5              0          0          0
+
+== arith_pcax_recipes.csv: 44 exact PCAx matches as two table lookups (N_pred = eCAN(2, ing1_w, v) + eCAN(2, ing2_w, v) - v) ==
+N_pred equal to the record: 44 of 44 ; both ingredient sizes equal to eCAN at their widths: 44 ; of the 0 unresolved rows: 0 
+  v     k    N   Source ing1_w ing1_N ing1_ecan ing2_w ing2_N ing2_ecan N_pred
+  4    24   28 PCAx2PCA      5     16        16      5     16        16     28
+  5    35   45 PCAx2PCA      6     25        25      6     25        25     45
+  7    63   91 PCAx2PCA      8     49        49      8     49        49     91
+  7    79  103 PCAx2PCA     10     61        61      8     49        49    103
+  7   497  133 PCAx2PCA     63     91        91      8     49        49    133
+  8    80  120 PCAx2PCA      9     64        64      9     64        64    120
+  8    98  134 PCAx2PCA     11     78        78      9     64        64    134
+  8   712  176 PCAx2PCA     80    120       120      9     64        64    176
+  9    99  153 PCAx2PCA     10     81        81     10     81        81    153
+  9   129  177 PCAx2PCA     13    105       105     10     81        81    177
+  9   981  225 PCAx2PCA     99    153       153     10     81        81    225
+  9  1278  249 PCAx2PCA    129    177       177     10     81        81    249
+ 11   143  231 PCAx2PCA     12    121       121     12    121       121    231
+ 11   191  271 PCAx2PCA     16    161       161     12    121       121    271
+ 11   203  281 PCAx2PCA     17    171       171     12    121       121    281
+ 11  1705  341 PCAx2PCA    143    231       231     12    121       121    341
+ 11  2277  381 PCAx2PCA    191    271       271     12    121       121    381
+ 11  2420  391 PCAx2PCA    203    281       281     12    121       121    391
+ 11 20000  451 PCAx2PCA   1705    341       341     12    121       121    451
+ 13   195  325 PCAx2PCA     14    169       169     14    169       169    325
+ 13   251  373 PCAx2PCA     18    217       217     14    169       169    373
+ 13   265  385 PCAx2PCA     19    229       229     14    169       169    385
+ 13   279  397 PCAx2PCA     20    241       241     14    169       169    397
+ 13   293  409 PCAx2PCA     21    253       253     14    169       169    409
+ 13   323  421  PCAxPCA     18    217       217     18    217       217    421
+ 13   341  433  PCAxPCA     18    217       217     19    229       229    433
+ 13  2717  481 PCAx2PCA    195    325       325     14    169       169    481
+ 13  3497  529 PCAx2PCA    251    373       373     14    169       169    529
+ 13  3692  541 PCAx2PCA    265    385       385     14    169       169    541
+ 13  3887  553 PCAx2PCA    279    397       397     14    169       169    553
+ 13  4501  577  PCAxPCA     18    217       217    251    373       373    577
+ 13  4752  589  PCAxPCA     19    229       229    251    373       373    589
+ 14   440  534  PCAxPCA     21    274       274     21    274       274    534
+ 16   288  496 PCAx2PCA     17    256       256     17    256       256    496
+ 16   424  616 PCAx2PCA     25    376       376     17    256       256    616
+ 16  4880  736 PCAx2PCA    288    496       496     17    256       256    736
+ 17   323  561 PCAx2PCA     18    289       289     18    289       289    561
+ 17  5797  833 PCAx2PCA    323    561       561     18    289       289    833
+ 19   399  703 PCAx2PCA     20    361       361     20    361       361    703
+ 19  7961 1045 PCAx2PCA    399    703       703     20    361       361   1045
+ 23   575 1035 PCAx2PCA     24    529       529     24    529       529   1035
+ 23 13777 1541 PCAx2PCA    575   1035      1035     24    529       529   1541
+ 25   675 1225 PCAx2PCA     26    625       625     26    625       625   1225
+ 25 17525 1825 PCAx2PCA    675   1225      1225     26    625       625   1825
+    k1 k_prod  route unresolved
+    20     24    3.3      FALSE
+    30     35    3.3      FALSE
+    56     63    3.3      FALSE
+    70     79    3.3      FALSE
+   441    497    3.3      FALSE
+    72     80    3.3      FALSE
+    88     98    3.3      FALSE
+   640    712    3.3      FALSE
+    90     99    3.3      FALSE
+   117    129    3.3      FALSE
+   891    981    3.3      FALSE
+  1161   1278    3.3      FALSE
+   132    143    3.3      FALSE
+   176    191    3.3      FALSE
+   187    203    3.3      FALSE
+  1573   1705    3.3      FALSE
+  2101   2277    3.3      FALSE
+  2233   2420    3.3      FALSE
+ 18755  20000    3.3      FALSE
+   182    195    3.3      FALSE
+   234    251    3.3      FALSE
+   247    265    3.3      FALSE
+   260    279    3.3      FALSE
+   273    293    3.3      FALSE
+   289    323 PCAcat      FALSE
+   306    341 PCAcat      FALSE
+  2535   2717    3.3      FALSE
+  3263   3497    3.3      FALSE
+  3445   3692    3.3      FALSE
+  3627   3887    3.3      FALSE
+  3978   4501    3.2      FALSE
+  4212   4752    3.2      FALSE
+   400    440 PCAcat      FALSE
+   272    288    3.3      FALSE
+   400    424    3.3      FALSE
+  4608   4880    3.3      FALSE
+   306    323    3.3      FALSE
+  5491   5797    3.3      FALSE
+   380    399    3.3      FALSE
+  7581   7961    3.3      FALSE
+   552    575    3.3      FALSE
+ 13225  13777    3.3      FALSE
+   650    675    3.3      FALSE
+ 16875  17525    3.3      FALSE
+
+unresolved entries in the three groups: 2614 
+                            
+                             POST_OPTIMIZED RECURSIVE_TENTATIVE OPEN
+  Direct product                            0              0        526
+  Direct product generalized                0              0       1573
+  PCAx                                      6            310        182
+                            
+                             RECURSIVE
+  Direct product                      0
+  Direct product generalized          0
+  PCAx                               17
+rows not in arith_tally.csv (already VERIFIED by the engine): 49 
+arith_formula_cmmssy.csv: 545 PCAx rows written (Direct product rows reported above only)
+
+total time: 17 s
+CMMSSY RUN DONE

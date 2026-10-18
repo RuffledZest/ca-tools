@@ -3,7 +3,7 @@ exact: 1303  ingredient outside the table: 42  not exact with an ingredient (ope
 
 not exact, by base tag shape and tier:
                                 
-                                 ARITH_OPEN INGREDIENT_OUTSIDE_TABLE
+                                 OPEN INGREDIENT_OUTSIDE_TABLE
   Raaphorst-Moura-Stevens                 0                        8
   SCPHF LFSR (TJ-IM)                      0                        8
   extended OA (Colbourn) special          7                        0
@@ -22,7 +22,7 @@ rows with an ingredient and not exact, record against law (all below):
 
 unresolved fuse rows: 162 
                                  tier
-base                              ARITHMETIC ARITH_OPEN
+base                              RECURSIVE OPEN
   Add # factors                            2          0
   Cohen-Colbourn-Ling                      8          0
   Colbourn-Martirosyan-TVT-Walker         96          0
@@ -40,7 +40,7 @@ base                              INGREDIENT_OUTSIDE_TABLE
   extended OA (Colbourn) special                         0
   perfect hash family#,#,#,c                             0
 
-unresolved fuse rows whose unfused base row is itself a search result or published array (TERMINAL base):
+unresolved fuse rows whose unfused base row is itself a search result or published array (terminal base):
 22 of 162 
 
 FUSE RUN DONE

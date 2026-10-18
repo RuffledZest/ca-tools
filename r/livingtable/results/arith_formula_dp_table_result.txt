@@ -94,12 +94,12 @@ by v (generalized tag, c = v): exact / rows
 
 == TIERS over all 2120 direct product rows ==
        
-        ARITHMETIC ARITH_BOUND_ONLY ARITH_INFERRED ARITH_OPEN
+        RECURSIVE POST_OPTIMIZED RECURSIVE_TENTATIVE OPEN
   FALSE        212                1              0        333
   TRUE           0                1             32       1541
 unresolved direct product entries: 2101  matched: 2101 
 
-      ARITHMETIC ARITH_BOUND_ONLY   ARITH_INFERRED       ARITH_OPEN 
+      RECURSIVE POST_OPTIMIZED   RECURSIVE_TENTATIVE       OPEN 
              206                2               32             1861 
 
 DIRECT PRODUCT TABLE RUN DONE

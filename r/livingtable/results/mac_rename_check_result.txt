@@ -1,0 +1,23 @@
+classes in data/arith_tally.csv (the 9,007 UNRESOLVED entries):
+
+        DIRECT_ONLY                OPEN      POST_OPTIMIZED           RECURSIVE 
+                339                3322                 380                4425 
+    RECURSIVE_STALE RECURSIVE_TENTATIVE 
+                 10                 531 
+
+classes in data/engine_coverage_v2.csv (all entries):
+  VERIFIED               987  expected   987  ok
+  VERIFIED_IMPROVED       24  expected    24  ok
+  RECURSIVE             4425  expected  4425  ok
+  RECURSIVE_TENTATIVE    531  expected   531  ok
+  RECURSIVE_STALE         10  expected    10  ok
+  POST_OPTIMIZED         380  expected   380  ok
+  SEARCH                3623  expected  3623  ok
+  DIRECT_ONLY            339  expected   339  ok
+  OPEN                  3322  expected  3322  ok
+
+sum of the nine classes: 13641 of 13641
+old names present in either file: 0 
+terminal rows split: POST_OPTIMIZED with a postop tag 361  DIRECT_ONLY without one 339  (expected 361 and 339)
+
+RENAME CHECK: PASS 

@@ -1,0 +1,133 @@
+lookup agrees with eCAN on spot checks: TRUE 
+
+== (1) DCAN from Yin 2003 ==
+k range the rows need: CCL k-ary Roux, k' from 2 to 5000 (k_row 144 to 10000 ); CMTW strength 4, k' = k/v from 2 to 3072 in the vk forms and k/2 up to 5000 in the 2k forms; table built for k = 2 .. 5000 
+entries with a Yin bound: 177 (of 119976 cells); all exact (lower bound met): TRUE 
+largest k with a bound, per v (DCAN in the CMTW convention, nonzero differences):
+  v kmax_yin DCAN_at_kmax over_Zv_all
+  2        4            2        TRUE
+  3        3            2        TRUE
+  4        4            3       FALSE
+  5        5            4        TRUE
+  6        4            6        TRUE
+  7        7            6        TRUE
+  8        8            7       FALSE
+  9        9            8       FALSE
+ 10        5           10        TRUE
+ 11       11           10        TRUE
+ 12        3           11       FALSE
+ 13       13           12        TRUE
+ 14        4           14        TRUE
+ 15        3           14        TRUE
+ 16       16           15       FALSE
+ 17       17           16        TRUE
+ 18        4           18       FALSE
+ 19       19           18        TRUE
+ 20        4           19       FALSE
+ 21        3           20        TRUE
+ 22        4           22        TRUE
+ 23       23           22        TRUE
+ 24        3           23       FALSE
+ 25       25           24       FALSE
+
+== (2) Cohen-Colbourn-Ling: 318 plain rows, t = 3 ==
+law evaluable with Yin's DCAN (some k' <= Yin's coverage): 318 rows; exact 0 ; record above 0 ; record below the Yin law 318 
+record below the Yin law by a median 24% (min 1% , max 65% ) of N
+integer-Q diagnostic (Q the DCAN(2, k', v) that would make some factorisation exact, Q >= v - 1):
+  rows with some integer Q: with CAN(2,l,v) 77 ; with CAN(2,l,v) - 1 73 ; either 100 ; neither 218 of 318 
+  exact factorisations with k' inside Yin's coverage: 1 on 1 rows; of those Q == Yin 0 , Q < Yin (impossible, Yin's values are exact) 1 , Q > Yin 0 
+  rows whose exact factorisations all need k' beyond Yin's coverage (no Yin bound at all): 99 
+  candidate exact factorisations per such row: median 20 , max 1823 (chance hits in a search this wide; nothing admitted)
+  at the k' of the Yin law, the DCAN the record would need is below Yin's (exact) value on 318 of 318 rows, by a median of 9.9 rows of the DCA (Yin's value there is 14 at the median); since Yin's values meet the lower bound, no DCA can supply that; the record's k' lies beyond Yin's coverage on every row
+  distinct Q per (v, k') among exact factorisations with >= 3 rows (a consistent value would read as one DCAN entry):
+    (v, k', variant) triples with >= 3 rows: 166 ; with a single Q value: 3 
+ v kp variant Q rows
+ 3  9  CAN2-1 1    3
+ 3 86  CAN2-1 1    3
+ 3 87  CAN2-1 1    3
+
+== (3) Colbourn-Martirosyan-TVT-Walker strength 4: 583 plain rows ==
+(3a) Lemma 4.8 / Corollary 4.9, v prime power, k even: 195 rows; Corollary 4.9 exact 0 , record above it 0 , below it 195 
+     integer CODN(2, k/2, v) fitted: 17 rows; inside [v^2 - v, CAN(2,k/2,v) - 1]: 15 
+  v    k    h      N CODN_fit  e2 below_CAN2_minus_1
+  3 7164 3582   2601       32  36                  3
+  3 7168 3584   2681       32  36                  3
+  3 8192 4096   2693       32  37                  4
+  3 8194 4097   2729       32  37                  4
+  3 8704 4352   2735       32  37                  4
+  3 8764 4382   2741       32  37                  4
+  3 9216 4608   2821       32  38                  5
+  3 9424 4712   2825       32  38                  5
+  7 3542 1771  41887       96 175                 78
+  7 3610 1805  41923       96 175                 78
+  7 4114 2057  42103       96 175                 78
+  8 4096 2048  69784       56 226                169
+  9 4320 2160 107361       96 277                180
+ 11 2926 1463 207791      240 341                100
+ 13 4080 2040 408973      336 481                144
+     one fitted value shared by >= 3 rows at the same v: 2 cases
+ v  q k
+ 3 32 8
+ 7 96 3
+     second reading at v = 3: R = N - CAN(4,k/2,3) - 2 CAN(3,k/2,3) against CAN(2,k/2,9) (Theorem 4.7 is R = CAN(2,k/2,9); 4.13's proof uses CODN(2,k,v^2) <= CAN(2,k,v^2) - 1):
+     k    h   R CAN2_h_9 R_minus_CAN2
+  7164 3582 288      297           -9
+  7168 3584 288      297           -9
+  8192 4096 288      297           -9
+  8194 4097 288      297           -9
+  8704 4352 288      297           -9
+  8764 4382 288      297           -9
+  9216 4608 288      297           -9
+  9424 4712 288      297           -9
+ 10000 5000 -84      297         -381
+     R = CAN(2,k/2,9) - 9 on 8 of 9 v = 3 rows: the 8 RECURSIVE_TENTATIVE rows at v = 3 read equally as CODN(2,k/2,3) = 32 (Lemma 4.8) or as CODN(2,k/2,9) = CAN(2,k/2,9) - 9 (Theorem 4.7 with a strength-2 array of 9 constant rows deleted); the record does not separate the two.
+     k = 2v rows (v prime power): 3 ; R - v^2 (v^2 - v) = -18, -22, -24 at v = 19, 23, 25 ; the record is Lemma 4.8 with CODN(2,v,v) = v^2 - v for both CODN terms, less v - 1 (R = (v-1)(v^3-1)); an observation, no theorem read gives the v - 1, not admitted
+(3b) Theorems 4.13-4.15, v >= 4 prime power, v | k: 239 rows; k' = k/v inside Yin's coverage (k' <= v): 10 
+  v   k kk       N D_yin pred_413 pred_415
+ 11 121 11   69091    10    69091    70421
+ 13 169 13  136045    12   136045   138241
+ 16 256 16  315136    15   315136   319231
+ 17 289 17  402577    16   402577   407489
+ 19  38  2  377227    18   630667   637525
+ 19 361 19  630667    18   630667   637525
+ 23  46  2  815167    22  1362175  1374341
+ 23 529 23 1362175    22  1362175  1374341
+ 25  50  2 1140601    24  1905625  1921249
+ 25 625 25 1905625    24  1905625  1921249
+     Theorem 4.13 with Yin's D and the Bush CODN: exact 7 (the k = v^2 rows), record below it 3 (the k = 2v rows, which are 2k rows, see 3a); Corollary 4.15 exact 0 
+     Corollary 4.15 (all ingredients in the table but DCAN): integer DCAN(2,k',v) >= v - 1 on 0 of 239 rows
+     Theorem 4.13: the record fixes only S = (v^3 - v^2) DCAN(2,k',v) + CODN(2,k',v^2) = N - CAN(4,k',v) - (v-1) CAN(3,k',v) - v^4 + v^2;
+     CODN(2,k',v^2) is not a table quantity for v >= 6 (v^2 > 25) and DCAN(2,k',v) has no Yin bound at these k'; underdetermined.
+     S per v (rows, distinct S, S divisible by v^2, S at the floor D = v - 1 gives CODN(2,k',v^2) = S - (v^3 - v^2)(v - 1)):
+  v rows kk_min kk_max distinct_S S_div_v2  S_min   S_max CODN_floor_min
+  7   17    506   1359          4       15  10212   11760           8448
+  8    5    361    512          1        5  17472   17472          14336
+  9   29    339   1107          4       27  28512   31752          23328
+ 11   23     11    781          4       22  26620   65340          14520
+ 13   30     13    745         12       17  52728  129792          28392
+ 16   40     16    625         30        9 122880  303360          65280
+ 17   41     17    577         32        9 157216  388416          83232
+ 19   36      2    526         21        7  -6516  534062        -123480
+ 23    9      2    302          3        8 -11660  791384        -267696
+ 25    9      2    400          3        8 -15024 1110000        -375024
+     (S < 0 at k' = 2 means the row is not of this form at all; those are 2k rows tested in (3a).)
+(3c) Corollary 4.12, v = 3, 3 | k: 2 rows; k' = k/3: 2388, 3072 ; DCAN(2,k',3) needed: 4.83, 11.44 ; integer: 0 (Yin covers k' <= 3 only)
+(3d) Lemma 4.8, v not a prime power, k even, with CODN(2,v,v) = CAN(2,v,v) - 1: 239 rows; integer CODN(2,k/2,v) inside its bounds: 0 (two unknown CODN values; reported, not tiered)
+(3e) rows reachable only through Theorem 4.1 / Corollaries 4.3, 4.6 (k l products with DCAN, CODN(3,.,v), QCAN; no table quantity): 56 
+CMTW strength 4 by tier:
+
+RECURSIVE_TENTATIVE     OPEN     RECURSIVE 
+            11            565              7 
+
+== all rows by family and tier ==
+                                 
+                                  RECURSIVE_TENTATIVE OPEN RECURSIVE
+  Cohen-Colbourn-Ling                          0        318          0
+  Colbourn-Martirosyan-TVT-Walker             11        565          7
+unresolved entries covered: 900 
+                                 
+                                  RECURSIVE_TENTATIVE OPEN RECURSIVE
+  Cohen-Colbourn-Ling                          0        318          0
+  Colbourn-Martirosyan-TVT-Walker             10        565          7
+
+DCAN RUN DONE

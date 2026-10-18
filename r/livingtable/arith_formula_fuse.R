@@ -16,10 +16,10 @@
 ## are marked INGREDIENT_OUTSIDE_TABLE, not failures; 9 have an
 ## ingredient and sit BELOW the law (the 2 strength-2 orthogonal array
 ## rows, and 7 "extended OA (Colbourn) special" rows, a sharper
-## fusion not recovered), ARITH_OPEN. Of the 162 UNRESOLVED fuse rows
+## fusion not recovered), OPEN. Of the 162 UNRESOLVED fuse rows
 ## 147 are exact and propagable, whatever the base family's own
 ## status; the ingredient row's own tag is reported so that a fused
-## row of a TERMINAL base is seen for what it is, a claim m fusions
+## row of a terminal base is seen for what it is, a claim m fusions
 ## away from a search result. The engine's dependency is the unfused
 ## base at v + m; an intermediate fused row is itself derived from
 ## that base. Tags with a postop suffix after the fuse words are not
@@ -35,18 +35,18 @@ d <- cb[grepl("( fuse)+$", cb$Source), ]
 d$m <- lengths(regmatches(d$Source, gregexpr(" fuse", d$Source)))
 d$base_tag <- sub("( fuse)+$", "", d$Source)
 d$N_pred <- mapply(function(t, k, v, m) { e <- ec(t, k, v + m); if (is.na(e)) NA else e - 2 * m }, d$t, d$k, d$v, d$m)
-d$tier <- ifelse(is.na(d$N_pred), "INGREDIENT_OUTSIDE_TABLE", ifelse(d$N == d$N_pred, "ARITHMETIC", "ARITH_OPEN"))
+d$tier <- ifelse(is.na(d$N_pred), "INGREDIENT_OUTSIDE_TABLE", ifelse(d$N == d$N_pred, "RECURSIVE", "OPEN"))
 d$base_shape <- gsub("[0-9]+", "#", d$base_tag)
 cat("== fuse rows in the frozen table:", nrow(d), " by m:", paste(names(table(d$m)), table(d$m), collapse = ", "), "==\n")
-cat("exact:", sum(d$tier == "ARITHMETIC"), " ingredient outside the table:", sum(d$tier == "INGREDIENT_OUTSIDE_TABLE"), " not exact with an ingredient (open):", sum(d$tier == "ARITH_OPEN"), "\n")
-cat("\nnot exact, by base tag shape and tier:\n"); print(table(d$base_shape[d$tier != "ARITHMETIC"], d$tier[d$tier != "ARITHMETIC"]))
+cat("exact:", sum(d$tier == "RECURSIVE"), " ingredient outside the table:", sum(d$tier == "INGREDIENT_OUTSIDE_TABLE"), " not exact with an ingredient (open):", sum(d$tier == "OPEN"), "\n")
+cat("\nnot exact, by base tag shape and tier:\n"); print(table(d$base_shape[d$tier != "RECURSIVE"], d$tier[d$tier != "RECURSIVE"]))
 cat("rows with an ingredient and not exact, record against law (all below):\n")
-print(d[d$tier == "ARITH_OPEN", c("t","v","k","N","Source","N_pred")], row.names = FALSE)
+print(d[d$tier == "OPEN", c("t","v","k","N","Source","N_pred")], row.names = FALSE)
 m <- match(paste(u$t, u$v, u$k, u$Source), paste(d$t, d$v, d$k, d$Source))
 du <- d[m[!is.na(m)], ]
 cat("\nunresolved fuse rows:", nrow(du), "\n"); print(table(base = du$base_shape, tier = du$tier))
-cat("\nunresolved fuse rows whose unfused base row is itself a search result or published array (TERMINAL base):\n")
-ter <- read.csv("data/arith_families_probe.csv", stringsAsFactors = FALSE); ter <- ter[ter$tier == "TERMINAL_CLAIMED", ]
+cat("\nunresolved fuse rows whose unfused base row is itself a search result or published array (terminal base):\n")
+ter <- read.csv("data/arith_families_probe.csv", stringsAsFactors = FALSE); ter <- ter[ter$tier %in% c("POST_OPTIMIZED", "DIRECT_ONLY"), ]
 du$base_key <- paste(du$t, du$v + du$m, du$k, du$base_tag)
 cat(sum(du$base_key %in% ter$key), "of", nrow(du), "\n")
 d$family <- "fuse"

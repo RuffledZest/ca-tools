@@ -138,6 +138,13 @@ print(reshape(Mtab[order(Mtab$t, Mtab$pcls, Mtab$q), c("t","pcls","q","M")], idv
 if (any(Mtab$status != "CALIBRATED")) { cat("keys not calibrated:\n"); print(Mtab[Mtab$status != "CALIBRATED", c("t","pcls","q","e","rows","shapes","M_values","status")], row.names = FALSE) }
 p$M[nct] <- Mtab$M[match(key[nct], Mtab$key)]
 p$M_status <- NA; p$M_status[ct] <- "FORMULA"; p$M_status[nct] <- Mtab$status[match(key[nct], Mtab$key)]
+## the N-CT construction status of each key (data/nct_key_status.csv) is carried into the table. The
+## mechanism tested is the e = 2 Power CT hash family with a chosen set of M directions of AG(2, q) in
+## place of the first Turan(t, p) + 1: CERTIFIED, a set of M directions with the distributing property
+## was found and checked exactly; REFUTED, exhaustive search proved no such set exists at that M; OPEN,
+## every search tried failed and exhaustion was not run. A status is a property of the mechanism, not
+## of the table row, and it does not enter the calibration above
+if (file.exists("data/nct_key_status.csv")) { ks <- read.csv("data/nct_key_status.csv", stringsAsFactors = FALSE); Mtab$nct_status <- ks$nct_status[match(Mtab$key, ks$key)] }
 write.csv(Mtab, "data/arith_power_Mtable.csv", row.names = FALSE)
 ## sensitivity of the fitted M: a wrong integer must fail
 for (d in c(-1, 1)) { nn <- sapply(nct, function(i) N_of_M(parts[[i]], p$M[i] + d, p$v[i], p$nred[i]))
@@ -190,9 +197,9 @@ if (nrow(km)) print(km[, c("fam","t","v","k","Source","k_pred","dk")], row.names
 ## base row (u0 < 0) and no row composition of M rows fits; a brute
 ## force found a 10 row fit at one (t, v, q) that did not transfer.
 ## Structure not recovered; these stay open.
-p$arith_tier <- ifelse(is.na(p$M) | is.na(p$N_pred), "ARITH_OPEN",
-                ifelse(p$dN != 0, "ARITH_MISS",
-                ifelse(p$M_status %in% c("FORMULA", "CALIBRATED"), "ARITHMETIC", "ARITH_INFERRED")))
+p$arith_tier <- ifelse(is.na(p$M) | is.na(p$N_pred), "OPEN",
+                ifelse(p$dN != 0, "RECURSIVE_MISS",
+                ifelse(p$M_status %in% c("FORMULA", "CALIBRATED"), "RECURSIVE", "RECURSIVE_TENTATIVE")))
 cat("\n== TIERS over all", nrow(p), "power rows ==\n"); print(table(p$fam, p$arith_tier))
 cv <- read.csv("data/engine_coverage.csv", stringsAsFactors = FALSE)
 u <- cv[cv$engine_class == "UNRESOLVED" & grepl("^Power (N-)?CT", cv$Source), ]

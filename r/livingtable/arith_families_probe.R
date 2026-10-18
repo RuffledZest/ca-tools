@@ -8,7 +8,7 @@
 ## coefficient sets in v. A pattern is a LEAD only if one form fits a
 ## clear majority; a search space this rich fits many rows by chance
 ## (30 of 60 CCL rows fit something, no form on more than 3), so
-## nothing here is admitted without the paper; (c) the TERMINAL families: tags naming a search
+## nothing here is admitted without the paper; (c) the terminal families: tags naming a search
 ## or a published array with no table ingredient (Torres-Jimenez, cover
 ## starters, Raaphorst-Moura-Stevens, Fix symbols, Add Factor SO,
 ## Cyclotomy variants, extended OA, Augment OA, Ji-Li-Yin, orthogonal
@@ -36,9 +36,9 @@ ukey <- paste(u$t, u$v, u$k, u$Source)
 ## ---- (a) Add a factor ----
 a <- cb[cb$Source == "Add a factor", ]
 a$N_pred <- mapply(function(t, k, v) ec(t, k - 1, v) + v * (v - 1) * (if (t - 2 >= 2) ec(t - 2, k - 2, v) else v^(t - 2)), a$t, a$k, a$v)
-a$tier <- ifelse(a$N == a$N_pred, "ARITHMETIC", ifelse(a$N < a$N_pred, "ARITH_BELOW", "ARITH_ABOVE"))
-cat("== Add a factor:", nrow(a), "rows; exact", sum(a$tier == "ARITHMETIC"), " record below law", sum(a$tier == "ARITH_BELOW"), "(t = 4 only)\n")
-print(a[a$tier != "ARITHMETIC", c("t","v","k","N","Source","N_pred")], row.names = FALSE)
+a$tier <- ifelse(a$N == a$N_pred, "RECURSIVE", ifelse(a$N < a$N_pred, "RECURSIVE_BELOW", "RECURSIVE_STALE"))
+cat("== Add a factor:", nrow(a), "rows; exact", sum(a$tier == "RECURSIVE"), " record below law", sum(a$tier == "RECURSIVE_BELOW"), "(t = 4 only)\n")
+print(a[a$tier != "RECURSIVE", c("t","v","k","N","Source","N_pred")], row.names = FALSE)
 
 ## ---- (b) blind pattern search, recorded as leads only ----
 Nk <- function(t, v) { s <- cb[cb$t == t & cb$v == v, ]; s <- s[order(s$k), ]; if (!nrow(s)) return(NULL)
@@ -74,11 +74,11 @@ cat("\nReading: CMTW t = 3 has one form on 23 of 28 rows, N3(k2) + (v-1)(N2(k1) 
 ## ---- (c) terminal families among the unresolved ----
 term_pat <- "^(Torres|cover starter|Cover starter|Raaphorst|Fix [0-9]|Add Factor SO|Cyclotomy|extended OA|Augment OA|Ji-Li-Yin|orthogonal array|projection|Add a symbol|Kleitman|Nurmela|Walker|Hartman|Meagher|Sherwood|Kokkala|IPO|Paley|simulated annealing|Tabu|tabu|Cohen SA|SA |CS_)"
 term <- u[grepl(term_pat, u$Source), ]
-cat("\n== TERMINAL families among the unresolved (search results or published arrays, no table ingredient):", nrow(term), "entries ==\n")
+cat("\n== terminal families among the unresolved (search results or published arrays, no table ingredient; POST_OPTIMIZED where the tag carries a postop suffix, DIRECT_ONLY otherwise):", nrow(term), "entries ==\n")
 print(sort(table(sub("^([A-Za-z-]+( [a-z]+)?).*", "\\1", term$Source)), decreasing = TRUE))
 cat("status of those entries in the sweep:"); print(table(term$status))
 out <- rbind(data.frame(key = paste(a$t, a$v, a$k, a$Source), tier = a$tier, family = "Add a factor"),
-             data.frame(key = paste(term$t, term$v, term$k, term$Source), tier = "TERMINAL_CLAIMED", family = "terminal (search or published array)"))
+             data.frame(key = paste(term$t, term$v, term$k, term$Source), tier = ifelse(grepl("postop", term$Source), "POST_OPTIMIZED", "DIRECT_ONLY"), family = "terminal (search or published array)"))
 out <- out[!duplicated(out$key), ]
 write.csv(out, "data/arith_families_probe.csv", row.names = FALSE)
 cat("\nFAMILIES PROBE DONE\n")

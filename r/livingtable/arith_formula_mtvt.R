@@ -30,7 +30,7 @@
 ## k1 fits no variant row.
 ## "postop NCK" (6 rows, t = 6, v = 6, k = 11..16): post-optimized
 ## arrays; the even-k law at ceiling(k / 2) is a bound only there,
-## ARITH_BOUND_ONLY as for the direct product's postop tags.
+## POST_OPTIMIZED as for the direct product's postop tags.
 ## Run from r/livingtable/ (paths adjusted for the repository layout):
 ##   Rscript arith_formula_mtvt.R | tee results/arith_formula_mtvt_result.txt
 suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame
@@ -52,8 +52,8 @@ d$kind <- ifelse(d$Source == "Martirosyan-TVT", "plain", ifelse(grepl("variant",
 cat("rows:", nrow(d), "\n"); print(table(kind = d$kind, t = d$t)); cat("odd k by kind:\n"); print(table(kind = d$kind, odd = d$k %% 2 == 1))
 d$k1 <- ceiling(d$k / 2); d$k2 <- floor(d$k / 2)
 d$N_pred <- mapply(function(t, v, k1, k2, kind) if (kind == "variant") law_odd(t, v, k1, k2) else law_even(t, v, k1), d$t, d$v, d$k1, d$k2, d$kind)
-d$tier <- ifelse(is.na(d$N_pred), "ARITH_OPEN", ifelse(d$kind == "postop", "ARITH_BOUND_ONLY",
-          ifelse(d$N == d$N_pred, "ARITHMETIC", ifelse(d$N > d$N_pred, "ARITH_ABOVE", "ARITH_BELOW"))))
+d$tier <- ifelse(is.na(d$N_pred), "OPEN", ifelse(d$kind == "postop", "POST_OPTIMIZED",
+          ifelse(d$N == d$N_pred, "RECURSIVE", ifelse(d$N > d$N_pred, "RECURSIVE_STALE", "RECURSIVE_BELOW"))))
 cat("\n== tiers by kind ==\n"); print(table(kind = d$kind, tier = d$tier))
 cat("plain rows exact by t:\n"); print(table(t = d$t[d$kind == "plain"], exact = (d$N == d$N_pred)[d$kind == "plain"]))
 cat("postop rows (bound only): record against the law\n"); print(d[d$kind == "postop", c("t","v","k","N","N_pred")], row.names = FALSE)

@@ -13,7 +13,7 @@
 ##       (111 of 114; the three v = 20 rows at k = 36, 38, 40 sit ABOVE
 ##       the law by 190, 190, 380, multiples of v(v-1)/2, with the present
 ##       eCAN(2, 18..20, 20) as ingredient, so the law as it stands would
-##       improve the record there; kept as ARITH_ABOVE, a stale-record
+##       improve the record there; kept as RECURSIVE_STALE, a stale-record
 ##       lead to be checked by construction before it is claimed)
 ##   perfect hash family a,b,w [T r | S s] [,c]:  the DHHF2CA law with M = a
 ##       rows over k = b columns, ingredient CA(t, w, v), N = sum_i (N_i -
@@ -33,12 +33,12 @@ cv <- read.csv("data/engine_coverage.csv", stringsAsFactors = FALSE)
 u <- cv[cv$engine_class == "UNRESOLVED", ]
 out <- list()
 report <- function(name, d) {
-    d$tier <- ifelse(is.na(d$N_pred), "ARITH_OPEN", ifelse(d$N == d$N_pred, "ARITHMETIC",
-              ifelse(d$N > d$N_pred, "ARITH_ABOVE", "ARITH_BELOW")))
+    d$tier <- ifelse(is.na(d$N_pred), "OPEN", ifelse(d$N == d$N_pred, "RECURSIVE",
+              ifelse(d$N > d$N_pred, "RECURSIVE_STALE", "RECURSIVE_BELOW")))
     m <- match(paste(u$t, u$v, u$k, u$Source), paste(d$t, d$v, d$k, d$Source))
     cat(sprintf("\n== %s: %d table rows, exact %d, record above law %d, record below law %d, inexpressible %d; unresolved entries %d ==\n", name, nrow(d),
-        sum(d$tier == "ARITHMETIC"), sum(d$tier == "ARITH_ABOVE"), sum(d$tier == "ARITH_BELOW"), sum(d$tier == "ARITH_OPEN"), sum(!is.na(m))))
-    if (any(d$tier != "ARITHMETIC")) print(head(d[d$tier != "ARITHMETIC", c("t","v","k","N","Source","N_pred")], 12), row.names = FALSE)
+        sum(d$tier == "RECURSIVE"), sum(d$tier == "RECURSIVE_STALE"), sum(d$tier == "RECURSIVE_BELOW"), sum(d$tier == "OPEN"), sum(!is.na(m))))
+    if (any(d$tier != "RECURSIVE")) print(head(d[d$tier != "RECURSIVE", c("t","v","k","N","Source","N_pred")], 12), row.names = FALSE)
     d$family <- name; out[[name]] <<- d[, c("family","t","v","k","N","Source","N_pred","tier")]
 }
 

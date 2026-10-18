@@ -1,13 +1,13 @@
-## arith_engine.R - the ARITHMETIC tier wired as an engine organ. The living table is the frozen record (13,641 rows of
-## colbournBigFrame) plus verified improvements; the ARITHMETIC entries
-## (data/arith_tally.csv, tier ARITHMETIC) are recomputed from it by the
+## arith_engine.R - the RECURSIVE tier wired as an engine organ. The living table is the frozen record (13,641 rows of
+## colbournBigFrame) plus verified improvements; the RECURSIVE entries
+## (data/arith_tally.csv, tier RECURSIVE) are recomputed from it by the
 ## laws in arith_laws.R, and every lookup an entry makes is recorded as
 ## an arithmetic edge (data/arith_edges.csv: child entry -> ingredient
 ## lookup (t, w, v) and the table row that currently answers it).
 ## Two propagation modes, contracted to agree on the CLOSURE (each is
-## iterated to a fixpoint, since an ARITHMETIC entry can itself be the
+## iterated to a fixpoint, since a RECURSIVE entry can itself be the
 ## ingredient of another, e.g. the Add-1-factor chains):
-##   sweep  recompute every ARITHMETIC entry from the updated table,
+##   sweep  recompute every RECURSIVE entry from the updated table,
 ##          apply the changes, repeat until nothing moves
 ##   graph  recompute only the entries whose recorded lookups an
 ##          improvement can move (same t and v, lookup width <= the
@@ -15,8 +15,8 @@
 ##          a direct product entry is a candidate for any t = 2 change
 ##          at its v), apply, and repeat with the changed entries as
 ##          the next round's improvements
-## An ARITHMETIC recomputation is a size relation over claims; nothing
-## here is verified, and the output tier is ARITHMETIC, below EXECUTED
+## An RECURSIVE recomputation is a size relation over claims; nothing
+## here is verified, and the output tier is RECURSIVE, below EXECUTED
 ## and SCREEN4, as the tier's claim rule requires.
 ## Usage (from r/livingtable/; paths adjusted for the repository layout):
 ##   Rscript arith_engine.R identity                 the frozen record must reproduce itself
@@ -42,8 +42,8 @@ suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame
 source("arith_laws.R")
 Mtab <- read.csv("data/arith_power_Mtable.csv", stringsAsFactors = FALSE)
 tal <- read.csv("data/arith_tally.csv", stringsAsFactors = FALSE)
-ar <- tal[tal$arith_tier == "ARITHMETIC", ]
-cat("ARITHMETIC entries:", nrow(ar), " by family:", paste(names(table(ar$arith_family)), table(ar$arith_family), collapse = "; "), "\n")
+ar <- tal[tal$arith_tier == "RECURSIVE", ]
+cat("RECURSIVE entries:", nrow(ar), " by family:", paste(names(table(ar$arith_family)), table(ar$arith_family), collapse = "; "), "\n")
 
 ## ---- the living table lookup: ecan(t, w, v) = min N over rows with k >= w ----
 LT <- new.env()
@@ -83,7 +83,7 @@ mode <- commandArgs(TRUE)[1]; if (is.na(mode)) mode <- "identity"
 t0 <- Sys.time()
 res0 <- recompute(seq_len(nrow(ar)))
 N0 <- sapply(res0, `[[`, "N")
-cat(sprintf("identity: %d of %d ARITHMETIC entries reproduce their recorded N from the frozen record (%.1f s)\n",
+cat(sprintf("identity: %d of %d RECURSIVE entries reproduce their recorded N from the frozen record (%.1f s)\n",
             sum(N0 == ar$N, na.rm = TRUE), nrow(ar), as.numeric(Sys.time() - t0, units = "secs")))
 bad <- which(is.na(N0) | N0 != ar$N)
 if (length(bad)) { cat("IDENTITY FAILURES (engine law disagrees with the calibration script):\n"); print(ar[bad, c("t","v","k","N","Source","arith_family")], row.names = FALSE); print(N0[bad]) }
@@ -101,10 +101,10 @@ if (mode == "identity") {
         length(unique(paste(nr$ing_t, nr$ing_k_now, nr$ing_v))), "distinct table rows answer the non-range lookups\n")
     ## the record's own structure: which ingredient rows feed the most distinct dependents
     top <- sort(table(paste0("(", nr$ing_t, ",", nr$ing_k_now, ",", nr$ing_v, ")")[!duplicated(nr[, c("child_t","child_v","child_k","child_Source","ing_t","ing_k_now","ing_v")])]), decreasing = TRUE)
-    cat("ingredient rows feeding the most distinct ARITHMETIC entries (t,k,v): ", paste(names(head(top, 8)), head(top, 8), collapse = "; "), "\n")
-    ## how many ARITHMETIC entries are themselves ingredients of others (the reason propagation iterates)
+    cat("ingredient rows feeding the most distinct RECURSIVE entries (t,k,v): ", paste(names(head(top, 8)), head(top, 8), collapse = "; "), "\n")
+    ## how many RECURSIVE entries are themselves ingredients of others (the reason propagation iterates)
     ck <- paste(ar$t, ar$k, ar$v); ik <- paste(nr$ing_t, nr$ing_k_now, nr$ing_v)
-    cat("ARITHMETIC entries that are ingredients of other ARITHMETIC entries:", length(unique(ik[ik %in% ck])), "\n")
+    cat("RECURSIVE entries that are ingredients of other RECURSIVE entries:", length(unique(ik[ik %in% ck])), "\n")
     cat("IDENTITY DONE\n"); quit(save = "no")
 }
 
@@ -168,11 +168,11 @@ cat("TWO-MODE AGREEMENT ON THE CLOSURE:", if (agree) "PASS" else "FAIL (sweep wi
 changed <- which(Ncur_S < ar$N)
 casc <- ar[changed, c("t","v","k","N","Source","arith_family"), drop = FALSE]
 casc$N_new <- Ncur_S[changed]; casc$delta <- casc$N_new - casc$N
-casc$via <- if (length(changed)) ifelse(direct_via[changed] != "", direct_via[changed], "via another ARITHMETIC entry") else character(0)
-casc$tier <- rep("ARITHMETIC", nrow(casc))
+casc$via <- if (length(changed)) ifelse(direct_via[changed] != "", direct_via[changed], "via another RECURSIVE entry") else character(0)
+casc$tier <- rep("RECURSIVE", nrow(casc))
 outfile <- if (mode == "demo") "data/arith_cascade.csv" else paste0("data/arith_cascade_", sub("\\.csv$", "", basename(impfile)), ".csv")
 write.csv(casc, outfile, row.names = FALSE)
-cat("\n== CLOSURE:", nrow(casc), "ARITHMETIC entries improve (claims propagated from the improvements) ==\n")
+cat("\n== CLOSURE:", nrow(casc), "RECURSIVE entries improve (claims propagated from the improvements) ==\n")
 if (nrow(casc)) print(casc[order(casc$t, casc$v, casc$k), c("t","v","k","N","N_new","delta","Source","via")], row.names = FALSE)
 cat("total rows saved across the closure:", -sum(casc$delta), " written:", outfile, "\n")
 cat("PROPAGATION DONE\n")

@@ -13,7 +13,7 @@ kind      FALSE TRUE
 
 == tiers by kind ==
          tier
-kind      ARITHMETIC ARITH_BOUND_ONLY
+kind      RECURSIVE POST_OPTIMIZED
   plain          206                0
   postop           0                6
   variant        160                0
@@ -47,7 +47,7 @@ t = 6 : 106 rows; assignments common to all rows: 4
 
 unresolved rows in the family: 372 
 
-      ARITHMETIC ARITH_BOUND_ONLY 
+      RECURSIVE POST_OPTIMIZED 
              366                6 
 
 MARTIROSYAN-TVT RUN DONE

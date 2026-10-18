@@ -63,21 +63,21 @@ t    1  2
 
 Add a factor rows with n = 2 (the rows the probe had BELOW the one-factor law):
  t  v    k n      N N_pred       tier
- 4  3 4714 2   2203   2203 ARITHMETIC
- 4  7 3495 2  35809  35809 ARITHMETIC
- 4  8 2814 2  61622  61622 ARITHMETIC
- 4  9 2635 2  92313  92313 ARITHMETIC
- 4 10 2597 2 172709 172709 ARITHMETIC
- 4 11 2597 2 188851 188851 ARITHMETIC
- 4 12 3114 2 337691 337691 ARITHMETIC
+ 4  3 4714 2   2203   2203 RECURSIVE
+ 4  7 3495 2  35809  35809 RECURSIVE
+ 4  8 2814 2  61622  61622 RECURSIVE
+ 4  9 2635 2  92313  92313 RECURSIVE
+ 4 10 2597 2 172709 172709 RECURSIVE
+ 4 11 2597 2 188851 188851 RECURSIVE
+ 4 12 3114 2 337691 337691 RECURSIVE
 
 unresolved entries in these tags: 574 
 
- ARITHMETIC ARITH_ABOVE  ARITH_OPEN 
+ RECURSIVE RECURSIVE_STALE  OPEN 
         391           6         177 
 unresolved by tag and tier:
                
-                ARITHMETIC ARITH_ABOVE ARITH_OPEN
+                RECURSIVE RECURSIVE_STALE OPEN
   Add a factor          26           0          0
   Add n factors        365           6        177
 

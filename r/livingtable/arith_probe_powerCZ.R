@@ -13,7 +13,7 @@
 ## way that reads as one row carrying a different, smaller ingredient
 ## (e.g. t = 3, v = 3, all rows of width q: N - 5 (eCAN - 1) = 29, 32,
 ## 38, 40 at q = 14, 16, 19, 20). The improvement's rule is NOT
-## recovered here; the family stays OPAQUE (ARITH_OPEN) pending the
+## recovered here; the family stays OPAQUE (OPEN) pending the
 ## paper. Run from r/livingtable/ (paths adjusted for the repository layout):
 ##   Rscript arith_probe_powerCZ.R | tee results/arith_probe_powerCZ_result.txt
 suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame

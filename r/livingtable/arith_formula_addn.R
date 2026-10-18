@@ -15,7 +15,7 @@
 ## every row with n <= 2; for n >= 3 exact when v is a prime power and
 ## n <= v, and at n = 3 for v in {12, 15, 20, 21, 24}; not exact
 ## (record ABOVE the sum) for any other non prime power row with
-## n >= 3 nor for any row with n > v. Those rows are ARITH_OPEN (the
+## n >= 3 nor for any row with n > v. Those rows are OPEN (the
 ## record's route there is not this sum), not stale-record leads. The
 ## prime power and n <= v part of the domain is a rule; the n = 3 list
 ## is the observed set, so the coincidence check below is informative
@@ -28,7 +28,7 @@
 ## do so by 7, 12 and 24 units of v(v-1); each gap equals the
 ## difference between the answering (3, ., v) row and a neighbouring
 ## row of the table, which is the reading "a strength-3 ingredient
-## moved after the entry was made". They are kept ARITH_ABOVE, leads
+## moved after the entry was made". They are kept RECURSIVE_STALE, leads
 ## to be checked by construction before any claim.
 ## Run from r/livingtable/ (paths adjusted for the repository layout):
 ##   Rscript arith_formula_addn.R | tee results/arith_formula_addn_result.txt
@@ -55,20 +55,20 @@ d <- rbind(a, f)
 d$N_pred <- mapply(law_addn, d$t, d$v, d$k, d$n)
 d$pp <- sapply(d$v, is_pp)
 d$domain <- d$n <= 2 | (d$pp & d$n <= d$v) | (d$n == 3 & d$v %in% c(12, 15, 20, 21, 24))
-d$tier <- ifelse(is.na(d$N_pred), "ARITH_OPEN",
-          ifelse(d$N == d$N_pred, "ARITHMETIC",
-          ifelse(!d$domain, "ARITH_OPEN",
-          ifelse(d$N > d$N_pred, "ARITH_ABOVE", "ARITH_BELOW"))))
+d$tier <- ifelse(is.na(d$N_pred), "OPEN",
+          ifelse(d$N == d$N_pred, "RECURSIVE",
+          ifelse(!d$domain, "OPEN",
+          ifelse(d$N > d$N_pred, "RECURSIVE_STALE", "RECURSIVE_BELOW"))))
 
 cat("== Add n factors + Add a factor:", nrow(d), "table rows (", nrow(a), "tagged Add n factors,", nrow(f), "tagged Add a factor ) ==\n")
-cat("exact:", sum(d$tier == "ARITHMETIC"), " record above law inside the domain:", sum(d$tier == "ARITH_ABOVE"),
-    " record below law:", sum(d$tier == "ARITH_BELOW"), " outside the domain or inexpressible:", sum(d$tier == "ARITH_OPEN"), "\n")
+cat("exact:", sum(d$tier == "RECURSIVE"), " record above law inside the domain:", sum(d$tier == "RECURSIVE_STALE"),
+    " record below law:", sum(d$tier == "RECURSIVE_BELOW"), " outside the domain or inexpressible:", sum(d$tier == "OPEN"), "\n")
 cat("\nexact by n (all rows):\n"); print(table(n = pmin(d$n, 9), exact = d$N == d$N_pred))
 cat("\nexact by prime power and n <= v:\n"); print(table(pp = d$pp, n_le_v = d$n <= d$v, exact = d$N == d$N_pred))
 cat("\nnon prime power rows with n = 3, exact by v:\n"); s <- d[!d$pp & d$n == 3, ]; print(table(v = s$v, exact = s$N == s$N_pred))
 cat("\nrows outside the domain that the sum reproduces anyway (a coincidence check on the rule part; should be none):", sum(!d$domain & d$N == d$N_pred), "\n")
 cat("\nrecord above the law inside the domain (kept as leads; difference in units of v(v-1)):\n")
-ab <- d[d$tier == "ARITH_ABOVE", ]; ab$diff <- ab$N - ab$N_pred; ab$units <- ab$diff / (ab$v * (ab$v - 1))
+ab <- d[d$tier == "RECURSIVE_STALE", ]; ab$diff <- ab$N - ab$N_pred; ab$units <- ab$diff / (ab$v * (ab$v - 1))
 print(ab[, c("t","v","k","n","N","Source","N_pred","diff","units")], row.names = FALSE)
 cat("\nAdd a factor rows by chain length:\n"); print(table(t = f$t, n = f$n))
 cat("\nAdd a factor rows with n = 2 (the rows the probe had BELOW the one-factor law):\n")

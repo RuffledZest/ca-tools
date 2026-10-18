@@ -26,9 +26,9 @@
 ## paywalled; also Colbourn 2008 "existence tables and projection")
 ## subtracts more than v or uses ingredients the eCAN lookup does not
 ## see. Not recovered here; those rows stay open. Tiers: 212
-## ARITHMETIC (plain, exact at c = v), 32 ARITH_INFERRED (generalized,
+## RECURSIVE (plain, exact at c = v), 32 RECURSIVE_TENTATIVE (generalized,
 ## exact at c = v, possibly coincidental), 2 bound only (postop), the
-## rest ARITH_OPEN.
+## rest OPEN.
 ## Run from r/livingtable/ (paths adjusted for the repository layout):
 ##   Rscript arith_formula_dp_table.R | tee results/arith_formula_dp_table_result.txt
 suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame
@@ -66,9 +66,9 @@ be <- p[p$d_gen < 0 & !p$postop, ]; print(head(be[order(be$d_gen), c("t","v","k"
 cat("\nby v (generalized tag, c = v): exact / rows\n")
 print(aggregate(cbind(exact = d_gen == 0, rows = 1) ~ v, data = p[p$generalized & !p$postop, ], FUN = sum))
 ## tier
-p$arith_tier <- ifelse(p$postop, "ARITH_BOUND_ONLY",
-                ifelse(p$d_gen == 0 & !p$generalized, "ARITHMETIC",
-                ifelse(p$d_gen == 0 & p$generalized, "ARITH_INFERRED", "ARITH_OPEN")))
+p$arith_tier <- ifelse(p$postop, "POST_OPTIMIZED",
+                ifelse(p$d_gen == 0 & !p$generalized, "RECURSIVE",
+                ifelse(p$d_gen == 0 & p$generalized, "RECURSIVE_TENTATIVE", "OPEN")))
 cat("\n== TIERS over all", nrow(p), "direct product rows ==\n"); print(table(p$generalized, p$arith_tier))
 cv <- read.csv("data/engine_coverage.csv", stringsAsFactors = FALSE)
 u <- cv[cv$engine_class == "UNRESOLVED" & grepl("^Direct product", cv$Source), ]
