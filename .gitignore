@@ -8,3 +8,4 @@ r/*.txt
 r/cafast/src/*.o
 r/cafast/src/*.so
 workflows_to_install/
+/ca_verify

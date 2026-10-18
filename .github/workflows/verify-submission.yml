@@ -70,7 +70,7 @@ jobs:
           bad=$(grep -v -E '^(submissions|table)/' changed.txt || true)
           if [ -n "$bad" ]; then
             { echo "## Covering array submission check"; echo
-              echo "**FAIL.** A submission pull request may only add files under submissions/<slug>/. These paths are outside it:"
+              echo "**FAIL.** A submission pull request may only add files under \`submissions/<slug>/\`. These paths are outside it:"
               echo; echo "$bad" | sed 's/^/- `/; s/$/`/'; } >> comment.md
             echo "OUTSIDE=1" >> "$GITHUB_ENV"
           fi
