@@ -1,0 +1,170 @@
+# Submitting covering arrays to the table
+
+This directory is how anyone adds an explicit covering array to the
+provenance table in `table/`. You open a pull request, the repository
+checks your arrays itself, and if they pass, the pull request gains
+the table rows that record them, with your credit. No maintainer has
+to look at the arrays for that to happen. The current table is
+published as a web page from `docs/index.html` (GitHub Pages, served
+from the `docs/` folder of `main` and regenerated on every push to
+`main`).
+
+## What a submission looks like
+
+A submission is one new directory, `submissions/<slug>/`, where the
+slug is a short name of your choosing made of letters, digits, dots,
+hyphens and underscores, for example `smith-t4-v3-2026-11`. It holds
+a file named `claims.csv` and the array files that file names.
+Nothing else in the repository should change in your pull request.
+
+`claims.csv` has exactly this header and one row per array:
+
+    t,v,k,N,file,source_detail,credit,notes
+
+`t` is the strength, `v` the number of symbols, `k` the number of
+columns and `N` the number of runs (rows) of the array. `file` is the
+name of the array file in the same directory. `source_detail` is the
+recipe someone else would use to obtain or regenerate the array: a
+repository URL with a commit, a DOI, or the exact generating command
+and software version. `credit` is the person, group or paper to be
+credited. `notes` is free text and may be empty. Fields that contain
+commas must be enclosed in double quotes, as in any CSV file, and no
+field may contain a line break.
+
+Each array file is plain text with one run per line. Entries are
+separated by spaces, tabs or commas. Symbols are either `0` to `v-1`
+or `1` to `v`; the check detects which. A don't-care entry, an entry
+that may take any value, is written `NA`, `-`, `*`, `x` or `-1`.
+These are the conventions of `ca_verify.c`, except that the check is
+stricter about anything else: a header line, a comment or any other
+token is an error rather than being skipped. The file must have
+exactly `N` non-blank lines of exactly `k` entries each.
+
+The directory `submissions/example/` is a complete worked example:
+the 9-run orthogonal array OA(9; 2, 4, 3) over GF(3), whose rows are
+(a, b, a+b, a+2b mod 3), with its `claims.csv`. Nine runs is the best
+known size for strength 2, four columns and three symbols, so the
+check records it as `equals_best`. (It is a different array from the
+Dwyer array already stored as `table/arrays/CA_9_2_4_3.txt`. A
+verbatim copy of that file would be rejected as a duplicate.) The
+example directory itself is never checked or recorded.
+
+## What a claim means
+
+The table uses stair-step semantics. A row (t, v, k, N) says that N
+runs suffice for a strength-t covering array on up to k columns over
+v symbols, because deleting columns from a covering array leaves a
+covering array. So the best known N at (t, v, k) is the smallest N
+among table rows with the same t and v and at least k columns. Your
+claim is compared with that number. If you have one array that
+serves a whole range of k, submit it once at its largest k; it then
+also improves every smaller k for which it beats the table.
+
+Only rows of tier CITED (the dated Colbourn snapshot and other
+traceable sources) and VERIFIED (arrays checked exhaustively) count
+for the comparison. SCREENED rows (below) are recorded but do not
+set the best known value.
+
+## What happens on a pull request
+
+When a pull request touches `submissions/`, the workflow
+`.github/workflows/verify-submission.yml` runs
+`tools/check_submission.py` on every submission directory the pull
+request changes. The tools, the verifier and the table it compares
+against always come from the main branch, never from the pull
+request, so nothing in a submission is ever executed.
+
+For every claim, the check reads the array, confirms it has N rows
+and k columns with symbols in range, puts it in canonical form
+(0-based integer symbols, one run per line, values separated by
+single spaces, `NA` for don't-care, a newline after every line) and
+computes the SHA-256 of that text. The hash is the array's identity:
+an array whose hash is already in the table is a duplicate and is
+rejected, however it was formatted. The check then runs `ca_verify`
+at strength t on the canonical array and looks up the current best
+known N.
+
+The check posts its report as a comment on the pull request. The
+report gives a verdict for every claim, the reasons for any failure,
+the exact uncovered combination (columns and values) if the array is
+not covering, and timings.
+
+There are two outcomes. If every claim passes, the check appends one
+row per array to `table/ca_table.csv` and to `table/MANIFEST.csv`,
+adds the canonical array files to `table/arrays/`, and commits these
+changes to your pull request branch. A green check therefore means
+the pull request already contains its own table rows, and merging it
+needs nothing else. If any claim fails, the check fails, the comment
+says why, and nothing is added to the table. Fix the problem and push
+again; every push is checked afresh.
+
+A passing claim is classified against the table. `exceeds_table`
+means N is smaller than the current best known value, a new record.
+`equals_best` means N equals it. `above_table` means N is larger: the
+array is still recorded as verified, with a note that it is not an
+improvement. The table rows record which of these applied and the
+value the claim was compared with.
+
+## Large arrays: the screened status
+
+The pull request check runs on a GitHub-hosted runner with 2 cores
+and a 6-hour job limit. Each array gets a budget of 15 minutes of
+wall-clock time, and a whole pull request gets 300 minutes. The work
+of an exhaustive check grows like C(k, t) times v^t; when that number
+exceeds 10^10, or when an exhaustive check does not finish within
+its budget, the check screens the array instead of verifying it.
+
+A screen picks 20 random sets of 30 columns, seeded from the array's
+own hash so anyone can repeat it, and verifies each of these
+sub-arrays exhaustively at strength t. If any of them has an
+uncovered combination the array is not a covering array, and the
+claim fails with that combination as proof. If all of them pass, the
+claim is recorded with tier `SCREENED` and MANIFEST status
+`screened`, never `VERIFIED`. A screened row is evidence, not proof,
+and it does not count as the best known value. Anyone with a bigger
+machine can verify the array in full later with `ca_verify` and
+record that as a new VERIFIED row. If even the screen cannot finish
+within the budget, the claim fails; such arrays need a maintainer
+with more computing power.
+
+Arrays with at most 30 columns are never screened: the screen would
+be the full check, so they get the full check.
+
+## Credit and the rows that are written
+
+Your `credit` field goes into the notes of the table row exactly as
+you wrote it, after `credit: `. Your `source_detail` becomes the
+row's `source_detail` exactly as written. Each new `ca_table.csv` row
+has source class `S7`, the pull request number as `snapshot_id`, the
+array's SHA-256, a stamp of the form `ca_verify <commit> <date>
+github-actions`, the entry date, and notes that state the credit, the
+comparison with the previous best and its source, the submission
+slug, and your notes. The canonical file is named `CA_N_t_k_v.txt`;
+if that name is already taken by a different array, the first eight
+hex digits of the hash are appended, as in `CA_9_2_4_3_9133df95.txt`.
+
+## Pull requests from forks
+
+Most submitters will open the pull request from a fork. The check
+runs, comments and passes or fails exactly as above, but the
+workflow's token cannot push to a fork, so the table rows cannot be
+committed to your branch. In that case the comment says so and the
+rows, the canonical arrays and the updated table are attached to the
+workflow run as an artifact named `table-rows-pr-<number>`. The
+maintainer merges using that artifact. If you will submit often, ask
+for write access to a branch of this repository and open the pull
+request from there; then the rows are committed for you.
+
+## Checking locally before you submit
+
+You can run the same check on your own machine with Python 3 and a C
+compiler:
+
+    cc -O3 -pthread -o ca_verify ca_verify.c
+    python3 tools/check_submission.py submissions/<slug>
+
+It prints the report and writes it, a JSON summary and the rows it
+would append to `check-<slug>/`. Nothing in `table/` changes unless
+you add `--apply`. Locally the per-array budget defaults to 20
+minutes; `--budget-minutes`, `--screen-threshold` and `--threads`
+change the limits.

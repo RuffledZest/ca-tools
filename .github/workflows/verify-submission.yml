@@ -1,0 +1,145 @@
+# Verify covering array submissions (see submissions/README.md).
+#
+# Runs on pull requests that touch submissions/**. It uses the
+# pull_request_target event so that it can comment on pull requests
+# from forks too. That event runs with a write token, so this workflow
+# never executes anything from the pull request: the tools, the
+# verifier and the table come from the base branch (checkout "base"),
+# and the pull request (checkout "pr") is only read as data.
+
+name: Verify submission
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths: ["submissions/**"]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: submission-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # GitHub-hosted runner: 2 cores, 6 hour job limit.
+  THREADS: "2"
+  BUDGET_MINUTES: "15"          # per array
+  TOTAL_BUDGET_MINUTES: "300"   # all submissions in the pull request
+  SCREEN_THRESHOLD: "1e10"      # C(k,t) * v^t above this: screen instead
+  PR: ${{ github.event.pull_request.number }}
+  HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+  SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - name: Check out the trusted tools and table (base branch)
+        uses: actions/checkout@v4
+        with:
+          path: base
+          persist-credentials: false
+
+      - name: Check out the pull request branch (read as data only)
+        uses: actions/checkout@v4
+        with:
+          path: pr
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.TABLE_BOT_TOKEN || github.token }}
+          persist-credentials: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+
+      - name: Build ca_verify
+        run: cc -O3 -pthread -o base/ca_verify base/ca_verify.c
+
+      - name: Self-test (table arrays re-hash to their MANIFEST entries)
+        run: python3 base/tools/check_submission.py --selftest --table-dir base/table > /dev/null
+
+      - name: Find the submissions changed in this pull request
+        run: |
+          if [ "$(git -C pr rev-parse HEAD)" != "$HEAD_SHA" ]; then
+            echo "The branch moved since this run started; the newer push has its own run."
+            exit 1
+          fi
+          gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' > changed.txt
+          : > comment.md
+          bad=$(grep -v -E '^(submissions|table)/' changed.txt || true)
+          if [ -n "$bad" ]; then
+            { echo "## Covering array submission check"; echo
+              echo "**FAIL.** A submission pull request may only add files under submissions/<slug>/. These paths are outside it:"
+              echo; echo "$bad" | sed 's/^/- `/; s/$/`/'; } >> comment.md
+            echo "OUTSIDE=1" >> "$GITHUB_ENV"
+          fi
+          slugs=$(sed -n 's#^submissions/\([^/]*\)/.*#\1#p' changed.txt | grep -v '^example$' | sort -u |
+                  while read -r s; do [ -d "pr/submissions/$s" ] && echo "$s"; done | tr '\n' ' ' | sed 's/ $//')
+          echo "Submissions: $slugs"
+          echo "SLUGS=$slugs" >> "$GITHUB_ENV"
+          if find pr/submissions -type l | grep -q .; then
+            echo "**FAIL.** Symbolic links are not allowed under submissions/." >> comment.md
+            echo "OUTSIDE=1" >> "$GITHUB_ENV"
+          fi
+
+      - name: Check each submission
+        run: |
+          cp -r base/table work-table
+          stamp=$(git -C base rev-parse --short HEAD)
+          start=$(date +%s)
+          status=0
+          [ -n "$OUTSIDE" ] && status=1
+          [ -z "$SLUGS" ] && echo "No submission directories changed (submissions/example is not checked)." >> comment.md
+          for slug in $SLUGS; do
+            left=$(( TOTAL_BUDGET_MINUTES - ($(date +%s) - start) / 60 ))
+            python3 base/tools/check_submission.py "pr/submissions/$slug" \
+              --table-dir work-table --ca-verify base/ca_verify --threads "$THREADS" \
+              --budget-minutes "$BUDGET_MINUTES" --total-budget-minutes "$left" \
+              --screen-threshold "$SCREEN_THRESHOLD" --pr "$PR" --stamp-version "$stamp" \
+              --out "out/$slug" --apply || status=1
+            cat "out/$slug/report.md" >> comment.md
+          done
+          echo "STATUS=$status" >> "$GITHUB_ENV"
+
+      - name: Put the table rows on the pull request
+        if: env.STATUS == '0' && env.SLUGS != ''
+        run: |
+          rm -rf pr/table && cp -r work-table pr/table
+          cd pr
+          git add -A table
+          if git diff --cached --quiet; then
+            echo "The pull request already contains exactly these table rows." >> ../comment.md
+          elif [ "$SAME_REPO" = "true" ]; then
+            git config user.name "ca-table-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -q -m "Record submission $SLUGS in the table (verified by ca_verify)"
+            git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
+            echo "The table rows and canonical arrays were committed to this branch as $(git rev-parse --short HEAD). Merging needs nothing else." >> ../comment.md
+          else
+            echo "FORK=1" >> "$GITHUB_ENV"
+            echo "This pull request comes from a fork, so the check cannot push to it. The rows and canonical arrays are attached to this workflow run as the artifact **table-rows-pr-$PR** ($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID). A maintainer merges with that artifact, or the submitter can resubmit from a branch of this repository." >> ../comment.md
+          fi
+
+      - name: Upload the rows (pull requests from forks)
+        if: env.FORK == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: table-rows-pr-${{ github.event.pull_request.number }}
+          path: |
+            out/
+            work-table/
+
+      - name: Comment on the pull request
+        if: always()
+        run: |
+          [ -s comment.md ] || echo "The check stopped before producing a report; see $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > comment.md
+          if [ "$(wc -c < comment.md)" -gt 60000 ]; then
+            head -c 60000 comment.md > c.md
+            printf '\n\n(report truncated; the full report is in the run log)\n' >> c.md
+            mv c.md comment.md
+          fi
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file comment.md
+
+      - name: Fail unless every claim passed
+        run: '[ "$STATUS" = "0" ]'

@@ -1,0 +1,2 @@
+t,v,k,N,file,source_detail,credit,notes
+2,3,4,9,CA_9_2_4_3.txt,"Textbook orthogonal array OA(9;2,4,3) over GF(3): rows (a, b, a+b, a+2b mod 3) for a, b in 0..2","Worked example, ca-tools submissions README",Equals the best known size; shows the format only

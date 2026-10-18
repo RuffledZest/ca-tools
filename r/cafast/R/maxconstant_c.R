@@ -7,8 +7,11 @@ maxconstant_c <- function(D, verbose = 0, remove = FALSE, one_is_enough = FALSE,
     levs <- sort(unique(as.vector(D)))
     levs <- levs[!is.na(levs)]
     v <- length(levs)
-    if (any(is.na(D))) stop("maxconstant_c needs an array without NA cells")
-    consts <- rowSums(D == D[, 1]) == k
+    ## NA cells (as in CAs::maxconstant): a row with an NA is not constant,
+    ## two rows are adjacent when they differ in every column where both are
+    ## non-missing, and NA cells in the clique rows are filled before permuting
+    if (any(rowSums(is.na(D)) == k)) stop("maxconstant_c cannot handle a row consisting only of NA cells")
+    consts <- !is.na(D[, 1]) & rowSums(D == D[, 1], na.rm = TRUE) == k
     nconstant <- sum(consts)
     posconsts <- integer(0)
     if (nconstant > 0) { posconsts <- which(consts); posconsts <- posconsts[order(D[posconsts, 1])] }
@@ -20,7 +23,7 @@ maxconstant_c <- function(D, verbose = 0, remove = FALSE, one_is_enough = FALSE,
     if (one_is_enough) {
         if (nconstant == 0) {
             target <- levs[1]
-            for (j in seq_len(k)) { s <- D[1, j]; if (s != target) { col <- D[, j]; D[col == s, j] <- target; D[col == target, j] <- s } }
+            for (j in seq_len(k)) { s <- D[1, j]; if (!is.na(s) && s != target) { col <- D[, j]; D[which(col == s), j] <- target; D[which(col == target), j] <- s } }
             nconstant <- 1L; posconsts <- 1L
         }
         clique <- posconsts
@@ -43,6 +46,8 @@ maxconstant_c <- function(D, verbose = 0, remove = FALSE, one_is_enough = FALSE,
     } else {
         D <- D[c(clique, setdiff(seq_len(N), clique)), , drop = FALSE]
         for (j in seq_len(k)) {
+            top <- D[seq_len(nmax), j]
+            if (anyNA(top)) { w <- which(is.na(top)); D[w, j] <- setdiff(levs, top)[seq_along(w)] }
             col <- D[, j]
             from <- col[seq_len(nmax)]
             to <- levs[seq_len(nmax)]

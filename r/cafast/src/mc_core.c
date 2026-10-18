@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* rows i, j of D (N x k, column-major, integers) are "disjoint" when they differ in every column.
+/* rows i, j of D (N x k, column-major, integers) are "disjoint" when they differ in every column
+   in which both are non-missing.
    A set of pairwise disjoint rows can all be made constant by permuting symbols within columns.
    C_maxclique_disjoint: largest set of pairwise disjoint rows, at most v of them; if `force`
    (1-based row indices) is non-empty, prefer a largest clique containing all of them. */
@@ -13,7 +14,11 @@ static const int *D;
 static int **adj; static int *deg;
 
 static int disjoint(int i, int j) {
-    for (int c = 0; c < K; c++) if (D[i + (size_t)c * N] == D[j + (size_t)c * N]) return 0;
+    /* an NA cell matches nothing, as in CAs::maxconstant (comparison with na.rm = TRUE) */
+    for (int c = 0; c < K; c++) {
+        int a = D[i + (size_t)c * N], b = D[j + (size_t)c * N];
+        if (a != NA_INTEGER && b != NA_INTEGER && a == b) return 0;
+    }
     return 1;
 }
 

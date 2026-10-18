@@ -106,3 +106,42 @@ run_all.sh all five batteries pass, result file inst/tests/run_all_result.txt
 (count core 529/0; faces PASS; maxconstant 52 cases 0 mismatches, hers
 15.0 s vs ours 0.2 s; powerCT 0 failures; driver PASS). Package ready to
 commit.
+
+## Rerun against her bug-fixed CAs (2026-10-17)
+
+Ulrike's 2026-10-16 note said she had fixed bugs in maxconstant (GitHub,
+not CRAN): NA handling in clique rows, the dupcheck argument, a spurious
+warning, input checks. CAs 0.24-4 installed from GitHub (commit 79ffad3)
+and the full battery rerun on the Mac (inst/tests/run_all_result_2026-10-17.txt):
+count_core 529 cases 0 failures; nck faces all pass; maxconstant 52 cases
+0 mismatches, hers 21.8 s, ours 0.2 s; powerct 0 failures; nck driver
+pass. Her fix changes nothing on this battery, which fills NAs with 0
+before comparing. Known gap, not a mismatch: maxconstant_c refuses an
+array with NA cells (stop), hers now accepts one. Decide before a CRAN
+submission whether to match that.
+
+## NA cells in maxconstant_c, CRAN preparation (2026-10-17)
+
+maxconstant_c now accepts NA cells with the rule of her fixed
+maxconstant (CAs 0.24-4). A row with an NA is not an existing constant
+row. Two rows are adjacent when they differ in every column where both
+are non-missing (her min(abs(diff), na.rm = TRUE) > 0). After the clique
+moves to the front, its NA cells are filled column by column from the
+top with the levels absent among the clique rows, ascending. Then the
+symbol permutation follows. NA cells outside the clique stay NA. one_is_enough
+leaves NA cells of row 1 alone, as hers does. A row of only NA cells is
+an error. Changes: R/maxconstant_c.R and disjoint() in src/mc_core.c.
+
+Known differences on NA arrays: her igraph clique can exceed v when NA
+cells make extra rows compatible (5 of the 82 NA cases, all k = 3). No
+filling makes more than v rows constant, hers then returns 0 or 1
+constant rows, ours stops at v. With a single-row clique, none constant
+and an NA in row 1, hers stops ("argument of length 0"), ours fills.
+Her fill uses 0:(v-1), ours the array's levels (same for 0-based).
+
+Battery: test_maxconstant.R now 134 cases (52 old + 82 NA cases:
+the 40 random cases with 4 percent of cells blanked, 20 random arrays
+without planted cliques, 20 cases with NAs inside the planted clique
+rows, Bush with NAs in and outside its clique), 0 mismatches.
+The CRAN copy of CAs is 0.24-3, which fails on NAs in clique rows, so
+the NA comparison in tests/test-cafast.R runs only with CAs >= 0.24-4.

@@ -1,0 +1,35 @@
+# Regenerate the static table page docs/index.html on every push to main.
+# GitHub Pages serves the docs/ folder of main.
+
+name: Table page
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: table-page
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render docs/index.html
+        run: python3 tools/render_table.py --table-dir table --out docs/index.html --date "$(date -u +%F)"
+      - name: Commit the page if it changed
+        run: |
+          git add docs/index.html
+          if git diff --cached --quiet; then
+            echo "Page unchanged."   # same table, same day
+          else
+            git config user.name "ca-table-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -q -m "Regenerate table page"
+            git push
+          fi

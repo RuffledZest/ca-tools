@@ -34,6 +34,19 @@ colbourn_catalogue.csv
     N for a given k is the smallest N whose row has k at least your k
     (ca_query.py best does this for you).
 
+## Submitting arrays (submissions/, tools/, .github/)
+
+Anyone can add an explicit covering array to the provenance table in
+table/ by pull request. A pull request adds one directory
+submissions/<slug>/ with a claims.csv and the array files; a GitHub
+Actions workflow verifies every array with ca_verify, posts a report
+on the pull request, and commits the resulting table rows to it when
+everything passes. The format and the rules are in
+submissions/README.md. tools/check_submission.py is the check (also
+runnable locally), tools/render_table.py builds the table page
+docs/index.html, which GitHub Pages serves. Both are standard library
+Python.
+
 ## R integration (r/)
 
 r/ca_verify_r.c and r/ca_verify.R
