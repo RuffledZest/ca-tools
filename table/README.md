@@ -25,7 +25,17 @@ finds that worth doing.
   suffix where two distinct arrays share parameters.
 - `MANIFEST.csv` - one row per array file: parameters, status,
   SHA-256 of the canonical file content, retrieval recipe,
-  verification stamp.
+  verification stamp, and `constant_rows` (added 2026-10-20): the
+  largest number of rows of the array that can be made constant by
+  permuting symbols within columns, at most v. It is a property of
+  the array that matters when the array is an ingredient of another
+  construction. Computed by `../tools/constant_rows.c`, a standalone
+  version of `cafast::maxconstant_c`, and checked against cafast on
+  every array on file by `../tools/constant_rows_check.R`. The
+  submission check computes it for every new array (empty when the
+  ten-minute budget is exceeded). Whether an array splits into the
+  blocks a product construction needs (its partition profile) is not
+  computed; it is recorded only when the construction states it.
 - `VERIFICATION_LOG.md` - the record of the verification runs that
   produced the stamps.
 - `verify_pipeline.R` - the canonicalization, hashing, and
@@ -80,8 +90,16 @@ covering array researcher would use. For the CITED baseline rows it
 is Colbourn's own construction label, the same text as their
 `source_detail`. For arrays entered through the submission check it
 is the submitter's `construction` field, which the check requires.
-For the other verified rows it is empty where the source page is the
-only record of how the array was made. The notes of a submission row
+For the 530 verified rows that entered from the NIST library, the
+Dwyer database and the CAs package before the column existed, it was
+filled on 2026-10-20 from the catalogues that describe those sources
+(NIST ipof directory, `CAs::DWYERcat$Source` with Dwyer's own method
+code quoted verbatim, `CAs::TJcat`, `CAs::CAEX_CAs`, and the KSK call
+itself), by `tools/backfill_construction.R` and
+`tools/apply_construction_backfill.py`; the mapping with its basis
+per row is `construction_backfill.csv`. Nothing was inferred: a value
+names the catalogue entry it was read from, and the Torres-Jimenez
+arrays say that the method is not recorded per array. The notes of a submission row
 say "exceeds table: previous best N (row k=..., source)" once; that
 is the comparison the check made at entry, and it is not repeated.
 

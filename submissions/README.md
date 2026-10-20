@@ -150,7 +150,11 @@ has source class `S7`, the pull request number as `snapshot_id`, the
 array's SHA-256, a stamp of the form `ca_verify <commit> <date>
 github-actions`, the entry date, and notes that state the credit, the
 comparison with the previous best and its source, the submission
-slug, and your notes. The canonical file is named `CA_N_t_k_v.txt`;
+slug, and your notes. The MANIFEST row also records the array's
+constant rows, the largest number of rows that symbol permutations
+within columns make constant, computed by `tools/constant_rows.c`
+(the computation of `cafast::maxconstant_c`); the report states it.
+The canonical file is named `CA_N_t_k_v.txt`;
 if that name is already taken by a different array, the first eight
 hex digits of the hash are appended, as in `CA_9_2_4_3_9133df95.txt`.
 

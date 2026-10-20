@@ -50,7 +50,7 @@ TABLE_HEADER = ["t", "v", "k", "N", "tier", "source_id", "source_detail",
                 "snapshot_id", "array_sha256", "verify_stamp", "entered",
                 "notes", "lb", "lb_evidence", "construction"]
 MANIFEST_HEADER = ["file", "t", "v", "k", "N", "status", "sha256",
-                   "source_id", "source_detail", "verify_stamp"]
+                   "source_id", "source_detail", "verify_stamp", "constant_rows"]
 SOURCE_ID = "S7"
 SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,200}$")
 MAX_FILE_BYTES = 200 * 1024 * 1024
@@ -166,7 +166,11 @@ def load_table(table_dir):
                              "writes %s" % (reader.fieldnames, TABLE_HEADER))
     with open(os.path.join(table_dir, "MANIFEST.csv"), newline="",
               encoding="utf-8") as f:
-        manifest = list(csv.DictReader(f))
+        mreader = csv.DictReader(f)
+        manifest = list(mreader)
+        if mreader.fieldnames != MANIFEST_HEADER:
+            raise SystemExit("table/MANIFEST.csv header is %s, this checker "
+                             "writes %s" % (mreader.fieldnames, MANIFEST_HEADER))
     return rows, manifest
 
 
@@ -246,7 +250,8 @@ def check_claim(cl, ctx, deadline):
     sub = ctx["subdir"]
     raw = cl["raw"]
     cl.update(passed=False, status="failed", comparison=None, reasons=[],
-              notes_out=[], uncovered=None, seconds={}, sha256=None)
+              notes_out=[], uncovered=None, seconds={}, sha256=None,
+              constant_rows=None)
     t0 = time.monotonic()
     try:
         for fld in ("file", "source_detail", "credit"):
@@ -404,6 +409,12 @@ def check_claim(cl, ctx, deadline):
                 cl["status"] = "screened"
                 cl["screen"] = dict(windows=len(wins), width=ctx["window"],
                                     seed=sha[:16])
+            # a property of the array for its use as an ingredient: the
+            # largest number of rows that symbol permutations make constant
+            cr_start = time.monotonic()
+            cl["constant_rows"] = run_constant_rows(ctx["constant_rows"], canon_path, v,
+                                                    ctx["constant_rows_budget"])
+            cl["seconds"]["constant_rows"] = time.monotonic() - cr_start
         cl["passed"] = True
     except ClaimError as e:
         cl["reasons"].append(str(e))
@@ -411,6 +422,44 @@ def check_claim(cl, ctx, deadline):
         cl["reasons"].append("could not read the array: %s" % e)
     cl["seconds"]["total"] = time.monotonic() - t0
     return cl
+
+
+# ---------------------------------------------------------------------------
+# Constant rows (tools/constant_rows.c, the computation of cafast::maxconstant_c)
+# ---------------------------------------------------------------------------
+
+def constant_rows_binary():
+    """Path of the constant_rows program, built from tools/constant_rows.c
+    next to it if it is missing or older than the source. None if no C
+    compiler is available."""
+    src = os.path.join(REPO, "tools", "constant_rows.c")
+    exe = os.path.join(REPO, "tools", "constant_rows")
+    if not os.path.isfile(src):
+        return None
+    if (not os.path.isfile(exe) or os.path.getmtime(exe) < os.path.getmtime(src)):
+        cc = shutil.which("cc") or shutil.which("gcc") or shutil.which("clang")
+        if cc is None:
+            return None
+        p = subprocess.run([cc, "-O2", "-o", exe, src], stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, universal_newlines=True)
+        if p.returncode != 0:
+            return None
+    return exe if os.access(exe, os.X_OK) else None
+
+
+def run_constant_rows(exe, path, v, timeout):
+    """Returns the number of rows that can be made constant, or None when
+    the program is unavailable, fails, or runs out of its time budget."""
+    if exe is None:
+        return None
+    try:
+        p = subprocess.run([exe, path, str(v)], stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, universal_newlines=True,
+                           timeout=max(1.0, timeout))
+    except subprocess.TimeoutExpired:
+        return None
+    m = re.match(r"constant_rows (\d+) of", p.stdout)
+    return int(m.group(1)) if (p.returncode == 0 and m) else None
 
 
 # ---------------------------------------------------------------------------
@@ -480,7 +529,8 @@ def build_rows(claims, ctx):
                        "above_table": "above_best"}[cl["comparison"]]
         manifest_rows.append([name, cl["t"], cl["v"], cl["k"], cl["N"], mstatus,
                               cl["sha256"], SOURCE_ID,
-                              cl["raw"]["source_detail"].strip(), ctx["stamp"]])
+                              cl["raw"]["source_detail"].strip(), ctx["stamp"],
+                              cl.get("constant_rows") if cl.get("constant_rows") is not None else ""])
         files.append((name, cl["canon_text"]))
     return table_rows, manifest_rows, files
 
@@ -574,6 +624,12 @@ def render_report(claims, ctx, all_pass, elapsed):
         if c["status"] == "verified":
             L.append("- verified exhaustively at strength %d in %s"
                      % (c["t"], fmt_secs(c["seconds"].get("verify", 0))))
+        if c.get("constant_rows") is not None:
+            L.append("- constant rows: %d of %d can be made constant by permuting "
+                     "symbols within columns (computed in %s)"
+                     % (c["constant_rows"], c["v"], fmt_secs(c["seconds"].get("constant_rows", 0))))
+        elif c["passed"]:
+            L.append("- constant rows: not computed (no compiler, or over the time budget)")
         if c["status"] == "screened":
             L.append("- screened, not exhaustively verified: %d random windows of "
                      "%d columns each verified in full at strength %d in %s "
@@ -650,6 +706,9 @@ def main(argv=None):
     ap.add_argument("--screen-threshold", type=float, default=1e10,
                     help="screen instead of full check when C(k,t)*v^t exceeds this")
     ap.add_argument("--screen-windows", type=int, default=20)
+    ap.add_argument("--constant-rows-minutes", type=float, default=10.0,
+                    help="time budget for the constant rows count per array "
+                         "(default 10; left empty when exceeded)")
     ap.add_argument("--screen-width", type=int, default=30)
     ap.add_argument("--out", default=None, help="output directory "
                     "(default ./check-<slug>)")
@@ -695,7 +754,9 @@ def main(argv=None):
                table_sha={r["array_sha256"]: r for r in table_rows
                           if r.get("array_sha256")},
                seen_sha={}, taken_names=taken, date=date, stamp=stamp,
-               snapshot_id=("pr-%s" % a.pr) if a.pr else slug)
+               snapshot_id=("pr-%s" % a.pr) if a.pr else slug,
+               constant_rows=constant_rows_binary(),
+               constant_rows_budget=a.constant_rows_minutes * 60.0)
 
     start = time.monotonic()
     total = (max(0.0, a.total_budget_minutes) * 60.0

@@ -45,7 +45,9 @@ everything passes. The format and the rules are in
 submissions/README.md. tools/check_submission.py is the check (also
 runnable locally), tools/render_table.py builds the table page
 docs/index.html, which GitHub Pages serves. Both are standard library
-Python. Every claim names its construction, and the table at
+Python. Every claim names its construction, every array on file has
+its constant rows counted (tools/constant_rows.c, the computation of
+cafast::maxconstant_c), and the table at
 table/ca_table.csv (raw URL in table/README.md) is the machine-readable
 form of the whole thing, read with the stair-step rule.
 

@@ -69,6 +69,14 @@ def credit_of(r):
     return m.group(1).strip() if m else ""
 
 
+CR = {}
+
+
+def constant_rows_of(r):
+    c = CR.get(r.get("array_sha256") or "", "")
+    return ("constant rows %s of %s" % (c, r["v"])) if c not in ("", None) else ""
+
+
 def construction_of(r):
     """The construction column; for rows that predate it, the source_detail
     of a CITED row is Colbourn's construction label."""
@@ -101,12 +109,14 @@ def evidence_html(rs):
         r = ver[-1]
         cr = credit_of(r)
         con = construction_of(r)
+        crs = constant_rows_of(r)
         parts.append('<span class="tag ver">verified</span>%s%s%s'
-                     '<span class="stamp">%s, sha256 %s</span>' % (
+                     '<span class="stamp">%s, sha256 %s%s</span>' % (
                          html.escape(cr + "; ") if cr else "",
                          ("<i>%s</i>; " % html.escape(con)) if con else "",
                          html.escape(r["source_detail"]),
-                         html.escape(r["verify_stamp"]), html.escape(r["array_sha256"][:12])))
+                         html.escape(r["verify_stamp"]), html.escape(r["array_sha256"][:12]),
+                         (", " + crs) if crs else ""))
     else:
         r = rs[0]
         parts.append(html.escape(construction_of(r) or r["source_detail"] or r["source_id"]))
@@ -114,6 +124,8 @@ def evidence_html(rs):
 
 
 def render(rows, manifest, date):
+    global CR
+    CR = {m["sha256"]: m.get("constant_rows", "") for m in manifest}
     tiers = collections.Counter(r["tier"] for r in rows)
     mstat = collections.Counter(m["status"] for m in manifest)
     subs = [r for r in rows if r["source_id"] == "S7" and r["tier"] in ("VERIFIED", "SCREENED")]
@@ -140,7 +152,10 @@ def render(rows, manifest, date):
     H.append("<p>Rows are stair-steps: an entry (t, v, k, N) means N runs suffice for up "
              "to k columns, so the best known N at k is the smallest N among entries with "
              "at least k columns. The construction column names the construction or "
-             "search that produced each entry, where it is known. Anyone can add an array by pull request; see "
+             "search that produced each entry, where it is known. For every array on file, "
+             "constant rows is the largest number of its rows that can be made constant by "
+             "permuting symbols within columns, a property that matters when the array is an "
+             "ingredient of another construction. Anyone can add an array by pull request; see "
              "<a href=\"%s/blob/main/submissions/README.md\">how to submit</a>. The data "
              "is <a href=\"%s/tree/main/table\">table/ in the repository</a>; the raw file "
              "<a href=\"%s\">table/ca_table.csv</a> is the machine-readable form "
@@ -168,11 +183,12 @@ def render(rows, manifest, date):
                    else '<span class="tag scr">screened</span>')
             prev = re.search(r"previous best (\d+)", r["notes"])
             H.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=n>%d</td>"
-                     "<td class=n>%d</td><td class=ev>%s%s%s<span class=stamp>%s, entered %s</span></td>"
+                     "<td class=n>%d</td><td class=ev>%s%s%s<span class=stamp>%s, entered %s%s</span></td>"
                      "<td class=ev>%s</td></tr>"
                      % (r["t"], r["v"], r["k"], r["N"], tag, html.escape(credit_of(r)),
                         " (previous best %s)" % prev.group(1) if prev else "",
                         html.escape(r["verify_stamp"]), html.escape(r["entered"]),
+                        (", " + constant_rows_of(r)) if constant_rows_of(r) else "",
                         html.escape(construction_of(r))))
         H.append("</tbody></table>")
 
@@ -196,10 +212,11 @@ def render(rows, manifest, date):
         for r in scr:
             H.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=ev>"
                      "<span class=\"tag scr\">screened</span>%s%s<span class=stamp>%s, "
-                     "not counted as best known</span></td></tr>"
+                     "not counted as best known%s</span></td></tr>"
                      % (r["k"], r["N"], html.escape(credit_of(r) + "; ") if credit_of(r) else "",
                         ("<i>%s</i>; " % html.escape(construction_of(r)) if construction_of(r) else "")
-                        + html.escape(r["source_detail"]), html.escape(r["verify_stamp"])))
+                        + html.escape(r["source_detail"]), html.escape(r["verify_stamp"]),
+                        (", " + constant_rows_of(r)) if constant_rows_of(r) else ""))
         H.append("</tbody></table></details>")
     H.append("</main></body></html>")
     return "\n".join(H) + "\n"
