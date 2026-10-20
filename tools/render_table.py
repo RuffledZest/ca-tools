@@ -48,6 +48,9 @@ summary { cursor:pointer; }
   border:1px solid currentColor; margin-right:.3rem; }
 .ver { color:var(--ver); } .scr { color:var(--scr); }
 .stamp { color:var(--mute); font-size:.8rem; display:block; }
+.subhead { font-size:.9rem; margin:.4rem 0; overflow-wrap:anywhere; }
+.lbl { color:var(--mute); font-size:.8rem; margin-right:.3rem; }
+details.sub > summary { padding:.15rem 0; }
 a { color: inherit; }
 @media (max-width: 480px) { body { font-size:15px; } table { font-size:.82rem; } th, td { padding:.25rem .2rem; } }
 """
@@ -84,6 +87,63 @@ def construction_of(r):
     if not c and r.get("tier") == "CITED":
         c = (r.get("source_detail") or "").strip()
     return c
+
+
+def slug_of(r):
+    m = re.search(r"submission ([A-Za-z0-9._-]+)", r.get("notes") or "")
+    return m.group(1) if m else "(unnamed)"
+
+
+def submissions_html(subs):
+    """One folded <details> per submission. Text that is the same for every
+    array of a submission (credit, construction, stamp, entry date) is shown
+    once above its table; text that differs stays in a column."""
+    out = []
+    groups = collections.OrderedDict()
+    for r in sorted(subs, key=lambda r: (r["entered"], slug_of(r), r["t"], r["v"], r["k"]),
+                    reverse=True):
+        groups.setdefault(slug_of(r), []).append(r)
+    shared_fields = (("credit", credit_of), ("construction", construction_of),
+                     ("stamp", lambda r: r["verify_stamp"]), ("entered", lambda r: r["entered"]))
+    for slug, rs in groups.items():
+        rs = sorted(rs, key=lambda r: (r["t"], r["v"], r["k"]))
+        nver = sum(1 for r in rs if r["tier"] == "VERIFIED")
+        nscr = len(rs) - nver
+        vs = sorted({r["v"] for r in rs}); ts = sorted({r["t"] for r in rs})
+        span = lambda xs: str(xs[0]) if len(xs) == 1 else "%d to %d" % (xs[0], xs[-1])
+        uniform = {name: len({f(r) for r in rs}) == 1 for name, f in shared_fields}
+        credits = sorted({credit_of(r) for r in rs})
+        out.append("<details class=sub><summary><b>%s</b>, %s: %d array%s (%s), t = %s, "
+                   "v = %s, entered %s</summary>" % (
+                       html.escape(", ".join(credits)), html.escape(slug), len(rs),
+                       "" if len(rs) == 1 else "s",
+                       ", ".join(x for x in ("%d verified" % nver if nver else "",
+                                             "%d screened" % nscr if nscr else "") if x),
+                       span(ts), span(vs), html.escape(max(r["entered"] for r in rs))))
+        lines = []
+        for name, f in shared_fields:
+            if uniform[name] and f(rs[0]):
+                lines.append("<span class=lbl>%s</span> %s" % (name, html.escape(f(rs[0]))))
+        if lines:
+            out.append("<p class=subhead>%s</p>" % "<br>".join(lines))
+        cols = [name for name, _ in shared_fields if not uniform[name]]
+        out.append("<table><thead><tr><th class=n>t</th><th class=n>v</th><th class=n>k</th>"
+                   "<th class=n>N</th><th class=n>prev. best</th><th class=n>const. rows</th>"
+                   "<th>status</th>%s</tr></thead><tbody>"
+                   % "".join("<th>%s</th>" % c for c in cols))
+        for r in rs:
+            prev = re.search(r"previous best (\d+)", r["notes"])
+            c = CR.get(r.get("array_sha256") or "", "")
+            tag = ('<span class="tag ver">verified</span>' if r["tier"] == "VERIFIED"
+                   else '<span class="tag scr">screened</span>')
+            extra = "".join("<td class=ev>%s</td>" % html.escape(f(r))
+                            for name, f in shared_fields if name in cols)
+            out.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=n>%d</td>"
+                       "<td class=n>%d</td><td class=n>%s</td><td class=n>%s</td><td>%s</td>%s</tr>"
+                       % (r["t"], r["v"], r["k"], r["N"], prev.group(1) if prev else "",
+                          ("%s of %d" % (c, r["v"])) if c not in ("", None) else "", tag, extra))
+        out.append("</tbody></table></details>")
+    return out
 
 
 def stair(rows_tv):
@@ -176,21 +236,9 @@ def render(rows, manifest, date):
     if not subs:
         H.append("<p>None yet.</p>")
     else:
-        H.append("<table><thead><tr><th class=n>t</th><th class=n>v</th><th class=n>k</th>"
-                 "<th class=n>N</th><th>credit and evidence</th><th>construction</th></tr></thead><tbody>")
-        for r in sorted(subs, key=lambda r: (r["entered"], r["t"], r["v"], r["k"]), reverse=True):
-            tag = ('<span class="tag ver">verified</span>' if r["tier"] == "VERIFIED"
-                   else '<span class="tag scr">screened</span>')
-            prev = re.search(r"previous best (\d+)", r["notes"])
-            H.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=n>%d</td>"
-                     "<td class=n>%d</td><td class=ev>%s%s%s<span class=stamp>%s, entered %s%s</span></td>"
-                     "<td class=ev>%s</td></tr>"
-                     % (r["t"], r["v"], r["k"], r["N"], tag, html.escape(credit_of(r)),
-                        " (previous best %s)" % prev.group(1) if prev else "",
-                        html.escape(r["verify_stamp"]), html.escape(r["entered"]),
-                        (", " + constant_rows_of(r)) if constant_rows_of(r) else "",
-                        html.escape(construction_of(r))))
-        H.append("</tbody></table>")
+        H.append("<p class=\"mute\">One entry per submission, newest first. Open one to "
+                 "see its arrays.</p>")
+        H.extend(submissions_html(subs))
 
     H.append("<h2>Best known N by strength and alphabet</h2>")
     H.append("<p class=\"mute\">Open a (t, v) pair to see its stair-step. Each rung gives "
