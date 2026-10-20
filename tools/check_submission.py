@@ -2,7 +2,8 @@
 """check_submission - verify a covering array submission against the table.
 
 A submission is a directory submissions/<slug>/ holding claims.csv
-(header t,v,k,N,file,source_detail,credit,notes) and the array files it
+(header t,v,k,N,file,source_detail,construction,credit,notes) and the
+array files it
 names. For every claim this script parses the array, checks its shape
 and symbols, canonicalizes it exactly as table/verify_pipeline.R does,
 hashes it, rejects duplicates, runs ca_verify at strength t under a
@@ -42,10 +43,12 @@ import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-CLAIMS_HEADER = ["t", "v", "k", "N", "file", "source_detail", "credit", "notes"]
+CLAIMS_HEADER = ["t", "v", "k", "N", "file", "source_detail", "construction",
+                 "credit", "notes"]
+OLD_CLAIMS_HEADER = ["t", "v", "k", "N", "file", "source_detail", "credit", "notes"]
 TABLE_HEADER = ["t", "v", "k", "N", "tier", "source_id", "source_detail",
                 "snapshot_id", "array_sha256", "verify_stamp", "entered",
-                "notes", "lb", "lb_evidence"]
+                "notes", "lb", "lb_evidence", "construction"]
 MANIFEST_HEADER = ["file", "t", "v", "k", "N", "status", "sha256",
                    "source_id", "source_detail", "verify_stamp"]
 SOURCE_ID = "S7"
@@ -156,7 +159,11 @@ def canonical_of_file(path, v):
 def load_table(table_dir):
     with open(os.path.join(table_dir, "ca_table.csv"), newline="",
               encoding="utf-8") as f:
-        rows = list(csv.DictReader(f))
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        if reader.fieldnames != TABLE_HEADER:
+            raise SystemExit("table/ca_table.csv header is %s, this checker "
+                             "writes %s" % (reader.fieldnames, TABLE_HEADER))
     with open(os.path.join(table_dir, "MANIFEST.csv"), newline="",
               encoding="utf-8") as f:
         manifest = list(csv.DictReader(f))
@@ -245,6 +252,10 @@ def check_claim(cl, ctx, deadline):
         for fld in ("file", "source_detail", "credit"):
             if not (raw.get(fld) or "").strip():
                 raise ClaimError("claims.csv field %s is empty" % fld)
+        if not (raw.get("construction") or "").strip():
+            raise ClaimError("claims.csv field construction is empty: name the "
+                             "construction or search that produced the array "
+                             "(write 'unknown' if it is not known)")
         for fld in CLAIMS_HEADER:
             if any(ch in (raw.get(fld) or "") for ch in "\r\n"):
                 raise ClaimError("claims.csv field %s contains a line break" % fld)
@@ -459,7 +470,8 @@ def build_rows(claims, ctx):
         table_rows.append([cl["t"], cl["v"], cl["k"], cl["N"], tier, SOURCE_ID,
                            cl["raw"]["source_detail"].strip(), ctx["snapshot_id"],
                            cl["sha256"], ctx["stamp"], ctx["date"],
-                           table_notes(cl, ctx), "", ""])
+                           table_notes(cl, ctx), "", "",
+                           cl["raw"]["construction"].strip()])
         if cl["status"] == "screened":
             mstatus = "screened"
         else:
@@ -550,6 +562,8 @@ def render_report(claims, ctx, all_pass, elapsed):
         L.append("")
         if c.get("sha256"):
             L.append("- sha256 (canonical form): `%s`" % c["sha256"])
+        if (c["raw"].get("construction") or "").strip():
+            L.append("- construction: %s" % md_cell(c["raw"]["construction"].strip()))
         for r in c["reasons"]:
             L.append("- **%s**" % md_cell(r))
         if c["uncovered"]:
@@ -700,7 +714,12 @@ def main(argv=None):
         with open(cpath, newline="", encoding="utf-8-sig") as f:
             reader = csv.reader(f)
             header = next(reader, [])
-            if [h.strip() for h in header] != CLAIMS_HEADER:
+            hdr = [h.strip() for h in header]
+            if hdr == OLD_CLAIMS_HEADER:
+                problems.append("claims.csv uses the header without the "
+                                "construction column; add it (%s)"
+                                % ",".join(CLAIMS_HEADER))
+            elif hdr != CLAIMS_HEADER:
                 problems.append("claims.csv header must be exactly %s (found %s)"
                                 % (",".join(CLAIMS_HEADER), ",".join(header)))
             else:

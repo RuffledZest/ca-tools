@@ -47,7 +47,7 @@ verify_claim <- function(x, t, v, k, N, source_id, source_detail,
         notes = if (dims_ok) notes else
             paste0("DIM MISMATCH: got ", nrow(x), "x", ncol(x),
                    " expected ", N, "x", k, ". ", notes),
-        lb = "", lb_evidence = "",
+        lb = "", lb_evidence = "", construction = "",
         stringsAsFactors = FALSE
     )
     list(ok = ok, covered = isTRUE(r$covered), dims_ok = dims_ok, row = row)

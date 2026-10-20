@@ -74,7 +74,40 @@ covering array library, S5 Dwyer CA_Database, S6 the CAs package's
 data and constructions, S7 literature). `source_detail` is the exact
 retrieval or generation recipe. `snapshot_id` dates the source.
 `lb, lb_evidence` are reserved for lower-bound evidence and are empty
-in this version.
+in this version. `construction` (added 2026-10-20) names the
+construction or search that produced the entry, in the words a
+covering array researcher would use. For the CITED baseline rows it
+is Colbourn's own construction label, the same text as their
+`source_detail`. For arrays entered through the submission check it
+is the submitter's `construction` field, which the check requires.
+For the other verified rows it is empty where the source page is the
+only record of how the array was made. The notes of a submission row
+say "exceeds table: previous best N (row k=..., source)" once; that
+is the comparison the check made at entry, and it is not repeated.
+
+## Reading the table from code
+
+The CSV at
+https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/ca_table.csv
+is the whole table, always current, and the only interface. There is
+no separate API. The stair-step rule gives the best known N at
+(t, v, k) as the smallest N among rows with tier CITED or VERIFIED,
+the same t and v, and k at least the requested k. In R, with no
+packages:
+
+    tab <- read.csv("https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/ca_table.csv",
+                    stringsAsFactors = FALSE)
+    tab$N <- as.numeric(tab$N)
+    best_known <- function(tab, t, v, k) {
+        s <- tab[tab$tier %in% c("CITED", "VERIFIED") &
+                 tab$t == t & tab$v == v & tab$k >= k, ]
+        if (nrow(s) == 0) NA_real_ else min(s$N)
+    }
+    best_known(tab, 3, 13, 197)   # 6422 as of 2026-10-18 (Bergeron)
+
+`ca_table.R` in this directory has the same two functions. SCREENED
+rows are listed but excluded from best known on purpose. The file is
+about 3 MB and grows by one row per accepted claim.
 
 ## Querying
 
@@ -107,6 +140,10 @@ The table is append-only. To add a claim with evidence:
    reference what it supersedes.
 5. Regenerate `ca_table.rda` with `make_rda()`, and if you add the
    array to `arrays/`, add its MANIFEST.csv line.
+
+Since 2026-10-18 the usual route is the submission check
+(`../submissions/README.md`), which does steps 2 to 4 on a pull
+request and fills `construction` from the claim.
 
 Admissible sources and the full protocol are in
 TABLE_REGISTRATION.md in the maintainers' records; the short version

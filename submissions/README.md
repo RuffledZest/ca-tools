@@ -19,15 +19,25 @@ Nothing else in the repository should change in your pull request.
 
 `claims.csv` has exactly this header and one row per array:
 
-    t,v,k,N,file,source_detail,credit,notes
+    t,v,k,N,file,source_detail,construction,credit,notes
 
 `t` is the strength, `v` the number of symbols, `k` the number of
 columns and `N` the number of runs (rows) of the array. `file` is the
 name of the array file in the same directory. `source_detail` is the
 recipe someone else would use to obtain or regenerate the array: a
 repository URL with a commit, a DOI, or the exact generating command
-and software version. `credit` is the person, group or paper to be
-credited. `notes` is free text and may be empty. Fields that contain
+and software version. `construction` names the construction or
+search that produced the array, in the words a covering array
+researcher would use: the recursive construction and its ingredients
+(for example "Raaphorst-Moura-Stevens extension, q = 7, m = 2"), the
+search method (for example "simulated annealing from the
+CA(136; 4, 179, 2) with one column added"), or an algebraic source.
+It is required, because the construction is what another researcher
+needs in order to know how the array can be used as an ingredient
+(constant rows, how it splits). Write `unknown` only if you cannot
+say. `credit` is the person, group or paper to be credited. `notes`
+is free text and may be empty; the check already records the
+previous best, so there is no need to repeat it here. Fields that contain
 commas must be enclosed in double quotes, as in any CSV file, and no
 field may contain a line break.
 
@@ -134,7 +144,8 @@ be the full check, so they get the full check.
 
 Your `credit` field goes into the notes of the table row exactly as
 you wrote it, after `credit: `. Your `source_detail` becomes the
-row's `source_detail` exactly as written. Each new `ca_table.csv` row
+row's `source_detail` and your `construction` the row's
+`construction`, both exactly as written. Each new `ca_table.csv` row
 has source class `S7`, the pull request number as `snapshot_id`, the
 array's SHA-256, a stamp of the form `ca_verify <commit> <date>
 github-actions`, the entry date, and notes that state the credit, the
