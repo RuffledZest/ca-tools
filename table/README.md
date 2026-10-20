@@ -130,6 +130,55 @@ packages:
 SCREENED rows are listed but excluded from best known on purpose. The
 file is about 1.7 MB and grows by one row per accepted claim.
 
+### In place of the frozen Colbourn tables (eCAN, eCAK)
+
+`CAs::eCAN(t, k, v)` and `CAs::eCAK(t, N, v)` read the frozen
+Colbourn tables in `CAs::colbournBigFrame` and return the best N for
+at least k columns, or the most columns for at most N runs, with that
+row's Source text. This table can stand in for them.
+`tools/ecan_compare.R` checks it, and its output with CAs 0.24-4 on
+2026-10-20 is `../results/ecan_compare_2026-10-20.txt`. The 13,641
+CITED rows equal `colbournBigFrame` row for row, with `construction`
+equal to its `Source`. The lookups below, run over the CITED rows
+alone, reproduce eCAN and eCAK exactly, number and Source text, at
+every one of the 13,641 points of the frozen tables. Run over the
+CITED and VERIFIED rows together, they give a smaller N at 21 of
+those points and more columns at 29, and never a worse value. In R,
+with `tab` read as above:
+
+    eCAN_table <- function(tab, t, k, v) {
+        s <- tab[tab$tier %in% c("CITED", "VERIFIED") &
+                 tab$t == t & tab$v == v & tab$k >= k, ]
+        if (nrow(s) == 0) return(data.frame(CAN = NA, Source = ""))
+        i <- which.min(s$N)
+        data.frame(CAN = s$N[i], Source = s$construction[i])
+    }
+    eCAK_table <- function(tab, t, N, v) {
+        s <- tab[tab$tier %in% c("CITED", "VERIFIED") &
+                 tab$t == t & tab$v == v & tab$N <= N, ]
+        if (nrow(s) == 0) return(data.frame(CAK = NA, Source = ""))
+        i <- which.max(s$k)
+        data.frame(CAK = s$k[i], Source = s$construction[i])
+    }
+
+The functions name the tiers they count. If another tier is added to
+the table later, it is documented here, and these lookups keep their
+meaning until a caller chooses to count it.
+
+The address above always serves the newest table, so the same call
+can return a smaller N next month. For a result that can be repeated,
+read the table at a fixed commit, for example
+
+    https://raw.githubusercontent.com/chrispbsmolen/ca-tools/9494361e011d3b96645164032c3abe4fa7537c09/table/ca_table.csv
+
+and report the commit with the result. The table is append-only in
+its claims, so a fixed commit always reads the same. The newest
+commit is listed at
+https://api.github.com/repos/chrispbsmolen/ca-tools/commits/main
+(field `sha`). For use without a network, `ca_table.rda` holds the
+same table as an R data frame in about 80 KB and can travel inside a
+package, refreshed at each release.
+
 ## Querying
 
     Rscript -e 'source("ca_table.R"); tab <- load_ca_table(); best_known(tab, 5, 3, 7)'

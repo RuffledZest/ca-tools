@@ -1,0 +1,28 @@
+CAs 0.24.4 
+table rows 14197  CITED 13641  colbournBigFrame 13641 
+CITED rows equal colbournBigFrame row for row (Source = construction): TRUE 
+eCAN: points 13641  CITED-only lookup differs 0  full table differs 21  all smaller: TRUE 
+ t   k  v eCAN table
+ 3  36  5  349   325
+ 3  58  7  979   930
+ 3  64  7 1014   931
+ 3  75  8 1447  1408
+ 3  92  9 2105  2024
+ 3  41 10 2618  2615
+ 3 134 11 3871  3750
+ 3 184 13 6421  6252
+ 4 173  2  135   134
+ 4 179  2  142   136
+ 4 189  2  143   141
+ 4 192  2  144   142
+ 4 196  2  145   143
+ 4 208  2  154   153
+ 4 213  2  156   153
+ 4 217  2  157   153
+ 4 222  2  158   153
+ 5 128  2  252   251
+ 5 132  2  260   259
+ 6  29  2  426   421
+ 6  72  2  718   716
+eCAK: points 13641  CITED-only lookup differs 0  full table gives more columns at 29  fewer at 0 
+ECAN COMPARE: PASS 
