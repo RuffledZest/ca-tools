@@ -53,7 +53,12 @@ MANIFEST_HEADER = ["file", "t", "v", "k", "N", "status", "sha256",
                    "source_id", "source_detail", "verify_stamp", "constant_rows"]
 SOURCE_ID = "S7"
 SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,200}$")
-MAX_FILE_BYTES = 200 * 1024 * 1024
+# Size limits. GitHub refuses files over 100 MiB and warns above 50 MiB
+# (docs.github.com, "About large files on GitHub"); the table stores
+# every accepted array, so one submission must stay well inside that.
+# Larger arrays go by arrangement (submissions/README.md, "Size limits").
+MAX_FILE_BYTES = 50 * 1024 * 1024
+MAX_SUBMISSION_BYTES = 200 * 1024 * 1024
 CA_VERIFY_MAX_LINE = 65000   # ca_verify reads lines into a 64 KiB buffer
 CA_VERIFY_MAX_V = 127        # ca_verify stores symbols as int8
 
@@ -84,8 +89,9 @@ def parse_array(path, v):
     except OSError as e:
         raise ClaimError("cannot read array file: %s" % e)
     if size > MAX_FILE_BYTES:
-        raise ClaimError("array file is %d bytes, above the %d byte limit"
-                         % (size, MAX_FILE_BYTES))
+        raise ClaimError("array file is %.1f MiB, above the %d MiB limit per "
+                         "file (see \"Size limits\" in submissions/README.md)"
+                         % (size / 1048576.0, MAX_FILE_BYTES // 1048576))
     rows = []
     width = None
     lo, hi = None, None
@@ -770,8 +776,19 @@ def main(argv=None):
 
     claims = []
     problems = []
+    total_bytes = (sum(os.path.getsize(os.path.join(sub, n)) for n in os.listdir(sub)
+                       if os.path.isfile(os.path.join(sub, n))
+                       and not os.path.islink(os.path.join(sub, n)))
+                   if os.path.isdir(sub) else 0)
+    if total_bytes > MAX_SUBMISSION_BYTES:
+        problems.append("the submission holds %.1f MiB of files, above the %d MiB "
+                        "limit per submission; split it into several pull requests "
+                        "(see \"Size limits\" in submissions/README.md)"
+                        % (total_bytes / 1048576.0, MAX_SUBMISSION_BYTES // 1048576))
     cpath = os.path.join(sub, "claims.csv")
-    if os.path.islink(sub.rstrip(os.sep)) or os.path.islink(cpath):
+    if total_bytes > MAX_SUBMISSION_BYTES:
+        pass                              # refused before reading any claim
+    elif os.path.islink(sub.rstrip(os.sep)) or os.path.islink(cpath):
         problems.append("the submission directory and claims.csv must not be "
                         "symbolic links")
     elif not os.path.isfile(cpath):
@@ -814,12 +831,10 @@ def main(argv=None):
     elapsed = time.monotonic() - start
     report = render_report(claims, ctx, all_pass, elapsed)
     if problems:
+        # the list goes once, ahead of the per-claim details
         report = report.replace("### Details", "### Submission problems\n\n" +
                                 "".join("- **%s**\n" % md_cell(p) for p in problems)
                                 + "\n### Details", 1)
-        if not claims:
-            report += "\n### Submission problems\n\n" + "".join(
-                "- **%s**\n" % md_cell(p) for p in problems)
 
     # outputs
     for stale in ("ca_table_rows.csv", "manifest_rows.csv"):

@@ -115,6 +115,34 @@ array is still recorded as verified, with a note that it is not an
 improvement. The table rows record which of these applied and the
 value the claim was compared with.
 
+## Size limits
+
+An array file may be at most 50 MiB, and the files of one submission
+together at most 200 MiB. A file over the first limit fails its claim
+before it is read, and a submission over the second is refused before
+any claim is checked. The report states the size.
+
+The limits come from storage. GitHub refuses any file over 100 MiB,
+warns above 50 MiB, and recommends keeping a repository under 1 GB,
+and the table keeps a copy of every accepted array. For scale, the
+largest arrays on file, Bergeron's CA(20216; 3, 401, 19) and its two
+neighbors, are 18 to 19 MiB each as text. Array text compresses well,
+so git stores the whole repository, those three included, in under 7
+MB.
+
+GitHub's web page accepts uploads only up to 25 MiB per file, so an
+array file larger than that has to be added with git from your own
+machine.
+
+An array too large for these limits can still enter the table, by
+arrangement. Open an issue describing it. The array is then deposited
+in a public archive that issues a DOI, verified in full by a
+maintainer on a larger machine with `ca_verify`, and recorded as a
+table row whose `source_detail` is the archive link, with the SHA-256
+of its canonical form and the stamp of that verification. The table
+then names the exact array and how it was checked without holding a
+copy.
+
 ## Large arrays: the screened status
 
 The pull request check runs on a GitHub-hosted runner with 2 cores
