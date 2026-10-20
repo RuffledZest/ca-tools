@@ -53,8 +53,10 @@ jobs:
           token: ${{ secrets.TABLE_BOT_TOKEN || github.token }}
           persist-credentials: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
 
-      - name: Build ca_verify
-        run: cc -O3 -pthread -o base/ca_verify base/ca_verify.c
+      - name: Build ca_verify and constant_rows
+        run: |
+          cc -O3 -pthread -o base/ca_verify base/ca_verify.c
+          cc -O2 -o base/tools/constant_rows base/tools/constant_rows.c
 
       - name: Self-test (table arrays re-hash to their MANIFEST entries)
         run: python3 base/tools/check_submission.py --selftest --table-dir base/table > /dev/null
@@ -67,7 +69,23 @@ jobs:
           fi
           gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' > changed.txt
           : > comment.md
-          bad=$(grep -v -E '^(submissions|table)/' changed.txt || true)
+          # A submission may only add files under submissions/<slug>/. The
+          # table/ paths are allowed only on a branch of this repository,
+          # where the check's own commit of the rows lives on the branch
+          # (changed.txt is the pull request's diff against the base, so a
+          # fork that is merely behind main does not show table/ here); a
+          # fork cannot receive that commit, so a fork touching table/ is a
+          # change nobody checked. submissions/README.md and the example
+          # are documentation, not a submission.
+          if [ "$SAME_REPO" = "true" ]; then
+            bad=$(grep -v -E '^(submissions/[^/]+/|table/)' changed.txt || true)
+          else
+            bad=$(grep -v -E '^submissions/[^/]+/' changed.txt || true)
+          fi
+          bad=$(echo "$bad" | sed '/^$/d')
+          if grep -q -E '^submissions/(README\.md|example/)' changed.txt; then
+            bad="$bad"$'\n'"$(grep -E '^submissions/(README\.md|example/)' changed.txt)"
+          fi
           if [ -n "$bad" ]; then
             { echo "## Covering array submission check"; echo
               echo "**FAIL.** A submission pull request may only add files under \`submissions/<slug>/\`. These paths are outside it:"

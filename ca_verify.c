@@ -6,7 +6,12 @@
  *
  * Input format: plain text, one row per line, entries separated by spaces,
  * tabs or commas. Symbols may be 0..v-1 or 1..v (auto-shifted). A '-', '*',
- * 'NA' or 'x' entry is a wildcard (flexible value) and counts as every symbol.
+ * 'NA' or 'x' entry is a don't-care (flexible value). A row contributes
+ * nothing to a projection in which it has a don't-care: coverage must hold
+ * on the concrete entries alone, so the array stays covering however the
+ * don't-cares are filled (the "promise" rule of caverify 0.2.0; before
+ * 2026-10-20 this program expanded a don't-care to every symbol, which
+ * certifies arrays that are not covering arrays).
  *
  * Usage: ca_verify FILE t v [threads]
  * Exit status: 0 = full coverage verified, 1 = coverage gaps found, 2 = error.
@@ -50,38 +55,16 @@ static int next_comb(int *c) {
     return 1;
 }
 
-/* mark tuples exhibited by row r on columns c[], honoring wildcards */
+/* mark the tuple exhibited by row r on columns c[]; a row with a don't-care
+   in any of these columns exhibits nothing here */
 static void mark_row(uint64_t *bm, const int8_t *row, const int *c) {
-    /* iterate over wildcard expansions; non-wildcard digits fixed */
-    int wpos[32], nw = 0;
-    long long base = 0;
+    long long idx = 0;
     for (int j = 0; j < T; j++) {
         int8_t s = row[c[j]];
-        if (s == WILDCARD) { wpos[nw++] = j; }
+        if (s == WILDCARD) return;
+        idx = idx * V + s;
     }
-    /* compute base index with wildcards as 0 */
-    long long mult[32];
-    long long m = 1;
-    for (int j = T - 1; j >= 0; j--) { mult[j] = m; m *= V; }
-    for (int j = 0; j < T; j++) {
-        int8_t s = row[c[j]];
-        base += (long long)(s == WILDCARD ? 0 : s) * mult[j];
-    }
-    if (nw == 0) {
-        bm[base >> 6] |= 1ULL << (base & 63);
-        return;
-    }
-    /* expand wildcards (rare; nw small) */
-    long long nexp = 1;
-    for (int i = 0; i < nw; i++) nexp *= V;
-    for (long long e = 0; e < nexp; e++) {
-        long long idx = base, ee = e;
-        for (int i = 0; i < nw; i++) {
-            idx += (ee % V) * mult[wpos[i]];
-            ee /= V;
-        }
-        bm[idx >> 6] |= 1ULL << (idx & 63);
-    }
+    bm[idx >> 6] |= 1ULL << (idx & 63);
 }
 
 static void *worker(void *arg) {

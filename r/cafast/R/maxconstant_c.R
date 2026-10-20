@@ -15,7 +15,8 @@ maxconstant_c <- function(D, verbose = 0, remove = FALSE, one_is_enough = FALSE,
     nconstant <- sum(consts)
     posconsts <- integer(0)
     if (nconstant > 0) { posconsts <- which(consts); posconsts <- posconsts[order(D[posconsts, 1])] }
-    if (nconstant == v) {
+    ## v constant rows already present only if they are v distinct constants
+    if (nconstant == v && !anyDuplicated(D[posconsts, 1])) {
         D <- if (remove) D[setdiff(seq_len(N), posconsts), , drop = FALSE] else D[c(posconsts, setdiff(seq_len(N), posconsts)), , drop = FALSE]
         if (verbose %in% c(2, 12)) attr(D, "constant_rows") <- list(design_name = Dnam, row_set_list = posconsts)
         return(D)

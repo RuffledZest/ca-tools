@@ -18,7 +18,11 @@
    Usage: constant_rows FILE v
    Output: one line "constant_rows C of N rows, k columns, v symbols"
    followed by "rows: i1 i2 ..." (1-based indices of one largest set).
-   Exit 0 on success, 2 on a read error.
+   Exit 0 on success, 2 on a read error. A row consisting only of
+   don't-care entries is an error, as it is for cafast::maxconstant_c.
+   Agreement with cafast assumes the rows are distinct: cafast 0.1.0
+   counts a duplicated constant row twice (its nconstant == v shortcut),
+   this program never does.
 
    Build: cc -O2 -o constant_rows constant_rows.c
 */
@@ -26,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <strings.h>
 
 #define NA_CELL (-1)
 
@@ -72,7 +77,7 @@ static int read_array(const char *path, int v) {
     for (;;) {
         c = fgetc(f);
         int sep = (c == ' ' || c == '\t' || c == ',' || c == '\r' || c == '\n' || c == EOF);
-        if (!sep) { if (tl < 63) tok[tl++] = (char)c; continue; }
+        if (!sep) { if (tl >= 63) { fprintf(stderr, "token too long\n"); fclose(f); free(buf); return 0; } tok[tl++] = (char)c; continue; }
         if (tl > 0) {
             tok[tl] = 0; int val;
             if (!strcmp(tok, "-") || !strcmp(tok, "*") || !strcmp(tok, "x") || !strcmp(tok, "X") ||
@@ -91,6 +96,8 @@ static int read_array(const char *path, int v) {
     }
     fclose(f);
     if (rows == 0 || cols <= 0) { fprintf(stderr, "empty array\n"); free(buf); return 0; }
+    for (int i = 0; i < rows; i++) { int allna = 1; for (int c2 = 0; c2 < cols; c2++) if (buf[(size_t)i * cols + c2] != NA_CELL) { allna = 0; break; }
+        if (allna) { fprintf(stderr, "row %d consists only of don't-care entries\n", i + 1); free(buf); return 0; } }
     int shift = (minv == 1 && maxv == v) ? 1 : 0;   /* symbols 1..v */
     if (maxv - shift > v - 1 || minv - shift < 0) { fprintf(stderr, "symbols outside 0..%d\n", v - 1); free(buf); return 0; }
     N = rows; K = cols; V = v; D = buf;
@@ -102,14 +109,18 @@ int main(int argc, char **argv) {
     if (argc != 3) { fprintf(stderr, "usage: constant_rows FILE v\n"); return 2; }
     int v = atoi(argv[2]);
     if (v < 2 || !read_array(argv[1], v)) return 2;
+    /* the disjoint pairs, found once and kept as (i, j) with i < j */
     deg = calloc(N, sizeof(int));
-    long long total = 0;
-    for (int i = 0; i < N; i++) for (int j = i + 1; j < N; j++) if (disjoint(i, j)) { deg[i]++; deg[j]++; total += 2; }
+    size_t pcap = 1 << 16, np = 0; int *pairs = malloc(pcap * 2 * sizeof(int));
+    for (int i = 0; i < N; i++) for (int j = i + 1; j < N; j++) if (disjoint(i, j)) {
+        if (np == pcap) { pcap *= 2; pairs = realloc(pairs, pcap * 2 * sizeof(int)); }
+        pairs[2 * np] = i; pairs[2 * np + 1] = j; np++; deg[i]++; deg[j]++; }
     adj = malloc(N * sizeof(int *));
-    int *pool = malloc((total > 0 ? total : 1) * sizeof(int)); long long off = 0;
+    int *pool = malloc((np > 0 ? 2 * np : 1) * sizeof(int)); long long off = 0;
     for (int i = 0; i < N; i++) { adj[i] = pool + off; off += deg[i]; deg[i] = 0; }
-    for (int i = 0; i < N; i++) for (int j = i + 1; j < N; j++) if (disjoint(i, j)) { adj[i][deg[i]++] = j; adj[j][deg[j]++] = i; }
-    /* lists are built in increasing j for each i, so they are sorted */
+    for (size_t q = 0; q < np; q++) { int i = pairs[2 * q], j = pairs[2 * q + 1]; adj[i][deg[i]++] = j; adj[j][deg[j]++] = i; }
+    free(pairs);
+    /* pairs come in increasing (i, j) order, so every list is sorted */
     best_set = malloc(V * sizeof(int)); cur = malloc((V + 1) * sizeof(int)); best_size = 0; cur_size = 0;
     bufs = malloc((V + 2) * sizeof(int *)); for (int d = 0; d < V + 2; d++) bufs[d] = malloc((N > 0 ? N : 1) * sizeof(int));
     int *cand = malloc(N * sizeof(int)); for (int j = 0; j < N; j++) cand[j] = j;

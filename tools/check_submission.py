@@ -119,7 +119,7 @@ def parse_array(path, v):
         raise ClaimError("array file holds no rows")
     shifted = False
     if lo is None:
-        pass                              # all don't-care; coverage will fail
+        raise ClaimError("every entry of the array is a don't-care")
     elif lo == 0 and hi <= v - 1:
         pass                              # 0-based
     elif lo >= 1 and hi == v:
@@ -412,8 +412,13 @@ def check_claim(cl, ctx, deadline):
             # a property of the array for its use as an ingredient: the
             # largest number of rows that symbol permutations make constant
             cr_start = time.monotonic()
-            cl["constant_rows"] = run_constant_rows(ctx["constant_rows"], canon_path, v,
-                                                    ctx["constant_rows_budget"])
+            cr_budget = min(ctx["constant_rows_budget"], deadline() - time.monotonic())
+            cl["constant_rows"] = (run_constant_rows(ctx["constant_rows"], canon_path, v,
+                                                     cr_budget) if cr_budget > 1 else None)
+            cl["constant_rows_why"] = ("no constant_rows program (no C compiler?)"
+                                       if ctx["constant_rows"] is None else
+                                       "over the time budget" if cl["constant_rows"] is None
+                                       else "")
             cl["seconds"]["constant_rows"] = time.monotonic() - cr_start
         cl["passed"] = True
     except ClaimError as e:
@@ -629,7 +634,7 @@ def render_report(claims, ctx, all_pass, elapsed):
                      "symbols within columns (computed in %s)"
                      % (c["constant_rows"], c["v"], fmt_secs(c["seconds"].get("constant_rows", 0))))
         elif c["passed"]:
-            L.append("- constant rows: not computed (no compiler, or over the time budget)")
+            L.append("- constant rows: not computed (%s)" % c.get("constant_rows_why", "unknown"))
         if c["status"] == "screened":
             L.append("- screened, not exhaustively verified: %d random windows of "
                      "%d columns each verified in full at strength %d in %s "

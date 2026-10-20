@@ -3,8 +3,9 @@
 
 Same semantics as ca_verify.c (use that one for speed; this one runs anywhere
 Python does, no compiler needed). Verifies that an N x k array over v symbols
-covers every t-way interaction. Wildcard entries ('-', '*', 'x', 'NA', or -1)
-count as every symbol.
+covers every t-way interaction. A don't-care entry ('-', '*', 'x', 'NA', or
+-1) contributes nothing to a projection that contains it: coverage must hold
+on the concrete entries alone (the rule of caverify 0.2.0).
 
 Usage: ca_verify.py FILE t v
 Exit status: 0 = verified, 1 = gaps found, 2 = error.
@@ -50,11 +51,8 @@ def verify(rows, t, v, max_report=10):
         for r in rows:
             vals = [r[c] for c in cols]
             if WILD in vals:
-                opts = [range(v) if x == WILD else (x,) for x in vals]
-                for tup in product(*opts):
-                    seen.add(tup)
-            else:
-                seen.add(tuple(vals))
+                continue
+            seen.add(tuple(vals))
         miss = vt - len(seen)
         if miss:
             gaps += 1

@@ -13,8 +13,10 @@ the November 2024 status of Charlie Colbourn's covering array tables.
 ca_verify.c
 :   Fast strength-t coverage checker in portable C (pthreads). Reads a plain
     text array (whitespace or comma separated, symbols 0..v-1 or 1..v,
-    wildcard entries '-', '*', 'x', 'NA' or -1 allowed), checks that every
-    t-way interaction is covered, reports either VERIFIED or the missing
+    don't-care entries '-', '*', 'x', 'NA' or -1 allowed and contributing
+    nothing to a projection that contains them, the rule of caverify
+    0.2.0), checks that every t-way interaction is covered, reports either
+    VERIFIED or the missing
     tuples. Exit code 0/1/2 = verified / gaps / error, so it can gate a CI
     pipeline. Build: cc -O3 -pthread -o ca_verify ca_verify.c
 

@@ -1,4 +1,5 @@
 ## backfill_construction.R - fills the construction column of
+## (corrected 2026-10-20 for the three Dwyer twin rows after review)
 ## table/ca_table.csv for the verified rows that entered before the
 ## column existed (2026-10-20), from the catalogues in the CAs package
 ## that describe their sources. Nothing is guessed: each value names the
@@ -20,7 +21,20 @@ for (i in which(todo)) {
     sd <- tab$source_detail[i]; cons <- ""; basis <- ""
     if (grepl("^aadwyer/CA_Database ", sd)) {
         f <- sub("^aadwyer/CA_Database (Repository/CA/)?([^ ]+) via.*", "\\2", sd)
+        ## the three twin rows: dwyerCA fetched the smaller of two arrays
+        ## listed for the same parameters, so the array on file is the
+        ## catalogue's other entry, named by its actual row count
+        if (grepl("\\(repo file holds [0-9]+ rows\\)", sd)) {
+            held <- as.integer(sub(".*repo file holds ([0-9]+) rows.*", "\\1", sd))
+            f <- sprintf("CA_%d_%d_%d_%d.txt", held, tab$t[i], tab$k[i], tab$v[i])
+        }
         j <- match(f, rownames(dw))
+        if (is.na(j) && grepl("repo file holds", sd)) {
+            cons <- paste0("Dwyer CA_Database array ", sub("\\.txt$", "", f),
+                           ", the smaller of two arrays the repository holds for these ",
+                           "parameters and not listed in DWYERcat; method not recorded")
+            basis <- "DWYERcat lists only the larger twin for (t, v, k)"
+        }
         if (!is.na(j)) {
             cons <- paste0("Dwyer CA_Database source code \"", trimws(dw$Source[j]),
                            "\" (Aaron Dwyer's abbreviation for the method; many of his arrays ",
