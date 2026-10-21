@@ -34,19 +34,19 @@ a { color: inherit; }
 <p>A covering array CA(N; t, k, v) is an N by k array over v symbols in which every choice of t columns shows every one of the v<sup>t</sup> value combinations in some row. This table records, for each strength t and alphabet size v, the smallest known N for each number of columns k, and says where every entry comes from. The baseline is the November 2024 status of Charles J. Colbourn's covering array tables as preserved by Ulrike Groemping in the CAs R package (tier CITED). Entries with an explicit array in hand were checked exhaustively by a verifier and carry the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check in full on the public runner were screened on random column windows (tier SCREENED); they are listed but do not count as best known.</p>
 <p>Rows are stair-steps: an entry (t, v, k, N) means N runs suffice for up to k columns, so the best known N at k is the smallest N among entries with at least k columns. The construction column names the construction or search that produced each entry, where it is known. For every array on file, constant rows is the largest number of its rows that can be made constant by permuting symbols within columns, a property that matters when the array is an ingredient of another construction. Anyone can add an array by pull request; see <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/submissions/README.md">how to submit</a>. The data is <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/table">table/ in the repository</a>; the raw file <a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/ca_table.csv">table/ca_table.csv</a> is the machine-readable form (see the README for the stair-step rule and an R snippet).</p>
 <ul class="stats">
-<li>table rows <b>14,197</b></li>
-<li>verified rows <b>550</b></li>
-<li>screened rows <b>3</b></li>
+<li>table rows <b>14,200</b></li>
+<li>verified rows <b>553</b></li>
+<li>screened rows <b>0</b></li>
 <li>arrays on file <b>281</b></li>
-<li>verified arrays <b>278</b></li>
-<li>screened arrays <b>3</b></li>
+<li>verified arrays <b>281</b></li>
+<li>screened arrays <b>0</b></li>
 <li>community submissions <b>23</b></li>
 </ul>
-<p class="mute">Generated 2026-10-20 from table/ca_table.csv and table/MANIFEST.csv.</p>
+<p class="mute">Generated 2026-10-21 from table/ca_table.csv and table/MANIFEST.csv.</p>
 <h2>Community submissions</h2>
 <p class="mute">One entry per submission, newest first. Open one to see its arrays.</p>
-<details class=sub><summary><b>Mickael Bergeron</b>, bergeron-rms-2026-10: 23 arrays (20 verified, 3 screened), t = 3, v = 5 to 19, entered 2026-10-18</summary>
-<p class=subhead><span class=lbl>credit</span> Mickael Bergeron<br><span class=lbl>construction</span> Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2<br><span class=lbl>stamp</span> ca_verify fc28b3c 2026-10-18 github-actions<br><span class=lbl>entered</span> 2026-10-18</p>
+<details class=sub><summary><b>Mickael Bergeron</b>, bergeron-rms-2026-10: 23 arrays (23 verified), t = 3, v = 5 to 19, entered 2026-10-18</summary>
+<p class=subhead><span class=lbl>credit</span> Mickael Bergeron<br><span class=lbl>construction</span> Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2<br><span class=lbl>stamp</span> ca_verify fc28b3c 2026-10-18 github-actions (20 of 23 arrays, the others noted in their rows)<br><span class=lbl>entered</span> 2026-10-18 (20 of 23 arrays, the others noted in their rows)</p>
 <table><thead><tr><th class=n>t</th><th class=n>v</th><th class=n>k</th><th class=n>N</th><th class=n>prev. best</th><th class=n>const. rows</th><th>status</th></tr></thead><tbody>
 <tr><td class=n>3</td><td class=n>5</td><td class=n>32</td><td class=n>324</td><td class=n>349</td><td class=n>5 of 5</td><td><span class="tag ver">verified</span></td></tr>
 <tr><td class=n>3</td><td class=n>5</td><td class=n>33</td><td class=n>325</td><td class=n>349</td><td class=n>5 of 5</td><td><span class="tag ver">verified</span></td></tr>
@@ -68,9 +68,9 @@ a { color: inherit; }
 <tr><td class=n>3</td><td class=n>13</td><td class=n>184</td><td class=n>6252</td><td class=n>6421</td><td class=n>13 of 13</td><td><span class="tag ver">verified</span></td></tr>
 <tr><td class=n>3</td><td class=n>13</td><td class=n>196</td><td class=n>6253</td><td class=n>6565</td><td class=n>1 of 13</td><td><span class="tag ver">verified</span></td></tr>
 <tr><td class=n>3</td><td class=n>13</td><td class=n>197</td><td class=n>6422</td><td class=n>6565</td><td class=n>13 of 13</td><td><span class="tag ver">verified</span></td></tr>
-<tr><td class=n>3</td><td class=n>19</td><td class=n>382</td><td class=n>19854</td><td class=n>20215</td><td class=n>19 of 19</td><td><span class="tag scr">screened</span></td></tr>
-<tr><td class=n>3</td><td class=n>19</td><td class=n>400</td><td class=n>19855</td><td class=n>20575</td><td class=n>1 of 19</td><td><span class="tag scr">screened</span></td></tr>
-<tr><td class=n>3</td><td class=n>19</td><td class=n>401</td><td class=n>20216</td><td class=n>20575</td><td class=n>19 of 19</td><td><span class="tag scr">screened</span></td></tr>
+<tr><td class=n>3</td><td class=n>19</td><td class=n>382</td><td class=n>19854</td><td class=n>20215</td><td class=n>19 of 19</td><td><span class="tag ver">verified</span><span class=stamp>stamp ca_verify fc28b3c 2026-10-18 Darwin-arm64</span><span class=stamp>entered 2026-10-21</span></td></tr>
+<tr><td class=n>3</td><td class=n>19</td><td class=n>400</td><td class=n>19855</td><td class=n>20575</td><td class=n>1 of 19</td><td><span class="tag ver">verified</span><span class=stamp>stamp ca_verify fc28b3c 2026-10-18 Darwin-arm64</span><span class=stamp>entered 2026-10-21</span></td></tr>
+<tr><td class=n>3</td><td class=n>19</td><td class=n>401</td><td class=n>20216</td><td class=n>20575</td><td class=n>19 of 19</td><td><span class="tag ver">verified</span><span class=stamp>stamp ca_verify fc28b3c 2026-10-18 Darwin-arm64</span><span class=stamp>entered 2026-10-21</span></td></tr>
 </tbody></table></details>
 <h2>Best known N by strength and alphabet</h2>
 <p class="mute">Open a (t, v) pair to see its stair-step. Each rung gives the column range it serves, the best known N, and its evidence.</p>
@@ -4812,7 +4812,7 @@ a { color: inherit; }
 <tr><td class=n>8002 to 8463</td><td class=n>39347</td><td class=ev>Restricted CPHF Ext  6( 5, 6) WCS fuse</td></tr>
 <tr><td class=n>8464 to 10000</td><td class=n>39689</td><td class=ev>Restricted CPHF Ext  6( 4, 6) WCS fuse</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 19: 36 rungs, 0 verified, 3 screened</summary>
+<details><summary>t = 3, v = 19: 36 rungs, 3 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 20</td><td class=n>6859</td><td class=ev>orthogonal array</td></tr>
 <tr><td class=n>21</td><td class=n>11791</td><td class=ev>orthogonal array fuse fuse fuse fuse postop NCK</td></tr>
@@ -4822,10 +4822,10 @@ a { color: inherit; }
 <tr><td class=n>25 to 40</td><td class=n>13357</td><td class=ev>Chateauneuf-Kreher doubling</td></tr>
 <tr><td class=n>41 to 345</td><td class=n>13699</td><td class=ev>SCPHF LFSR (TJ-IM)</td></tr>
 <tr><td class=n>346 to 381</td><td class=n>13717</td><td class=ev>Raaphorst-Moura-Stevens</td></tr>
-<tr><td class=n>382</td><td class=n>20215</td><td class=ev>Add a factor</td></tr>
-<tr><td class=n>383 to 395</td><td class=n>20539</td><td class=ev>SCPHF Conditional Expectation (CLS)</td></tr>
-<tr><td class=n>396 to 399</td><td class=n>20574</td><td class=ev>perfect hash family2,760,381T361</td></tr>
-<tr><td class=n>400 to 405</td><td class=n>20575</td><td class=ev>CPHF Random Extension (CLS)</td></tr>
+<tr><td class=n>382</td><td class=n>19854</td><td class=ev><span class="tag ver">verified</span>Mickael Bergeron; <i>Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2</i>; https://github.com/MichelBacon/covering-arrays-rms-extension commit 2c4edea, regenerated 2026-10-18 by construct_one_copy.py 19 (md5 2bc14e5328e2d8a5cb784972d4102eda)<span class="stamp">ca_verify fc28b3c 2026-10-18 Darwin-arm64, sha256 c3295291c396, constant rows 19 of 19</span></td></tr>
+<tr><td class=n>383 to 400</td><td class=n>19855</td><td class=ev><span class="tag ver">verified</span>Mickael Bergeron; <i>Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2</i>; https://github.com/MichelBacon/covering-arrays-rms-extension commit 2c4edea, regenerated 2026-10-18 by construct_layers.py 19 19 (md5 84b9c989be8a6942a4bdf55bb07e645e)<span class="stamp">ca_verify fc28b3c 2026-10-18 Darwin-arm64, sha256 e901ce89b3c9, constant rows 1 of 19</span></td></tr>
+<tr><td class=n>401</td><td class=n>20216</td><td class=ev><span class="tag ver">verified</span>Mickael Bergeron; <i>Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2</i>; https://github.com/MichelBacon/covering-arrays-rms-extension commit 2c4edea, regenerated 2026-10-18 by construct_layers.py 20 19 (md5 d9993249f832ead0f4889b0c780fdae2)<span class="stamp">ca_verify fc28b3c 2026-10-18 Darwin-arm64, sha256 8b722f04c05f, constant rows 19 of 19</span></td></tr>
+<tr><td class=n>402 to 405</td><td class=n>20575</td><td class=ev>CPHF Random Extension (CLS)</td></tr>
 <tr><td class=n>406 to 509</td><td class=n>24303</td><td class=ev>SCPHF LFSR (TJ-IM) fuse fuse fuse fuse</td></tr>
 <tr><td class=n>510 to 553</td><td class=n>24325</td><td class=ev>Raaphorst-Moura-Stevens fuse fuse fuse fuse</td></tr>
 <tr><td class=n>554 to 717</td><td class=n>26353</td><td class=ev>Path-Restricted SCPHF RE (CLS)</td></tr>
@@ -4850,9 +4850,6 @@ a { color: inherit; }
 <tr><td class=n>7596 to 7620</td><td class=n>37494</td><td class=ev>Cohen-Colbourn-Ling</td></tr>
 <tr><td class=n>7621 to 8463</td><td class=n>39349</td><td class=ev>Restricted CPHF Ext  6( 5, 6) WCS</td></tr>
 <tr><td class=n>8464 to 10000</td><td class=n>39691</td><td class=ev>Restricted CPHF Ext  6( 4, 6) WCS</td></tr>
-<tr><td class=n>382</td><td class=n>19854</td><td class=ev><span class="tag scr">screened</span>Mickael Bergeron; <i>Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2</i>; https://github.com/MichelBacon/covering-arrays-rms-extension commit 2c4edea, regenerated 2026-10-18 by construct_one_copy.py 19 (md5 2bc14e5328e2d8a5cb784972d4102eda)<span class=stamp>ca_verify fc28b3c 2026-10-18 github-actions, not counted as best known, constant rows 19 of 19</span></td></tr>
-<tr><td class=n>400</td><td class=n>19855</td><td class=ev><span class="tag scr">screened</span>Mickael Bergeron; <i>Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2</i>; https://github.com/MichelBacon/covering-arrays-rms-extension commit 2c4edea, regenerated 2026-10-18 by construct_layers.py 19 19 (md5 84b9c989be8a6942a4bdf55bb07e645e)<span class=stamp>ca_verify fc28b3c 2026-10-18 github-actions, not counted as best known, constant rows 1 of 19</span></td></tr>
-<tr><td class=n>401</td><td class=n>20216</td><td class=ev><span class="tag scr">screened</span>Mickael Bergeron; <i>Raaphorst-Moura-Stevens extension (Bergeron 2026): m columns added to the RMS CA(2q^3 - 1; 3, q^2 + q + 1, q), q a prime power, using L = max(q - 2, ceil(m (q - 2) / q)) layers of q^2 rows; N = 2q^3 - 1 + q^2 L for m = 1 and N = 2q^3 + q^2 L for m &gt;= 2</i>; https://github.com/MichelBacon/covering-arrays-rms-extension commit 2c4edea, regenerated 2026-10-18 by construct_layers.py 20 19 (md5 d9993249f832ead0f4889b0c780fdae2)<span class=stamp>ca_verify fc28b3c 2026-10-18 github-actions, not counted as best known, constant rows 19 of 19</span></td></tr>
 </tbody></table></details>
 <details><summary>t = 3, v = 20: 85 rungs, 0 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>

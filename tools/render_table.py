@@ -112,6 +112,13 @@ def submissions_html(subs):
         vs = sorted({r["v"] for r in rs}); ts = sorted({r["t"] for r in rs})
         span = lambda xs: str(xs[0]) if len(xs) == 1 else "%d to %d" % (xs[0], xs[-1])
         uniform = {name: len({f(r) for r in rs}) == 1 for name, f in shared_fields}
+        # stamp and entry date: the most common value is shown once, and a
+        # row with a different one carries it under its status, so a few
+        # later checks do not add wide columns
+        common = {}
+        for name, f in shared_fields:
+            if name in ("stamp", "entered") and not uniform[name]:
+                common[name] = collections.Counter(f(r) for r in rs).most_common(1)[0][0]
         credits = sorted({credit_of(r) for r in rs})
         out.append("<details class=sub><summary><b>%s</b>, %s: %d array%s (%s), t = %s, "
                    "v = %s, entered %s</summary>" % (
@@ -119,14 +126,18 @@ def submissions_html(subs):
                        "" if len(rs) == 1 else "s",
                        ", ".join(x for x in ("%d verified" % nver if nver else "",
                                              "%d screened" % nscr if nscr else "") if x),
-                       span(ts), span(vs), html.escape(max(r["entered"] for r in rs))))
+                       span(ts), span(vs), html.escape(min(r["entered"] for r in rs))))
         lines = []
         for name, f in shared_fields:
             if uniform[name] and f(rs[0]):
                 lines.append("<span class=lbl>%s</span> %s" % (name, html.escape(f(rs[0]))))
+            elif name in common:
+                n = sum(1 for r in rs if f(r) == common[name])
+                lines.append("<span class=lbl>%s</span> %s (%d of %d arrays, the others noted "
+                             "in their rows)" % (name, html.escape(common[name]), n, len(rs)))
         if lines:
             out.append("<p class=subhead>%s</p>" % "<br>".join(lines))
-        cols = [name for name, _ in shared_fields if not uniform[name]]
+        cols = [name for name, _ in shared_fields if not uniform[name] and name not in common]
         out.append("<table><thead><tr><th class=n>t</th><th class=n>v</th><th class=n>k</th>"
                    "<th class=n>N</th><th class=n>prev. best</th><th class=n>const. rows</th>"
                    "<th>status</th>%s</tr></thead><tbody>"
@@ -138,6 +149,10 @@ def submissions_html(subs):
                    else '<span class="tag scr">screened</span>')
             extra = "".join("<td class=ev>%s</td>" % html.escape(f(r))
                             for name, f in shared_fields if name in cols)
+            note = "".join("<span class=stamp>%s %s</span>" % (name, html.escape(f(r)))
+                           for name, f in shared_fields
+                           if name in common and f(r) != common[name])
+            tag = tag + note
             out.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=n>%d</td>"
                        "<td class=n>%d</td><td class=n>%s</td><td class=n>%s</td><td>%s</td>%s</tr>"
                        % (r["t"], r["v"], r["k"], r["N"], prev.group(1) if prev else "",
@@ -186,9 +201,13 @@ def evidence_html(rs):
 def render(rows, manifest, date):
     global CR
     CR = {m["sha256"]: m.get("constant_rows", "") for m in manifest}
-    tiers = collections.Counter(r["tier"] for r in rows)
+    # a SCREENED row whose array was later verified in full (a VERIFIED row
+    # with the same hash) is superseded: kept in the table, not shown
+    verified_sha = {r["array_sha256"] for r in rows if r["tier"] == "VERIFIED" and r["array_sha256"]}
+    rows_shown = [r for r in rows if not (r["tier"] == "SCREENED" and r["array_sha256"] in verified_sha)]
+    tiers = collections.Counter(r["tier"] for r in rows_shown)
     mstat = collections.Counter(m["status"] for m in manifest)
-    subs = [r for r in rows if r["source_id"] == "S7" and r["tier"] in ("VERIFIED", "SCREENED")]
+    subs = [r for r in rows_shown if r["source_id"] == "S7" and r["tier"] in ("VERIFIED", "SCREENED")]
     by_tv = collections.defaultdict(list)
     for r in rows:
         by_tv[(r["t"], r["v"])].append(r)
@@ -247,7 +266,7 @@ def render(rows, manifest, date):
         rs = by_tv[(t, v)]
         steps = stair(rs)
         nver = sum(1 for _, _, _, e in steps if any(r["tier"] == "VERIFIED" for r in e))
-        scr = [r for r in rs if r["tier"] == "SCREENED"]
+        scr = [r for r in rs if r["tier"] == "SCREENED" and r["array_sha256"] not in verified_sha]
         H.append("<details><summary>t = %d, v = %d: %d rungs, %d verified%s</summary>"
                  % (t, v, len(steps), nver,
                     ", %d screened" % len(scr) if scr else ""))

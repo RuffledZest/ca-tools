@@ -5,11 +5,11 @@ living table that grows by pull request (`../submissions/README.md`).
 It replaces folklore with evidence: every entry says where it came
 from, and several hundred entries carry machine verification stamps
 tied to explicit arrays you can check yourself. Counts below are as
-of 2026-10-20.
+of 2026-10-21.
 
 ## What is here
 
-- `ca_table.csv` - the table, 14,197 rows, append-only, one row per
+- `ca_table.csv` - the table, 14,200 rows, append-only, one row per
   evidence event. Schema below.
 - `ca_table.rda` - the same table as a compressed R data frame
   (object `ca_table`), regenerated from the CSV by
@@ -19,10 +19,10 @@ of 2026-10-20.
 - `arrays/` - 281 explicit arrays in canonical form (0-based integer
   symbols, one run per line, space separated; `NA` marks a don't-care
   entry, see below). 224 equal the best-known size for their
-  parameters, 54 are SMALLER than the November 2024 snapshot's recorded
-  best (the MANIFEST `status` column separates `equals_best` from
-  `exceeds_snapshot`), and 3 are screened rather than verified. File names are `CA_N_t_k_v.txt`, with a hash
-  suffix where two distinct arrays share parameters.
+  parameters and 57 are SMALLER than the November 2024 snapshot's
+  recorded best (the MANIFEST `status` column separates `equals_best`
+  from `exceeds_snapshot`). File names are `CA_N_t_k_v.txt`, with a
+  hash suffix where two distinct arrays share parameters.
 - `MANIFEST.csv` - one row per array file: parameters, status,
   SHA-256 of the canonical file content, retrieval recipe,
   verification stamp, and `constant_rows` (added 2026-10-20): the
@@ -47,9 +47,9 @@ Some arrays contain `NA` don't-care entries. Verification uses the
 "promise" semantics: coverage holds on the concrete entries alone, so
 these arrays remain covering no matter how the don't-cares are filled.
 
-The 54 `exceeds_snapshot` arrays are published work, chiefly
-Torres-Jimenez arrays shipped in the CAs package and the 20 verified
-arrays of Mickael Bergeron's submission, whose run sizes beat the
+The 57 `exceeds_snapshot` arrays are published work, chiefly
+Torres-Jimenez arrays shipped in the CAs package and the 23 arrays of
+Mickael Bergeron's submission, whose run sizes beat the
 November 2024 snapshot's recorded rung at their parameters. The
 improvements belong to their published sources; this table's
 contribution is only the verification stamp and the side-by-side
@@ -127,8 +127,12 @@ packages:
 
 `ca_table.R` in this directory has `load_ca_table()` and the same
 `best_known()`, and `ca_table.rda` is the table as an R data frame.
-SCREENED rows are listed but excluded from best known on purpose. The
-file is about 1.7 MB and grows by one row per accepted claim.
+SCREENED rows are listed but excluded from best known on purpose. When
+a screened array is later verified in full, it gets a new VERIFIED row
+with that machine's stamp, the SCREENED row stays in the file, and the
+page no longer shows it. Bergeron's three v = 19 arrays went this way
+on 2026-10-21, from full checks run on 2026-10-18. The file is about
+1.7 MB and grows by one row per accepted claim.
 
 ### In place of the frozen Colbourn tables (eCAN, eCAK)
 
@@ -136,14 +140,16 @@ file is about 1.7 MB and grows by one row per accepted claim.
 Colbourn tables in `CAs::colbournBigFrame` and return the best N for
 at least k columns, or the most columns for at most N runs, with that
 row's Source text. This table can stand in for them.
-`tools/ecan_compare.R` checks it, and its output with CAs 0.24-4 on
-2026-10-20 is `../results/ecan_compare_2026-10-20.txt`. The 13,641
+`tools/ecan_compare.R` checks it. Its output with CAs 0.24-4 is
+kept in `../results/`, one file per date, the latest
+`ecan_compare_2026-10-21.txt`. The 13,641
 CITED rows equal `colbournBigFrame` row for row, with `construction`
 equal to its `Source`. The lookups below, run over the CITED rows
 alone, reproduce eCAN and eCAK exactly, number and Source text, at
 every one of the 13,641 points of the frozen tables. Run over the
-CITED and VERIFIED rows together, they give a smaller N at 21 of
-those points and more columns at 29, and never a worse value. In R,
+CITED and VERIFIED rows together, as of 2026-10-21 they give a
+smaller N at 24 of those points and more columns at 32, and never a
+worse value. In R,
 with `tab` read as above:
 
     eCAN_table <- function(tab, t, k, v) {

@@ -127,7 +127,7 @@ warns above 50 MiB, and recommends keeping a repository under 1 GB,
 and the table keeps a copy of every accepted array. For scale, the
 largest arrays on file, Bergeron's CA(20216; 3, 401, 19) and its two
 neighbors, are 18 to 19 MiB each as text. Array text compresses well,
-so git stores the whole repository, those three included, in under 7
+so git stores the whole repository, those three included, in about 7
 MB.
 
 GitHub's web page accepts uploads only up to 25 MiB per file, so an
