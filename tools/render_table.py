@@ -161,6 +161,36 @@ def submissions_html(subs):
     return out
 
 
+# the page legend for the table's columns; table/README.md "Schema" is the full text
+LEGEND = [
+    ("t, v, k, N", "the claim: N runs suffice for a covering array of strength t on up to k "
+     "columns of v symbols (stair-step: the best known N at k is the smallest N among "
+     "entries with at least k columns)"),
+    ("tier", "the evidence class. <b>CITED</b>: traceable to a dated snapshot or publication, "
+     "no array in hand (the 13,641 baseline rows are Colbourn's tables of November 2024). "
+     "<b>VERIFIED</b>: an explicit array was checked exhaustively at strength t. "
+     "<b>SCREENED</b>: an array too large for the public check, screened on random column "
+     "windows, listed but not counted as best known. <b>FAILED_PENDING_RECHECK</b>: a "
+     "verification attempt that failed its dimension check, kept and superseded by a later "
+     "row. <b>DISPUTED</b>: reserved for failures that survive recheck, none so far"),
+    ("source_id", "the source class. <b>S1</b> Colbourn's tables (the CAs snapshot), "
+     "<b>S4</b> NIST covering array library, <b>S5</b> Dwyer CA_Database, <b>S6</b> data "
+     "and constructions of the CAs package, <b>S7</b> literature and community submissions"),
+    ("source_detail", "the exact retrieval or generation recipe (URL and commit, or the "
+     "generating call and package version)"),
+    ("snapshot_id", "the dated source: <code>colbourn-2024-11-ug</code> for the baseline, "
+     "<code>pr-N</code> for pull request N"),
+    ("array_sha256", "SHA-256 of the array in canonical form (0-based symbols, one run per "
+     "line), for rows with an array"),
+    ("verify_stamp", "the verifier, its version or commit, the date and the machine"),
+    ("entered", "the date the row was added"),
+    ("notes", "comparison with the previous best, credit, submission, and supersession notes"),
+    ("lb, lb_evidence", "reserved for lower-bound evidence, empty in every row so far"),
+    ("construction", "the construction or search that produced the entry, in a researcher's "
+     "words; for the baseline it is Colbourn's own label"),
+]
+
+
 def stair(rows_tv):
     """Rungs (N, k_from, k_to, evidence rows) from CITED and VERIFIED rows."""
     ev = [r for r in rows_tv if r["tier"] in ("CITED", "VERIFIED")]
@@ -250,6 +280,13 @@ def render(rows, manifest, date):
     H.append("</ul>")
     H.append("<p class=\"mute\">Generated %s from table/ca_table.csv and "
              "table/MANIFEST.csv.</p>" % html.escape(date))
+
+    H.append("<details><summary>What the columns of ca_table.csv mean</summary>")
+    H.append("<table><thead><tr><th>column</th><th>meaning</th></tr></thead><tbody>")
+    for col, meaning in LEGEND:
+        H.append("<tr><td><code>%s</code></td><td class=ev>%s</td></tr>" % (html.escape(col), meaning))
+    H.append("</tbody></table><p class=\"mute\">The full schema is in "
+             "<a href=\"%s/blob/main/table/README.md\">table/README.md</a>.</p></details>" % REPO_URL)
 
     H.append("<h2>Community submissions</h2>")
     if not subs:

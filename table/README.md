@@ -9,16 +9,16 @@ of 2026-10-21.
 
 ## What is here
 
-- `ca_table.csv` - the table, 14,200 rows, append-only, one row per
+- `ca_table.csv` - the table, 14,205 rows, append-only, one row per
   evidence event. Schema below.
 - `ca_table.rda` - the same table as a compressed R data frame
   (object `ca_table`), regenerated from the CSV by
   `ca_table.R::make_rda()`.
 - `ca_table.R`, `ca_table.py` - small query helpers for R and Python
   (best known N, stair-step, verified rows). No dependencies.
-- `arrays/` - 281 explicit arrays in canonical form (0-based integer
+- `arrays/` - 286 explicit arrays in canonical form (0-based integer
   symbols, one run per line, space separated; `NA` marks a don't-care
-  entry, see below). 224 equal the best-known size for their
+  entry, see below). 229 equal the best-known size for their
   parameters and 57 are SMALLER than the November 2024 snapshot's
   recorded best (the MANIFEST `status` column separates `equals_best`
   from `exceeds_snapshot`). File names are `CA_N_t_k_v.txt`, with a
@@ -78,12 +78,17 @@ v symbols". `tier` is the evidence class:
   lists both, and dwyerCA always fetches the smaller, so walking
   every catalogue row trips the dimension check on the larger
   twins. All three arrays verify at their actual sizes.
+- `SCREENED` - an array too large for the public check, screened on
+  random column windows instead of verified in full (see
+  `../submissions/README.md`). Listed but not counted as best known;
+  when the array is later verified in full it gets a new VERIFIED row
+  (below).
 - `DISPUTED` - reserved for verification failures that survive
   recheck. None at publication.
 
 `source_id` names the source class (S1 Colbourn snapshot, S4 NIST
 covering array library, S5 Dwyer CA_Database, S6 the CAs package's
-data and constructions, S7 literature). `source_detail` is the exact
+data and constructions, S7 literature and community submissions). `source_detail` is the exact
 retrieval or generation recipe. `snapshot_id` dates the source.
 `lb, lb_evidence` are reserved for lower-bound evidence and are empty
 in this version. `construction` (added 2026-10-20) names the
@@ -200,11 +205,14 @@ caverify package.
 
 The table is append-only in its claims: a row's t, v, k, N, tier,
 source, hash, stamp and entry date are never changed, and a better N
-or a correction is a new row. Two things have been written into
-existing rows since publication, both recorded here: on 2026-10-20
+or a correction is a new row. Three things have been written into
+existing rows since publication, all recorded here: on 2026-10-20
 the new `construction` column was filled for rows that predate it
 (above), and the notes of the 23 Bergeron rows lost a fragment that
-repeated the previous best. To add a claim with evidence:
+repeated the previous best; on 2026-10-21 the `construction` text of
+the 24 CAEX rows was made precise (their last step is column
+extension by computer search, per the `CAs::CAEX` help page, not a
+product construction, which CAEX uses only for N = 34 and 36 to 50). To add a claim with evidence:
 
 1. Get the array (download, construct, or receive it) and note the
    exact recipe: URL and date, or the generating call and package

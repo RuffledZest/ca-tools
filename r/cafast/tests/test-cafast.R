@@ -33,6 +33,17 @@ check(nconst(M) == 2 && identical(attr(M, "constant_rows")$row_set_list, c(11L, 
       "maxconstant_c plan")
 check(nrow(maxconstant_c(plan, remove = TRUE)) == 12, "maxconstant_c remove")
 check(nconst(maxconstant_c(plan[-13, ], one_is_enough = TRUE)) == 1, "maxconstant_c one_is_enough")
+## duplicated constant rows count once and stay in the array as ordinary rows
+## (A: v = 2, the all-zero row twice; B: v = 3, the all-zero row twice and a
+## largest clique of 2 that the duplicate pair would otherwise imitate)
+A <- rbind(c(0,0,0), c(0,1,1), c(1,0,1), c(1,1,0), c(0,0,0))
+B <- rbind(c(0,0,0), c(0,0,0), c(0,1,2), c(1,2,0), c(2,1,1))
+MA <- maxconstant_c(A, verbose = 2); MB <- maxconstant_c(B, verbose = 2)
+check(identical(attr(MA, "constant_rows")$row_set_list, 1L) && nconst(MA) == 1 && nrow(MA) == 5,
+      "maxconstant_c duplicated constant row, v = 2")
+check(identical(attr(MB, "constant_rows")$row_set_list, c(1L, 5L)) && nconst(MB) == 2 && nrow(MB) == 5,
+      "maxconstant_c duplicated constant rows, v = 3")
+check(nrow(maxconstant_c(B, remove = TRUE)) == 3, "maxconstant_c remove keeps the duplicate")
 ## OA(64, 4, 4, 3) with NA cells, one of them in a clique row
 D <- as.matrix(expand.grid(0:3, 0:3, 0:3))
 D <- unname(cbind(D, (D[, 1] + D[, 2] + D[, 3]) %% 4))

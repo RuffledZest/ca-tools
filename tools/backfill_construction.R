@@ -1,5 +1,6 @@
 ## backfill_construction.R - fills the construction column of
-## (corrected 2026-10-20 for the three Dwyer twin rows after review)
+## (corrected 2026-10-20 for the three Dwyer twin rows after review; 2026-10-21 the CAEX
+## text: the stored arrays' last step is column extension, per the CAs::CAEX help page)
 ## table/ca_table.csv for the verified rows that entered before the
 ## column existed (2026-10-20), from the catalogues in the CAs package
 ## that describe their sources. Nothing is guessed: each value names the
@@ -57,8 +58,9 @@ for (i in which(todo)) {
     } else if (grepl("^CAs data CAEX_CAs ", sd)) {
         nm <- sub("^CAs data CAEX_CAs ([^,]+),.*", "\\1", sd)
         if (nm %in% names(CAEX_CAs)) {
-            cons <- paste0("Torres-Jimenez et al. (2021): strength 2, 3 levels, product construction ",
-                           "and column extension by computer search; stored array ", nm,
+            cons <- paste0("Torres-Jimenez, Acevedo-Juarez and Avila-George (2021), CA Extender: ",
+                           "strength 2, 3 levels, built on the best earlier arrays with a final ",
+                           "column extension by computer search; stored array ", nm,
                            " of CAs CAEX_CAs, lineage in CAs CAEX_lineages")
             basis <- paste0("CAs::CAEX_CAs[[\"", nm, "\"]]")
         }
