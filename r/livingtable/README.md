@@ -122,7 +122,8 @@ t=5: 1,670, t=6: 2,881.
 `data/better_verified.csv` holds the 17 VERIFIED_IMPROVED entries that
 were feasible to build and verify in full. All 17 verified, with
 margins of 1 to 170 rows over the snapshot (routes TJ, CK_doublingCA,
-ODbasedCA, DWYER).
+ODbasedCA, DWYER). Since 2026-10-21 all 17 are VERIFIED rows of
+`table/ca_table.csv`.
 
 The 9,007 UNRESOLVED entries are the subject of the arithmetic tier
 below, which reads size laws off their Source tags and splits the

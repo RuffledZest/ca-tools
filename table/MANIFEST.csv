@@ -285,3 +285,6 @@
 "CA_16_2_6435_2.txt",2,2,6435,16,"equals_best","1004934ee483406a29b3c448cab853342a3e143a8823f9e51b4a27573e309203","S6","CAs::KSK(k=6435), CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",1
 "CA_17_2_11440_2.txt",2,2,11440,17,"equals_best","b7160c1c77d653d5a0dcbdeb90fd8b648dc0ec482da249231689b02d3909958f","S6","CAs::KSK(k=11440), CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",1
 "CA_18_2_20000_2.txt",2,2,20000,18,"equals_best","f156194907bbc2b7cddb4cb24ea0ae520dc27bb1551a3ec9f8e53a777e304766","S6","CAs::KSK(k=20000), CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",1
+"CA_2215_3_16_10.txt",3,10,16,2215,"exceeds_snapshot","c9fd2c74c21d8371204f192499d48729893716f6e6c2d33d41d6d0bfc6d88edb","S6","CAs::bestCA(3, 16, 10, seed = 20260829) via CK_doublingCA, CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",10
+"CA_3381_3_12_14.txt",3,14,12,3381,"exceeds_snapshot","94767a2368e2326ece16b8d9d0e3c0432145df7824e6a860a7dedebd8015f662","S6","CAs::bestCA(3, 12, 14, seed = 20260829) via ODbasedCA, CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",14
+"CA_9330_3_12_20.txt",3,20,12,9330,"exceeds_snapshot","b88a6d1f59e266cee18e7e5ddb5287742d1f322fcce838692d6b471ccc0466d3","S6","CAs::bestCA(3, 12, 20, seed = 20260829) via ODbasedCA, CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",20

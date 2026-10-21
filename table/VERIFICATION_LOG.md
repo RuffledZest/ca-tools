@@ -116,3 +116,19 @@ k = 1716, 3003, 6435, 11440, 20000; N = 14 to 18) were built with
 checked again with `ca_verify.c` and `tools/constant_rows.c` on a
 second machine, all VERIFIED with one constant row each and file
 hashes equal to the stamps.
+
+## Three improvements from the CAs constructions, 2026-10-21
+
+In August 2026 the reproduction sweep found three entries where the
+CAs package's own implementations give fewer rows than the November
+2024 snapshot: (t, k, v) = (3, 16, 10) by Chateauneuf-Kreher doubling,
+2215 against 2223, and (3, 12, 14) and (3, 12, 20) by the ordered
+design construction of Cohen, Colbourn and Ling, 3381 against 3458
+and 9330 against 9500 (`../r/livingtable/data/better_verified.csv`).
+They were not entered then. On 2026-10-21 they were rebuilt exactly
+as in August, `CAs::bestCA(t, k, v, seed = 20260829)` with CAs 0.24-4,
+verified by caverify 0.2.0 on the Mac, checked again with
+`ca_verify.c` and `tools/constant_rows.c` on a second machine (all
+VERIFIED, v constant rows each), and entered as S6 rows with status
+exceeds_snapshot. The improvements belong to the CAs implementation
+and the published constructions, not to this project.

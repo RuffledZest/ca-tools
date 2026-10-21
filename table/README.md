@@ -11,17 +11,17 @@ not connected to submissions, so no row here is derived by it.
 
 ## What is here
 
-- `ca_table.csv` - the table, 14,205 rows, append-only, one row per
+- `ca_table.csv` - the table, 14,208 rows, append-only, one row per
   evidence event. Schema below.
 - `ca_table.rda` - the same table as a compressed R data frame
   (object `ca_table`), regenerated from the CSV by
   `ca_table.R::make_rda()`.
 - `ca_table.R`, `ca_table.py` - small query helpers for R and Python
   (best known N, stair-step, verified rows). No dependencies.
-- `arrays/` - 286 explicit arrays in canonical form (0-based integer
+- `arrays/` - 289 explicit arrays in canonical form (0-based integer
   symbols, one run per line, space separated; `NA` marks a don't-care
   entry, see below). 229 equal the best-known size for their
-  parameters and 57 are SMALLER than the November 2024 snapshot's
+  parameters and 60 are SMALLER than the November 2024 snapshot's
   recorded best (the MANIFEST `status` column separates `equals_best`
   from `exceeds_snapshot`). File names are `CA_N_t_k_v.txt`, with a
   hash suffix where two distinct arrays share parameters. An array
@@ -153,13 +153,13 @@ at least k columns, or the most columns for at most N runs, with that
 row's Source text. This table can stand in for them.
 `tools/ecan_compare.R` checks it. Its output with CAs 0.24-4 is
 kept in `../results/`, one file per run, the latest
-`ecan_compare_2026-10-21b.txt`. The 13,641
+`ecan_compare_2026-10-21c.txt`. The 13,641
 CITED rows equal `colbournBigFrame` row for row, with `construction`
 equal to its `Source`. The lookups below, run over the CITED rows
 alone, reproduce eCAN and eCAK exactly, number and Source text, at
 every one of the 13,641 points of the frozen tables. Run over the
 CITED and VERIFIED rows together, as of 2026-10-21 they give a
-smaller N at 24 of those points and more columns at 32, and never a
+smaller N at 27 of those points and more columns at 32, and never a
 worse value. In R,
 with `tab` read as above:
 
