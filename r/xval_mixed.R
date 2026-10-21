@@ -21,7 +21,7 @@
 ## (CAs derives level counts from the data, so this is the
 ## apples-to-apples contract).
 ##
-## Run from the Spectre folder:  Rscript ca-tools/r/xval_mixed.R [NB]
+## Run from the directory that contains ca-tools:  Rscript ca-tools/r/xval_mixed.R [NB]
 ## where NB (default 3000) is the number of Track B random cases.
 ## Expected final line: "XVAL PASS" (plus a case-count summary).
 

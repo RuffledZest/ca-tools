@@ -1,4 +1,4 @@
-# cafast 0.1.1 (development, after the 0.1.0 CRAN submission)
+# cafast (development version, to become 0.1.1)
 
 * `maxconstant_c()` counts a repeated constant row once. Constant rows
   already present are taken one per symbol; further copies stay in the

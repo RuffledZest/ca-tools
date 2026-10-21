@@ -81,3 +81,8 @@ attributes.
 Three independent adversarial reviews (2026-09-04 and 2026-09-05)
 preceded release, each by execution; every finding was fixed or
 documented above.
+
+## License
+
+GPL (>= 3), the license of the CAs package, whose routines this code
+follows closely; the same code is packaged in `../cafast`, also GPL (>= 3).

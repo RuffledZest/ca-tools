@@ -5,7 +5,9 @@ living table that grows by pull request (`../submissions/README.md`).
 It replaces folklore with evidence: every entry says where it came
 from, and several hundred entries carry machine verification stamps
 tied to explicit arrays you can check yourself. Counts below are as
-of 2026-10-21.
+of 2026-10-21. Improvements are not yet propagated through recursive
+constructions: the engine in `../r/livingtable` is run by hand and is
+not connected to submissions, so no row here is derived by it.
 
 ## What is here
 
@@ -22,7 +24,11 @@ of 2026-10-21.
   parameters and 57 are SMALLER than the November 2024 snapshot's
   recorded best (the MANIFEST `status` column separates `equals_best`
   from `exceeds_snapshot`). File names are `CA_N_t_k_v.txt`, with a
-  hash suffix where two distinct arrays share parameters.
+  hash suffix where two distinct arrays share parameters. An array
+  is stored when it equals or beats the best known size at entry; the other
+  246 VERIFIED rows (143 NIST, 100 Dwyer, 3 CAs), all above the best
+  known size, carry the hash, stamp and recipe, so the array can be
+  fetched again and checked against its hash.
 - `MANIFEST.csv` - one row per array file: parameters, status,
   SHA-256 of the canonical file content, retrieval recipe,
   verification stamp, and `constant_rows` (added 2026-10-20): the
@@ -74,10 +80,10 @@ v symbols". `tier` is the evidence class:
   dimension check. Kept because history is never rewritten; each such
   row is superseded by a later resolution row. The three present at
   publication share one cause, per U. Groemping: the Dwyer
-  CA_Database holds two arrays for some parameter sets, DWYERcat
-  lists both, and dwyerCA always fetches the smaller, so walking
-  every catalogue row trips the dimension check on the larger
-  twins. All three arrays verify at their actual sizes.
+  CA_Database holds two arrays for some parameter sets and dwyerCA
+  always fetches the smaller, so walking the catalogue trips the
+  dimension check on the larger twins (VERIFICATION_LOG.md has the
+  three pairs). All three arrays verify at their actual sizes.
 - `SCREENED` - an array too large for the public check, screened on
   random column windows instead of verified in full (see
   `../submissions/README.md`). Listed but not counted as best known;
@@ -146,8 +152,8 @@ Colbourn tables in `CAs::colbournBigFrame` and return the best N for
 at least k columns, or the most columns for at most N runs, with that
 row's Source text. This table can stand in for them.
 `tools/ecan_compare.R` checks it. Its output with CAs 0.24-4 is
-kept in `../results/`, one file per date, the latest
-`ecan_compare_2026-10-21.txt`. The 13,641
+kept in `../results/`, one file per run, the latest
+`ecan_compare_2026-10-21b.txt`. The 13,641
 CITED rows equal `colbournBigFrame` row for row, with `construction`
 equal to its `Source`. The lookups below, run over the CITED rows
 alone, reproduce eCAN and eCAK exactly, number and Source text, at
@@ -205,11 +211,13 @@ caverify package.
 
 The table is append-only in its claims: a row's t, v, k, N, tier,
 source, hash, stamp and entry date are never changed, and a better N
-or a correction is a new row. Three things have been written into
-existing rows since publication, all recorded here: on 2026-10-20
-the new `construction` column was filled for rows that predate it
-(above), and the notes of the 23 Bergeron rows lost a fragment that
-repeated the previous best; on 2026-10-21 the `construction` text of
+or a correction is a new row. Four things have been written into
+existing rows since publication, all recorded here: on 2026-10-19
+the `construction` text of the 23 Bergeron rows was corrected to the
+formula checked against all 23 arrays; on 2026-10-20 the new
+`construction` column was filled for rows that predate it (above),
+and the notes of the 23 Bergeron rows lost a fragment that repeated
+the previous best; on 2026-10-21 the `construction` text of
 the 24 CAEX rows was made precise (their last step is column
 extension by computer search, per the `CAs::CAEX` help page, not a
 product construction, which CAEX uses only for N = 34 and 36 to 50). To add a claim with evidence:
@@ -235,9 +243,30 @@ Since 2026-10-18 the usual route is the submission check
 (`../submissions/README.md`), which does steps 2 to 4 on a pull
 request and fills `construction` from the claim.
 
-Admissible sources and the full protocol are in
-TABLE_REGISTRATION.md in the maintainers' records; the short version
-is: dated, re-fetchable or re-derivable sources only.
+### Admissible sources
+
+Every row comes from a source that can be dated and fetched again or
+derived again. The source classes are:
+
+- S1, Colbourn's tables as preserved in `CAs::colbournBigFrame` (CAs
+  0.24, snapshot `colbourn-2024-11-ug`), the baseline.
+- S2, Ulrike Groemping's HTML mirror of the same tables, used only to
+  cross-check S1. No rows.
+- S3, Internet Archive captures of the original tables, each cited by
+  its capture URL and date, used only to compare the tables' history.
+  No rows.
+- S4, the NIST covering array library, explicit arrays cited by exact
+  URL.
+- S5, the Dwyer CA_Database, explicit arrays cited by commit and path.
+- S6, data and constructions of the CAs package, cited by package
+  version and generating call.
+- S7, the literature, cited by DOI or arXiv id (CITED, or VERIFIED
+  when the paper or its supplement provides the array), and community
+  submissions, explicit arrays verified by the submission check.
+
+Not admissible: forums, unversioned personal pages, private
+communications, anything that cannot be dated and fetched or derived
+again. A new source class is added by a dated change to this list.
 
 ## Attribution
 
@@ -245,7 +274,10 @@ The baseline is the work of Charles J. Colbourn (the covering array
 tables, 2005-2024) as preserved by Ulrike Groemping. Explicit arrays
 come from the NIST covering array library (IPOG-F), the Dwyer
 CA_Database (github.com/aadwyer/CA_Database), and the constructions
-and data of the CAs R package (Groemping). Verification stamps were
-produced with the caverify R package (this repository). The arrays
+and data of the CAs R package (Groemping), and from community
+submissions (S7), credited in each row, the first being Mickael
+Bergeron's (github.com/MichelBacon/covering-arrays-rms-extension).
+Verification stamps were produced with the caverify R package and,
+for submissions, with `ca_verify.c` (both in this repository). The arrays
 themselves are mathematical objects; each file's origin is in the
 MANIFEST.

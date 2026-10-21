@@ -2,7 +2,7 @@
 
 Fast engineering companions to the CAs package (Ulrike Groemping) for
 covering arrays. Part of ca-tools; separate from caverify, which stays
-the small certificate checker. Working name: rename at will.
+the small certificate checker.
 
 Everything here re-implements or generalises a routine of CAs and is
 tested against the CAs original on a battery that prints a DONE or PASS
@@ -13,7 +13,7 @@ from hers, what was tested and what the limits are.
 
 | function | replaces / extends | what it gives |
 |---|---|---|
-| `maxconstant_c(D, ...)` | `CAs::maxconstant` | same result up to symbol permutation, 60 to 100 times faster on real CAs (C clique search instead of igraph on an R-built graph) |
+| `maxconstant_c(D, ...)` | `CAs::maxconstant` | same result up to symbol permutation on arrays without duplicated rows (a repeated constant row counts once), 60 to 100 times faster on real CAs (C clique search instead of igraph on an R-built graph) |
 | `powerCT_any(t, k, v)`, `power_plan`, `power_build` | `CAs::powerCA` | the Colbourn and Torres-Jimenez power construction for any (t, k, v), not only the 132 catalogued settings; homogeneous case |
 | `count_core(x, t, vs)` | counting behind `CAs::coverage` | per t-subset tuple multiplicities, with row multiplicities (ca-tools countkernel) |
 | `flexpos_c`, `markflex_c` | `CAs::flexpos`, `CAs::markflex` | cell-for-cell reproductions in C |

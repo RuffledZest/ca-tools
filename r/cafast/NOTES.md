@@ -1,4 +1,4 @@
-# cafast (working name) - notes and register
+# cafast - notes and register
 
 Separate package from caverify, by decision 2026-09-13 (reply to Ulrike).
 Purpose: fast replacements for the slow parts of the CAs package that the

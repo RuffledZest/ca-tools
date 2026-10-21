@@ -1,7 +1,7 @@
 Package: cafast
 Type: Package
 Title: Fast Companions to the 'CAs' Package for Covering Arrays
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: person("Christopher", "Smolen",
     email = "chrispbsmolen@gmail.com", role = c("aut", "cre"))
 Description: Compiled implementations and generalizations of selected

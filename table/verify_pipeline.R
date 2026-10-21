@@ -1,5 +1,5 @@
 ## verify_pipeline.R - verification pipeline for the provenance table
-## Per TABLE_REGISTRATION.md (approved 2026-08-23), section 7.
+## The protocol is in table/README.md (How to append a row, Admissible sources).
 ##
 ## canon_serialize: canonical form = 0-based integer symbols, one run
 ## per line, k space-separated values, "NA" for flexible entries, \n

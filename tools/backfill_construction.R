@@ -59,9 +59,9 @@ for (i in which(todo)) {
         nm <- sub("^CAs data CAEX_CAs ([^,]+),.*", "\\1", sd)
         if (nm %in% names(CAEX_CAs)) {
             cons <- paste0("Torres-Jimenez, Acevedo-Juarez and Avila-George (2021), CA Extender: ",
-                           "strength 2, 3 levels, built on the best earlier arrays with a final ",
-                           "column extension by computer search; stored array ", nm,
-                           " of CAs CAEX_CAs, lineage in CAs CAEX_lineages")
+                           "strength 2, 3 levels, last construction step a column extension ",
+                           "by computer search; stored array ", nm,
+                           " of CAs CAEX_CAs, named in CAs CAEX_lineages")
             basis <- paste0("CAs::CAEX_CAs[[\"", nm, "\"]]")
         }
     } else if (grepl("^CAs::KSK\\(", sd)) {

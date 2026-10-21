@@ -1,8 +1,8 @@
 ## As run on 2026-09-05 for the calibration in this directory. Paths
 ## (living_table/, ca-tools/r/countkernel) refer to the working folder it
 ## ran from; adjust to run elsewhere. Produces nck_calibration_result.csv/.txt.
-## mac_nck_calibration.R - the NCK calibration gate at catalogue scale
-## (COUNTING_KERNEL_REGISTRATION.md section 5): her postopNCK versus
+## mac_nck_calibration.R (kept here as nck_calibration.R) - the NCK calibration gate at catalogue scale
+## (see ../README.md): her postopNCK versus
 ## our postopNCK_c on arrays built by her own constructions that carry
 ## real slack (rows above the best known size), identical parameters,
 ## many seeds, achieved sizes compared as distributions, every output
@@ -11,13 +11,12 @@
 ## whole run is projected BEFORE the main loop starts. Checkpointed per
 ## (instance, engine, seed) in nck_calibration_result.csv; resumable.
 ## Arrays are built in the parent process (network) before any fork.
-## Run from Spectre (alongside the retry pass is fine, it uses no
-## network after setup):
+## Run from the working folder described above (it uses no network after setup):
 ##   Rscript living_table/mac_nck_calibration.R [workers] pilot   (projection only)
 ##   Rscript living_table/mac_nck_calibration.R [workers] | tee -a living_table/nck_calibration_result.txt
 suppressMessages({library(CAs); library(caverify); library(parallel)})
 args <- commandArgs(TRUE)
-smoke <- "smoke" %in% args                 ## sandbox self-test mode
+smoke <- "smoke" %in% args                 ## quick self-test mode
 nc <- suppressWarnings(as.integer(args[1])); if (is.na(nc)) nc <- 6L
 kdir <- "ca-tools/r/countkernel"
 if (!file.exists(file.path(kdir, "nck_faces.so")))
@@ -29,7 +28,7 @@ seeds_hers <- 1:5; seeds_ours <- 1:20
 if (smoke) { seeds_hers <- 1; seeds_ours <- 1:2; nc <- 2L }
 
 ## ---- instance selection: NIST IPOG arrays (fetched by her nistCA) ----
-## Survey of 2026-09-04 (sandbox): her catalogue constructions are
+## Survey of 2026-09-04: her catalogue constructions are
 ## algebraically tight, 0-5% flexible cells, so NCK cannot act on
 ## them (as the paper predicts for such arrays). NIST's greedy IPOG
 ## arrays, the paper's own experimental family, carry real slack

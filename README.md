@@ -53,38 +53,41 @@ cafast::maxconstant_c), and the table at
 table/ca_table.csv (raw URL in table/README.md) is the machine-readable
 form of the whole thing, read with the stair-step rule.
 
-## R integration (r/)
-
-r/ca_verify_r.c and r/ca_verify.R
-:   The checker as a native R component: a single C file with a
-    registered .Call entry point and one R wrapper. The array passes
-    directly from R as an integer matrix, so there are no files and no
-    system calls. R's NA is the wildcard. Threading uses R's standard
-    OpenMP mechanism (portable to Windows via Rtools, automatic
-    single-threaded fallback). Symbols 0..v-1 or 1..v are detected
-    automatically.
+## R packages (r/)
 
 r/caverify/
-:   The same two files as a complete self-contained R package that
-    passes R CMD check (status OK). Its tests include a randomized
-    cross-validation against an independent pure R implementation.
-    Usable directly as a dependency for packages that prefer to stay
-    free of C code. Install with
-    `remotes::install_github("chrispbsmolen/ca-tools", subdir = "r/caverify")`,
-    or from CRAN once the submission clears.
+:   The verifier as an R package, caverify 0.2.0, on CRAN
+    (`install.packages("caverify")`). A don't-care entry (NA)
+    contributes nothing to a projection that contains it, so a verified
+    array stays covering however its NA entries are later filled.
+    Versions 0.1.x counted an NA as every symbol, a rule Ulrike
+    Groemping showed can certify an array that is not covering. Its
+    tests include a randomized cross-validation against an independent
+    pure R implementation, and r/xval_mixed.R cross-validates it
+    against the CAs package on mixed-level arrays.
 
-r/INTEGRATION.md
-:   Step-by-step instructions for either path: copying the two files
-    into an existing package, or depending on the demonstration
-    package.
+r/cafast/
+:   Fast C versions of routines of the CAs package (maxconstant_c,
+    flexpos_c, markflex_c, postopNCK_c, count_core, and the power
+    construction for any (t, k, v)), each tested against the CAs
+    original. Version 0.1.0 is under review at CRAN; the development
+    version here adds the change listed in its NEWS.md.
+
+r/countkernel/
+:   The development sources of cafast's counting kernel and of its
+    Nayeri-Colbourn-Konjevod post-optimizer, with their calibration
+    against CAs::postopNCK.
 
 r/livingtable/
 :   A dependency-propagation engine over the CAs catalogues, with the
     ledgers of the reproduction and verification campaign and an
     accounting of all 13,641 catalogue entries in nine classes.
-    VERIFIED 987 and VERIFIED_IMPROVED 24 are arrays CAs rebuilt and
-    caverify checked. RECURSIVE 4,425 are sizes a calibrated
-    construction law reproduces exactly from table ingredients,
+    VERIFIED 987 and VERIFIED_IMPROVED 24 are entries an implemented
+    route in CAs reproduces or beats; of these, 629 and 17 were built
+    and verified in full, the rest screened, unfinished or failed (these
+    are the engine's working labels, not the table's VERIFIED tier).
+    RECURSIVE 4,425 are sizes a calibrated construction law reproduces
+    exactly from table ingredients,
     nothing built, with RECURSIVE_TENTATIVE 531 where the reading may
     be coincidental and RECURSIVE_STALE 10 where the law now gives
     fewer rows than the entry. POST_OPTIMIZED 380 were finished by a
@@ -93,7 +96,9 @@ r/livingtable/
     constructions with no builder, and OPEN 3,322 wait on ingredients
     the tables never published. The one distinction that matters is
     between an array that exists and has been checked and a size
-    that only a construction accounts for. Details, laws and logs in
+    that only a construction accounts for. The engine is run by hand
+    and is not yet connected to submissions, so the table holds no
+    values derived by it. Details, laws and logs in
     r/livingtable/README.md.
 
 ## Validation
@@ -120,8 +125,9 @@ repositories routinely, e.g. in CI on every submission.
 ## Status and license
 
 Early version, offered to the community; suggestions and corrections
-welcome. MIT license (change freely if the community prefers otherwise).
-The license covers the code. The table data in table/ is not original
+welcome. The code is under the MIT license (LICENSE), except r/cafast
+and r/countkernel, which follow code of the CAs package closely and are
+under GPL (>= 3), the license of CAs. The table data in table/ is not original
 to this repository. Each row names its source, the sources are listed
 under Attribution in table/README.md, and the data remains subject to
 those sources' terms.

@@ -1,5 +1,5 @@
 ## mac_4a_q127.R - reproduces the q=127 type-4a full verification
-## that was first run in the cloud sandbox on 2026-09-03 (the
+## that was first run on a cloud machine on 2026-09-03 (the
 ## question of that date: does type 4a repair the faulty 3a cases).
 ## This is the one faulty field size small enough for FULL
 ## verification. Expected: cyc(127, 6, type="4a") builds 768 x 128

@@ -21,22 +21,26 @@ regenerated to k=1000; all CAEX_CAs and TJ2level_CAs arrays shipped
 in CAs 0.24. Embedded families beyond those two were not enumerated
 in this version.
 
-## The three dimension failures, resolved 2026-08-23
+## The three dimension failures, resolved 2026-08-23 and 2026-08-24
 
 CA_390_5_7_3, CA_478_5_8_3, CA_1544_5_28_3 (Dwyer, strength 5,
 three levels) failed dimension checks. Cause, explained by U.
 Groemping (2026-08-24): the Dwyer repository holds two arrays for
-some parameter sets, both are listed in DWYERcat, and the dwyerCA
-code always fetches the smaller one, so this run's walk over every
-catalogue row called dwyerCA for the three larger twins and received
-the smaller files, tripping the dimension check. Nothing is wrong
+some parameter sets and the dwyerCA code always fetches the smaller
+one, so this run's walk over the catalogue called dwyerCA for the
+three larger twins and received the smaller files, tripping the
+dimension check. DWYERcat lists both arrays of the pair for two of
+the three parameter sets (351 and 390 rows at k = 7, 1542 and 1544
+at k = 28) and only the larger for the third (478 at k = 8; the
+405-row array is not in DWYERcat), checked against CAs 0.24-4. Nothing is wrong
 with the repository or the files. Fresh downloads verified all three
 arrays at their actual sizes, and 351 and 405 equal the Colbourn
-best-known exactly. Resolution rows are appended in the table. The
-failed-attempt rows are retained unedited, history is never
-rewritten; their notes record the update-in-place guess held at
-stamp time, and an interim "cause undetermined" wording, both
-superseded by this section.
+best-known exactly. Resolution rows (entered 2026-08-24) are
+appended in the table, and the failed-attempt rows are retained
+unedited, history is never rewritten. The resolution rows' notes
+still say the repository file was "improved in place"; that was the
+guess held when they were written, and it is superseded by this
+section.
 
 ## Collection cross-check, 2026-08-23
 
@@ -78,3 +82,37 @@ Dwyer entries. These are improvements present in published sources,
 not discoveries of this project; they are included in the collection
 under status exceeds_snapshot, with the beaten snapshot value named
 in each row's notes.
+
+## Submissions through the check, 2026-10-18 onward
+
+From 2026-10-18 arrays also enter through the submission check
+(`../submissions/README.md`), which verifies them on the GitHub runner
+with `ca_verify.c` from this repository and stamps them
+`ca_verify <commit> <date> github-actions`. The first submission,
+Mickael Bergeron's 23 strength-3 arrays (pull request 1), gave 20
+VERIFIED rows; the three largest, at v = 19, were screened on random
+column windows because a full check did not fit the runner's budget.
+Those three were verified in full on the Mac on 2026-10-18 (same
+`ca_verify` commit, 16 threads) and entered as VERIFIED rows with that
+stamp on 2026-10-21, beside the retained SCREENED rows.
+
+## Don't-care rule of ca_verify.c corrected, 2026-10-20
+
+Until commit 50b439f, `ca_verify.c` (the submission check's verifier,
+not caverify) still let a don't-care entry count as every symbol, the
+rule caverify dropped on 2026-08-23. It now applies the same rule as
+caverify 0.2.0: a row contributes nothing to a projection in which it
+has a don't-care entry. All 33 arrays on file with don't-care entries
+were verified again under the corrected program, 33 of 33 VERIFIED
+(`../results/na_reverify_2026-10-20.txt`). The stamps minted with the
+earlier program on 2026-10-18 belong to Bergeron's arrays, which have
+no don't-care entries, so the rule does not affect them.
+
+## Five KSK arrays, 2026-10-21
+
+The five KSK entries the table held only as CITED (t = 2, v = 2,
+k = 1716, 3003, 6435, 11440, 20000; N = 14 to 18) were built with
+`CAs::KSK` (CAs 0.24-4), verified by caverify 0.2.0 on the Mac, and
+checked again with `ca_verify.c` and `tools/constant_rows.c` on a
+second machine, all VERIFIED with one constant row each and file
+hashes equal to the stamps.

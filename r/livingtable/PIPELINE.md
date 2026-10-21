@@ -190,6 +190,6 @@ log to results/<script>_result.txt; run in this order.
 The published table itself (ca_table.csv, append-only, tiered) is
 kept separately from this directory (the ca-tools table area, not
 part of r/livingtable/); this directory is the engine workshop. Machine outputs here were produced on either a
-cloud sandbox or the author's workstation; every number that matters
+cloud machine or the author's workstation; every number that matters
 is reproducible by rerunning the scripts above against CAs and
 caverify.

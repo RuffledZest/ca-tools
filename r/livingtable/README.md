@@ -131,9 +131,17 @@ class into the remaining final classes in
 
 ### Class names
 
-Every entry ends in one of nine classes. VERIFIED and
-VERIFIED_IMPROVED hold arrays that CAs rebuilt and caverify checked,
-at the recorded size or below it. RECURSIVE holds entries whose
+Every entry ends in one of nine classes. VERIFIED holds entries whose
+recorded size an implemented route reproduces exactly, and
+VERIFIED_IMPROVED entries where an implemented route beats it. These
+are the engine's working labels and do not mean that every array was
+checked: of the 985 MATCH entries in VERIFIED, 629 were built and
+verified in full, 267 passed a four-window screen (16 of those were in
+fact checked in full), 85 could not be finished on the machines used
+and 4 failed (the ledgers below); of the 24 VERIFIED_IMPROVED, 17 were
+built and verified in full. Nor are they the table's VERIFIED tier,
+which holds only rows of `table/ca_table.csv` with an array hash and a
+verification stamp. RECURSIVE holds entries whose
 recorded size a construction reproduces exactly from ingredients in
 the table, with nothing built. RECURSIVE_TENTATIVE is the same where
 the reading may be a coincidence or one ingredient is not a table
@@ -146,8 +154,8 @@ ingredient. DIRECT_ONLY holds published one-off constructions and
 search results with no table ingredient and no builder here. OPEN
 holds the entries whose ingredients the tables never published. The
 one distinction that matters is between an array that exists and has
-been checked (VERIFIED, VERIFIED_IMPROVED) and a size that only a
-construction accounts for (the RECURSIVE family). Two further names
+been checked (the executed rows of VERIFIED and VERIFIED_IMPROVED) and
+a size that only a construction accounts for (the RECURSIVE family). Two further names
 appear in the code. UNRESOLVED is the internal name for the 9,007
 entries between `engine_coverage.R` and the tally, and the family
 scripts can label a row RECURSIVE_BELOW (record below the law) on the
@@ -315,7 +323,7 @@ over 13,641 entries with no omissions:
 | DIRECT_ONLY | 339 | 2.5% |
 | OPEN | 3,322 | 24.4% |
 
-Entries with a handle (verified 1,011, search-tagged 3,623, RECURSIVE
+Entries with a handle (reproduced by a route 1,011, search-tagged 3,623, RECURSIVE
 4,425, each counted apart) number 9,059 of 13,641, 66.4 percent. By
 strength the share with a handle is 17.1 percent at t = 2, 70.1 at
 t = 3, 64.5 at t = 4, 85.0 at t = 5 and 94.2 at t = 6. Strength two is
@@ -455,7 +463,7 @@ replay test PASS (record reproduced after rewind and restore).
 
 The shipped `results/engine_demo_result.txt` and
 `results/mac_4a_q127_result.txt` were regenerated with the shipped
-scripts on 2026-09-05 (2-core sandbox, 2 workers for the demo), after
+scripts on 2026-09-05 (a 2-core cloud machine, 2 workers for the demo), after
 the scripts' output wording was changed, so that the logs are verbatim
 output of the scripts as shipped. The regenerated
 `data/engine_demo_diff.csv` was identical to the file produced on the

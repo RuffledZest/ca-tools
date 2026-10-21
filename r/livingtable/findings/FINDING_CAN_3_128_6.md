@@ -90,7 +90,7 @@ route: 1054 (CK doubling).
 ## What is NOT yet established
 
 Whether Colbourn (2010) itself claims 762 at these parameters
-(the paper is paywalled from the sandbox; the CAs documentation
+(the paper is paywalled and was not read; the CAs documentation
 already notes "various mistakes were found in tables of Colbourn (2010)"), and
 whether any non-cyclotomy source in the literature attains 762 or
 less. Until those are checked, this is stated as "the table

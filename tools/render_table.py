@@ -179,7 +179,8 @@ LEGEND = [
     ("source_detail", "the exact retrieval or generation recipe (URL and commit, or the "
      "generating call and package version)"),
     ("snapshot_id", "the dated source: <code>colbourn-2024-11-ug</code> for the baseline, "
-     "<code>pr-N</code> for pull request N"),
+     "<code>pr-N</code> (or the submission folder name) for a submission, empty where "
+     "<code>source_detail</code> already carries a dated recipe"),
     ("array_sha256", "SHA-256 of the array in canonical form (0-based symbols, one run per "
      "line), for rows with an array"),
     ("verify_stamp", "the verifier, its version or commit, the date and the machine"),
@@ -257,7 +258,10 @@ def render(rows, manifest, date):
              "explicit array in hand were checked exhaustively by a verifier and carry "
              "the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check "
              "in full on the public runner were screened on random column windows "
-             "(tier SCREENED); they are listed but do not count as best known.</p>")
+             "(tier SCREENED); they are listed but do not count as best known. Improvements "
+             "are not yet propagated through recursive constructions: the propagation engine "
+             "in <a href=\"%s/tree/main/r/livingtable\">r/livingtable</a> is run by hand and "
+             "is not connected to submissions, so no entry here is derived by it.</p>" % REPO_URL)
     H.append("<p>Rows are stair-steps: an entry (t, v, k, N) means N runs suffice for up "
              "to k columns, so the best known N at k is the smallest N among entries with "
              "at least k columns. The construction column names the construction or "
@@ -275,7 +279,8 @@ def render(rows, manifest, date):
                      ("screened rows, not yet verified in full", tiers["SCREENED"]), ("arrays on file", len(manifest)),
                      ("verified arrays", len(manifest) - mstat["screened"]),
                      ("screened arrays", mstat["screened"]),
-                     ("community submissions", len(subs))):
+                     ("community submissions", len({slug_of(r) for r in subs})),
+                     ("arrays from submissions", len(subs))):
         H.append("<li>%s <b>%s</b></li>" % (label, "{:,}".format(n)))
     H.append("</ul>")
     H.append("<p class=\"mute\">Generated %s from table/ca_table.csv and "
