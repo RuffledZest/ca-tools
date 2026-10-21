@@ -242,7 +242,7 @@ def render(rows, manifest, date):
              % (REPO_URL, REPO_URL, RAW_CSV))
     H.append("<ul class=\"stats\">")
     for label, n in (("table rows", len(rows)), ("verified rows", tiers["VERIFIED"]),
-                     ("screened rows", tiers["SCREENED"]), ("arrays on file", len(manifest)),
+                     ("screened rows, not yet verified in full", tiers["SCREENED"]), ("arrays on file", len(manifest)),
                      ("verified arrays", len(manifest) - mstat["screened"]),
                      ("screened arrays", mstat["screened"]),
                      ("community submissions", len(subs))):

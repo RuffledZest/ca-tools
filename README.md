@@ -6,7 +6,7 @@ tables catalogue.
 
 Built as a contribution to the covering array community, alongside the
 CAs R package by Ulrike Groemping (github.com/ugroempi/CAs), which preserves
-the November 2024 status of Charlie Colbourn's covering array tables.
+the November 2024 status of Charles J. Colbourn's covering array tables.
 
 ## What is in here
 
@@ -121,3 +121,7 @@ repositories routinely, e.g. in CI on every submission.
 
 Early version, offered to the community; suggestions and corrections
 welcome. MIT license (change freely if the community prefers otherwise).
+The license covers the code. The table data in table/ is not original
+to this repository. Each row names its source, the sources are listed
+under Attribution in table/README.md, and the data remains subject to
+those sources' terms.
