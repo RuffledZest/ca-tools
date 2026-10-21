@@ -1,0 +1,25 @@
+# On every pull request and on pushes to branches other than main: check
+# that the table, the MANIFEST, the array files and the documents agree,
+# and that every array file re-hashes to its MANIFEST entry. The generated
+# counts in table/README.md are refreshed after merge, so they are not
+# compared here (--pr). On main the same checks run inside table-page.yml.
+
+name: Consistency
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consistency
+        run: python3 tools/consistency.py --check --pr
+      - name: Self-test
+        run: python3 tools/check_submission.py --selftest --table-dir table > /dev/null
