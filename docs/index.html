@@ -34,11 +34,11 @@ a { color: inherit; }
 <p>A covering array CA(N; t, k, v) is an N by k array over v symbols in which every choice of t columns shows every one of the v<sup>t</sup> value combinations in some row. This table records, for each strength t and alphabet size v, the smallest known N for each number of columns k, and says where every entry comes from. The baseline is the November 2024 status of Charles J. Colbourn's covering array tables as preserved by Ulrike Groemping in the CAs R package (tier CITED). Entries with an explicit array in hand were checked exhaustively by a verifier and carry the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check in full on the public runner were screened on random column windows (tier SCREENED); they are listed but do not count as best known. Improvements are not yet propagated through recursive constructions: the propagation engine in <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/r/livingtable">r/livingtable</a> is run by hand and is not connected to submissions, so no entry here is derived by it.</p>
 <p>Rows are stair-steps: an entry (t, v, k, N) means N runs suffice for up to k columns, so the best known N at k is the smallest N among entries with at least k columns. The construction column names the construction or search that produced each entry, where it is known. For every array on file, constant rows is the largest number of its rows that can be made constant by permuting symbols within columns, a property that matters when the array is an ingredient of another construction. Anyone can add an array by pull request; see <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/submissions/README.md">how to submit</a>. The data is <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/table">table/ in the repository</a>; the raw file <a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/ca_table.csv">table/ca_table.csv</a> is the machine-readable form (see the README for the stair-step rule and an R snippet).</p>
 <ul class="stats">
-<li>table rows <b>14,205</b></li>
-<li>verified rows <b>558</b></li>
+<li>table rows <b>14,208</b></li>
+<li>verified rows <b>561</b></li>
 <li>screened rows, not yet verified in full <b>0</b></li>
-<li>arrays on file <b>286</b></li>
-<li>verified arrays <b>286</b></li>
+<li>arrays on file <b>289</b></li>
+<li>verified arrays <b>289</b></li>
 <li>screened arrays <b>0</b></li>
 <li>community submissions <b>1</b></li>
 <li>arrays from submissions <b>23</b></li>
@@ -4268,7 +4268,7 @@ a { color: inherit; }
 <tr><td class=n>9110 to 9283</td><td class=n>5089</td><td class=ev>Restricted CPHF Ext  7( 0, 2) WCS</td></tr>
 <tr><td class=n>9284 to 10000</td><td class=n>5097</td><td class=ev>CPHF IPO 7 (WCS)</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 10: 80 rungs, 15 verified</summary>
+<details><summary>t = 3, v = 10: 80 rungs, 16 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 4</td><td class=n>1000</td><td class=ev>Derive from strength 4</td></tr>
 <tr><td class=n>5</td><td class=n>1050</td><td class=ev>Li-Ji-Yin</td></tr>
@@ -4278,7 +4278,7 @@ a { color: inherit; }
 <tr><td class=n>12</td><td class=n>1299</td><td class=ev><span class="tag ver">verified</span><i>Dwyer CA_Database source code &quot;OA+&quot; (Aaron Dwyer&#x27;s abbreviation for the method; many of his arrays cite personal communication with Colbourn)</i>; aadwyer/CA_Database CA_1299_3_12_10.txt via CAs::dwyerCA, CAs 0.24<span class="stamp">caverify 0.2.0 2026-08-23 Darwin-arm64, sha256 27da098e0912, constant rows 9 of 10</span></td></tr>
 <tr><td class=n>13</td><td class=n>1858</td><td class=ev><span class="tag ver">verified</span><i>Dwyer CA_Database source code &quot;OA+&quot; (Aaron Dwyer&#x27;s abbreviation for the method; many of his arrays cite personal communication with Colbourn)</i>; aadwyer/CA_Database CA_1858_3_13_10.txt via CAs::dwyerCA, CAs 0.24<span class="stamp">caverify 0.2.0 2026-08-23 Darwin-arm64, sha256 07cb6e13f5ce, constant rows 8 of 10</span></td></tr>
 <tr><td class=n>14</td><td class=n>1885</td><td class=ev><span class="tag ver">verified</span><i>Dwyer CA_Database source code &quot;OA+&quot; (Aaron Dwyer&#x27;s abbreviation for the method; many of his arrays cite personal communication with Colbourn)</i>; aadwyer/CA_Database CA_1885_3_14_10.txt via CAs::dwyerCA, CAs 0.24<span class="stamp">caverify 0.2.0 2026-08-23 Darwin-arm64, sha256 b39c5a18440b, constant rows 8 of 10</span></td></tr>
-<tr><td class=n>15 to 16</td><td class=n>2223</td><td class=ev>Chateauneuf-Kreher doubling</td></tr>
+<tr><td class=n>15 to 16</td><td class=n>2215</td><td class=ev><span class="tag ver">verified</span><i>Chateauneuf-Kreher doubling (Chateauneuf and Kreher 2002), strength 3, as implemented in CAs (CK_doublingCA), the route chosen by CAs::bestCA</i>; CAs::bestCA(3, 16, 10, seed = 20260829) via CK_doublingCA, CAs 0.24.4<span class="stamp">caverify 0.2.0 2026-10-21 Darwin-arm64, sha256 c9fd2c74c21d, constant rows 10 of 10</span></td></tr>
 <tr><td class=n>17 to 18</td><td class=n>2232</td><td class=ev>Chateauneuf-Kreher doubling</td></tr>
 <tr><td class=n>19 to 20</td><td class=n>2250</td><td class=ev>Chateauneuf-Kreher doubling</td></tr>
 <tr><td class=n>21</td><td class=n>2334</td><td class=ev>Chateauneuf-Kreher doubling postop NCK</td></tr>
@@ -4531,13 +4531,13 @@ a { color: inherit; }
 <tr><td class=n>9754 to 9938</td><td class=n>13141</td><td class=ev>Restricted CPHF Ext  6( 0, 4) WCS</td></tr>
 <tr><td class=n>9939 to 10000</td><td class=n>13153</td><td class=ev>Restricted CPHF Ext  6( 0, 3) WCS</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 14: 72 rungs, 0 verified</summary>
+<details><summary>t = 3, v = 14: 72 rungs, 1 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 4</td><td class=n>2744</td><td class=ev>Derive from strength 4</td></tr>
 <tr><td class=n>5</td><td class=n>2842</td><td class=ev>Li-Ji-Yin</td></tr>
 <tr><td class=n>6</td><td class=n>2940</td><td class=ev>Ji-Yin</td></tr>
 <tr><td class=n>7 to 11</td><td class=n>3185</td><td class=ev>ordered design (CCL)</td></tr>
-<tr><td class=n>12</td><td class=n>3458</td><td class=ev>ordered design (CCL)</td></tr>
+<tr><td class=n>12</td><td class=n>3381</td><td class=ev><span class="tag ver">verified</span><i>ordered design based construction of Cohen, Colbourn and Ling (2003, 2008), strength 3, as implemented in CAs (ODbasedCA), the route chosen by CAs::bestCA</i>; CAs::bestCA(3, 12, 14, seed = 20260829) via ODbasedCA, CAs 0.24.4<span class="stamp">caverify 0.2.0 2026-10-21 Darwin-arm64, sha256 94767a2368e2, constant rows 14 of 14</span></td></tr>
 <tr><td class=n>13 to 14</td><td class=n>3549</td><td class=ev>ordered design (CCL)</td></tr>
 <tr><td class=n>15</td><td class=n>3967</td><td class=ev>orthogonal array fuse fuse postop NCK</td></tr>
 <tr><td class=n>16</td><td class=n>4002</td><td class=ev>orthogonal array fuse fuse postop NCK</td></tr>
@@ -4866,11 +4866,11 @@ a { color: inherit; }
 <tr><td class=n>7621 to 8463</td><td class=n>39349</td><td class=ev>Restricted CPHF Ext  6( 5, 6) WCS</td></tr>
 <tr><td class=n>8464 to 10000</td><td class=n>39691</td><td class=ev>Restricted CPHF Ext  6( 4, 6) WCS</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 20: 85 rungs, 0 verified</summary>
+<details><summary>t = 3, v = 20: 85 rungs, 1 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 6</td><td class=n>8000</td><td class=ev>orthogonal array (Ji-Yin)</td></tr>
 <tr><td class=n>7 to 11</td><td class=n>8930</td><td class=ev>ordered design (CCL)</td></tr>
-<tr><td class=n>12</td><td class=n>9500</td><td class=ev>ordered design (CCL)</td></tr>
+<tr><td class=n>12</td><td class=n>9330</td><td class=ev><span class="tag ver">verified</span><i>ordered design based construction of Cohen, Colbourn and Ling (2003, 2008), strength 3, as implemented in CAs (ODbasedCA), the route chosen by CAs::bestCA</i>; CAs::bestCA(3, 12, 20, seed = 20260829) via ODbasedCA, CAs 0.24.4<span class="stamp">caverify 0.2.0 2026-10-21 Darwin-arm64, sha256 b88a6d1f59e2, constant rows 20 of 20</span></td></tr>
 <tr><td class=n>13 to 14</td><td class=n>9690</td><td class=ev>ordered design (CCL)</td></tr>
 <tr><td class=n>15 to 16</td><td class=n>9880</td><td class=ev>ordered design (CCL)</td></tr>
 <tr><td class=n>17 to 20</td><td class=n>10070</td><td class=ev>ordered design (CCL)</td></tr>
