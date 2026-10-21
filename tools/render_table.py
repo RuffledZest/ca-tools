@@ -80,6 +80,34 @@ def constant_rows_of(r):
     return ("constant rows %s of %s" % (c, r["v"])) if c not in ("", None) else ""
 
 
+SHA2FILE = {}
+LOG_URL = REPO_URL + "/blob/main/table/VERIFICATION_LOG.md"
+ARRAY_URL = "https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/arrays/"
+
+
+def stamp_html(r):
+    """The verification stamp with links: the verifier it names (caverify by
+    version, on CRAN; ca_verify by the commit of its source), the stored array
+    if there is one, and the verification log."""
+    st = r.get("verify_stamp") or ""
+    m = re.match(r"^(caverify) (\S+)(.*)$", st)
+    m2 = re.match(r"^(ca_verify) ([0-9a-f]{7,40})(.*)$", st)
+    if m:
+        head = '<a href="https://cran.r-project.org/package=caverify">%s %s</a>%s' % (
+            m.group(1), html.escape(m.group(2)), html.escape(m.group(3)))
+    elif m2:
+        head = '<a href="%s/blob/%s/ca_verify.c">%s %s</a>%s' % (
+            REPO_URL, m2.group(2), m2.group(1), m2.group(2), html.escape(m2.group(3)))
+    else:
+        head = html.escape(st)
+    links = []
+    f = SHA2FILE.get(r.get("array_sha256") or "")
+    if f:
+        links.append('<a href="%s%s">array</a>' % (ARRAY_URL, html.escape(f)))
+    links.append('<a href="%s">verification log</a>' % LOG_URL)
+    return head + " (" + ", ".join(links) + ")"
+
+
 def construction_of(r):
     """The construction column; for rows that predate it, the source_detail
     of a CITED row is Colbourn's construction label."""
@@ -129,12 +157,14 @@ def submissions_html(subs):
                        span(ts), span(vs), html.escape(min(r["entered"] for r in rs))))
         lines = []
         for name, f in shared_fields:
+            show = (lambda r0: stamp_html(r0)) if name == "stamp" else (lambda r0: html.escape(f(r0)))
             if uniform[name] and f(rs[0]):
-                lines.append("<span class=lbl>%s</span> %s" % (name, html.escape(f(rs[0]))))
+                lines.append("<span class=lbl>%s</span> %s" % (name, show(rs[0])))
             elif name in common:
                 n = sum(1 for r in rs if f(r) == common[name])
+                r0 = next(r for r in rs if f(r) == common[name])
                 lines.append("<span class=lbl>%s</span> %s (%d of %d arrays, the others noted "
-                             "in their rows)" % (name, html.escape(common[name]), n, len(rs)))
+                             "in their rows)" % (name, show(r0), n, len(rs)))
         if lines:
             out.append("<p class=subhead>%s</p>" % "<br>".join(lines))
         cols = [name for name, _ in shared_fields if not uniform[name] and name not in common]
@@ -149,10 +179,11 @@ def submissions_html(subs):
                    else '<span class="tag scr">screened</span>')
             extra = "".join("<td class=ev>%s</td>" % html.escape(f(r))
                             for name, f in shared_fields if name in cols)
-            note = "".join("<span class=stamp>%s %s</span>" % (name, html.escape(f(r)))
+            note = "".join("<span class=stamp>%s %s</span>" % (name, stamp_html(r) if name == "stamp" else html.escape(f(r)))
                            for name, f in shared_fields
                            if name in common and f(r) != common[name])
-            tag = tag + note
+            af = SHA2FILE.get(r.get("array_sha256") or "")
+            tag = tag + note + ('<span class=stamp><a href="%s%s">array</a></span>' % (ARRAY_URL, html.escape(af)) if af else "")
             out.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=n>%d</td>"
                        "<td class=n>%d</td><td class=n>%s</td><td class=n>%s</td><td>%s</td>%s</tr>"
                        % (r["t"], r["v"], r["k"], r["N"], prev.group(1) if prev else "",
@@ -183,7 +214,9 @@ LEGEND = [
      "<code>source_detail</code> already carries a dated recipe"),
     ("array_sha256", "SHA-256 of the array in canonical form (0-based symbols, one run per "
      "line), for rows with an array"),
-    ("verify_stamp", "the verifier, its version or commit, the date and the machine"),
+    ("verify_stamp", "the verifier, its version or commit, the date and the machine; on this page "
+     "each stamp links to that verifier (caverify on CRAN, or the ca_verify source at that commit), "
+     "to the array file where one is stored, and to the verification log"),
     ("entered", "the date the row was added"),
     ("notes", "comparison with the previous best, credit, submission, and supersession notes"),
     ("lb, lb_evidence", "reserved for lower-bound evidence, empty in every row so far"),
@@ -221,7 +254,7 @@ def evidence_html(rs):
                          html.escape(cr + "; ") if cr else "",
                          ("<i>%s</i>; " % html.escape(con)) if con else "",
                          html.escape(r["source_detail"]),
-                         html.escape(r["verify_stamp"]), html.escape(r["array_sha256"][:12]),
+                         stamp_html(r), html.escape(r["array_sha256"][:12]),
                          (", " + crs) if crs else ""))
     else:
         r = rs[0]
@@ -232,6 +265,7 @@ def evidence_html(rs):
 def render(rows, manifest, date):
     global CR
     CR = {m["sha256"]: m.get("constant_rows", "") for m in manifest}
+    SHA2FILE.clear(); SHA2FILE.update({m["sha256"]: m["file"] for m in manifest})
     # a SCREENED row whose array was later verified in full (a VERIFIED row
     # with the same hash) is superseded: kept in the table, not shown
     verified_sha = {r["array_sha256"] for r in rows if r["tier"] == "VERIFIED" and r["array_sha256"]}
@@ -324,7 +358,7 @@ def render(rows, manifest, date):
                      "not counted as best known%s</span></td></tr>"
                      % (r["k"], r["N"], html.escape(credit_of(r) + "; ") if credit_of(r) else "",
                         ("<i>%s</i>; " % html.escape(construction_of(r)) if construction_of(r) else "")
-                        + html.escape(r["source_detail"]), html.escape(r["verify_stamp"]),
+                        + html.escape(r["source_detail"]), stamp_html(r),
                         (", " + constant_rows_of(r)) if constant_rows_of(r) else ""))
         H.append("</tbody></table></details>")
     H.append("</main></body></html>")
