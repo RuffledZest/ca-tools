@@ -85,8 +85,10 @@ res0 <- recompute(seq_len(nrow(ar)))
 N0 <- sapply(res0, `[[`, "N")
 cat(sprintf("identity: %d of %d RECURSIVE entries reproduce their recorded N from the frozen record (%.1f s)\n",
             sum(N0 == ar$N, na.rm = TRUE), nrow(ar), as.numeric(Sys.time() - t0, units = "secs")))
-bad <- which(is.na(N0) | N0 != ar$N)
-if (length(bad)) { cat("IDENTITY FAILURES (engine law disagrees with the calibration script):\n"); print(ar[bad, c("t","v","k","N","Source","arith_family")], row.names = FALSE); print(N0[bad]) }
+bad <- which(is.na(N0) | is.na(ar$N) | N0 != ar$N)
+if (length(bad)) { cat("IDENTITY FAILURES (engine law disagrees with the calibration script):\n"); print(ar[bad, c("t","v","k","N","Source","arith_family")], row.names = FALSE); print(N0[bad])
+    ## fail closed: a law that does not reproduce the record must not write edges or propagate
+    cat("ENGINE STOPPED: the identity test failed; nothing was written\n"); quit(save = "no", status = 1) }
 if (mode == "identity") {
     edges <- do.call(rbind, lapply(seq_len(nrow(ar)), function(i) { d <- res0[[i]]$deps; if (is.null(d)) return(NULL)
         d <- aggregate(list(mult = rep(1, nrow(d))), by = d[, c("t", "w", "v", "range")], FUN = sum)
@@ -163,8 +165,10 @@ repeat { sround <- sround + 1
     Ncur_S[ch] <- NS[ch]
     for (i in ch) apply_improvement(ar$t[i], ar$k[i], ar$v[i], Ncur_S[i], 1) }
 cat(sprintf("sweep mode: %d entries change, stable after %d rounds (%.1f s)\n", sum(Ncur_S < ar$N), sround, as.numeric(Sys.time() - t2, units = "secs")))
-agree <- all(Ncur_G == Ncur_S)
+agree <- isTRUE(all(Ncur_G == Ncur_S))
 cat("TWO-MODE AGREEMENT ON THE CLOSURE:", if (agree) "PASS" else "FAIL (sweep wins; investigate graph mode)", "\n")
+## fail closed: when the two modes disagree, no cascade is written
+if (!agree) { cat("ENGINE STOPPED: the two modes disagree on the closure; nothing was written\n"); quit(save = "no", status = 1) }
 changed <- which(Ncur_S < ar$N)
 casc <- ar[changed, c("t","v","k","N","Source","arith_family"), drop = FALSE]
 casc$N_new <- Ncur_S[changed]; casc$delta <- casc$N_new - casc$N

@@ -21,7 +21,8 @@
 #   synthetic     15 invented improvements chosen to set off a long cascade
 #                 (inputs/imp_synthetic.csv): 14 accepted, 415 entries change over
 #                 4 rounds; test input only, not claims about any array
-# For each propagation input: the two modes must agree on the closure, the
+# Every engine run must exit with status 0. For each propagation input: the
+# two modes must agree on the closure, the
 # cascade file must equal expected/cascade_<name>.csv, and the summary lines
 # (improvements offered and accepted, entries and rounds of each mode) must
 # equal expected/summary_<name>.txt.
@@ -42,18 +43,24 @@ Rscript -e 'cat("R", as.character(getRversion()), " CAs", as.character(packageVe
 # identity
 committed=$(sha "$LT/data/arith_edges.csv")
 rm -f data/arith_edges.csv
-Rscript arith_engine.R identity > "$WORK/identity.out" 2>&1
+Rscript arith_engine.R identity > "$WORK/identity.out" 2>&1; st=$?
 idline=$(grep "^identity:" "$WORK/identity.out" | sed 's/ (.*s)$//')
 ok=1
 echo "$idline" | grep -q "^identity: \([0-9]*\) of \1 RECURSIVE" || ok=0
 if [ -f data/arith_edges.csv ]; then edges=$(sha data/arith_edges.csv); else edges="missing"; ok=0; fi
 [ "$edges" = "$committed" ] || ok=0
+[ $st = 0 ] || ok=0
+why=""
+[ $st = 0 ] || why="the engine exited with status $st"
+[ -n "$why" ] || [ "$edges" != "missing" ] || why="no edges file was written"
+[ -n "$why" ] || [ "$edges" = "$committed" ] || why="the edges file differs from the repository"
+[ -n "$why" ] || echo "$idline" | grep -q "^identity: \([0-9]*\) of \1 RECURSIVE" || why="not every entry was reproduced"
 printf '%s\nedges %s\n' "$idline" "$edges" > "$WORK/identity.txt"
 if [ $RECORD = 1 ] && [ $ok = 1 ]; then cp "$WORK/identity.txt" "$HERE/expected/identity.txt"; fi
 if [ $ok = 1 ] && [ -f "$HERE/expected/identity.txt" ] && cmp -s "$WORK/identity.txt" "$HERE/expected/identity.txt"; then
     echo "identity   PASS  ($idline)"
 else
-    echo "identity   FAIL"; cat "$WORK/identity.txt"; echo "edges in the repository $committed"; tail -3 "$WORK/identity.out"; fail=1
+    echo "identity   FAIL  (${why:-identity.txt differs from expected/identity.txt})"; cat "$WORK/identity.txt"; echo "edges in the repository $committed"; tail -3 "$WORK/identity.out"; fail=1
 fi
 
 for name in september table synthetic; do
@@ -65,14 +72,16 @@ for name in september table synthetic; do
     cp "$HERE/inputs/$in" "$WORK/lt/$in"
     out="data/arith_cascade_${in%.csv}.csv"
     rm -f "$out"
-    Rscript arith_engine.R propagate "$in" > "$WORK/$name.out" 2>&1
+    Rscript arith_engine.R propagate "$in" > "$WORK/$name.out" 2>&1; st=$?
     grep -E "^improvements offered:|^graph mode: [0-9]+ entries|^sweep mode: [0-9]+ entries" "$WORK/$name.out" \
         | sed 's/ (.*s)$//' > "$WORK/summary_$name.txt"
     agree=$(grep -c "TWO-MODE AGREEMENT ON THE CLOSURE: PASS" "$WORK/$name.out")
     ok=1; why=""
-    [ "$agree" = 1 ] || { ok=0; why="the two modes do not agree"; }
-    [ -f "$out" ] || { ok=0; why="no cascade file was written"; }
-    [ "$(wc -l < "$WORK/summary_$name.txt")" -eq 3 ] || { ok=0; why="summary lines missing"; }
+    # the first reason found is the one reported; the exit status comes first
+    [ $st = 0 ] || { ok=0; why="the engine exited with status $st"; }
+    [ -n "$why" ] || [ "$agree" = 1 ] || { ok=0; why="the two modes do not agree"; }
+    [ -n "$why" ] || [ -f "$out" ] || { ok=0; why="no cascade file was written"; }
+    [ -n "$why" ] || [ "$(wc -l < "$WORK/summary_$name.txt")" -eq 3 ] || { ok=0; why="summary lines missing"; }
     if [ $RECORD = 1 ] && [ $ok = 1 ]; then
         cp "$out" "$HERE/expected/cascade_$name.csv"; cp "$WORK/summary_$name.txt" "$HERE/expected/summary_$name.txt"
     fi
