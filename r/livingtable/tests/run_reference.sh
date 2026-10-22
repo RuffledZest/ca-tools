@@ -25,7 +25,9 @@
 # two modes must agree on the closure, the
 # cascade file must equal expected/cascade_<name>.csv, and the summary lines
 # (improvements offered and accepted, entries and rounds of each mode) must
-# equal expected/summary_<name>.txt.
+# equal expected/summary_<name>.txt. The working of every change
+# (data/arith_chain_<input>.csv) must equal expected/chain_<name>.csv, and
+# tests/check_chains.R must recompute every value from its working alone.
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
 LT=$(cd "$HERE/.." && pwd)
@@ -35,7 +37,7 @@ WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 cp -R "$LT" "$WORK/lt"
 cd "$WORK/lt" || exit 2
-rm -f data/arith_cascade_imp_*.csv
+rm -f data/arith_cascade_imp_*.csv data/arith_chain_imp_*.csv
 fail=0
 sha() { (sha256sum "$1" 2>/dev/null || shasum -a 256 "$1") | cut -c1-64; }
 Rscript -e 'cat("R", as.character(getRversion()), " CAs", as.character(packageVersion("CAs")), "\n")'
@@ -71,7 +73,8 @@ for name in september table synthetic; do
     esac
     cp "$HERE/inputs/$in" "$WORK/lt/$in"
     out="data/arith_cascade_${in%.csv}.csv"
-    rm -f "$out"
+    chn="data/arith_chain_${in%.csv}.csv"
+    rm -f "$out" "$chn"
     Rscript arith_engine.R propagate "$in" > "$WORK/$name.out" 2>&1; st=$?
     grep -E "^improvements offered:|^graph mode: [0-9]+ entries|^sweep mode: [0-9]+ entries" "$WORK/$name.out" \
         | sed 's/ (.*s)$//' > "$WORK/summary_$name.txt"
@@ -82,20 +85,25 @@ for name in september table synthetic; do
     [ -n "$why" ] || [ "$agree" = 1 ] || { ok=0; why="the two modes do not agree"; }
     [ -n "$why" ] || [ -f "$out" ] || { ok=0; why="no cascade file was written"; }
     [ -n "$why" ] || [ "$(wc -l < "$WORK/summary_$name.txt")" -eq 3 ] || { ok=0; why="summary lines missing"; }
+    [ -n "$why" ] || [ -f "$chn" ] || { ok=0; why="no chain file was written"; }
+    [ -n "$why" ] || Rscript "$HERE/check_chains.R" "$chn" > "$WORK/chaincheck_$name.out" 2>&1 || { ok=0; why="a chain does not recompute to its value (check_chains.R)"; }
     if [ $RECORD = 1 ] && [ $ok = 1 ]; then
         cp "$out" "$HERE/expected/cascade_$name.csv"; cp "$WORK/summary_$name.txt" "$HERE/expected/summary_$name.txt"
+        cp "$chn" "$HERE/expected/chain_$name.csv"
     fi
     if [ $ok = 1 ]; then
-        if [ ! -f "$HERE/expected/cascade_$name.csv" ] || [ ! -f "$HERE/expected/summary_$name.txt" ]; then
+        if [ ! -f "$HERE/expected/cascade_$name.csv" ] || [ ! -f "$HERE/expected/summary_$name.txt" ] || [ ! -f "$HERE/expected/chain_$name.csv" ]; then
             ok=0; why="expected file missing"
         elif ! cmp -s "$out" "$HERE/expected/cascade_$name.csv"; then
             ok=0; why="cascade differs from expected/cascade_$name.csv"
         elif ! cmp -s "$WORK/summary_$name.txt" "$HERE/expected/summary_$name.txt"; then
             ok=0; why="summary differs from expected/summary_$name.txt"
+        elif ! cmp -s "$chn" "$HERE/expected/chain_$name.csv"; then
+            ok=0; why="working differs from expected/chain_$name.csv"
         fi
     fi
     if [ $ok = 1 ]; then
-        echo "$(printf '%-10s' $name) PASS  ($(($(wc -l < "$out") - 1)) entries change, two modes agree)"
+        echo "$(printf '%-10s' $name) PASS  ($(($(wc -l < "$out") - 1)) entries change, two modes agree, every working recomputes)"
     else
         echo "$(printf '%-10s' $name) FAIL  ($why)"; cat "$WORK/summary_$name.txt"; tail -3 "$WORK/$name.out"; fail=1
     fi

@@ -77,12 +77,13 @@ law_phf <- function(t, v, k, Source, ecan, ncan) {
 ## answers, a frozen partner counted as 1 constant row ----
 law_dp <- function(t, v, k, Source, ecan, ncan, kmax) {
     best <- Inf; deps <- data.frame(t = 2, w = kmax, v = v, range = TRUE)   ## any (2, w <= kmax, v) can move the minimum
+    pick <- NULL   ## the pair that gives the minimum, reported for the working (N and deps do not use it)
     for (k1 in 2:min(kmax, floor(sqrt(k)) + 1)) { k2 <- ceiling(k / k1); if (k2 > kmax) next
         n1 <- ncan(2, k1, v); n2 <- ncan(2, k2, v)
         cc <- if (is.na(n1) && is.na(n2)) v else min(v, ifelse(is.na(n1), 1, n1) + ifelse(is.na(n2), 1, n2))
         val <- ecan(2, k1, v) + ecan(2, k2, v) - cc
-        if (!is.na(val) && val < best) best <- val }
-    list(N = best, deps = deps)
+        if (!is.na(val) && val < best) { best <- val; pick <- c(k1 = k1, k2 = k2, cc = cc) } }
+    list(N = best, deps = deps, pick = pick)
 }
 ## ---- derive, add n factors, Martirosyan-Colbourn, CK doubling ----
 law_derive <- function(t, v, k, Source, ecan) { f <- as.numeric(sub(".*strength ([0-9]+)", "\\1", Source))

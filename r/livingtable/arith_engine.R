@@ -33,11 +33,24 @@
 ## have (CAs::maxconstant on the built array); absent, it is credited
 ## with one, the only number any covering array guarantees. Laws that
 ## assume v constant rows (c flags, the direct product) credit an
-## improved ingredient only for what it carries.
-## Result files: results/arith_engine_identity_result.txt (identity),
-## results/arith_engine_demo_result.txt and data/arith_cascade.csv (demo),
-## and for propagate, data/arith_cascade_<file>.csv (the improvements
-## file path is used as given).
+## improved ingredient only for what it carries. An improvement may also
+## carry an id column, used to name it in the working (otherwise it is
+## named by its t, k, v and N).
+## Result files: data/arith_cascade.csv and data/arith_chain.csv (demo),
+## and for propagate data/arith_cascade_<file>.csv and
+## data/arith_chain_<file>.csv (the base name of the improvements file);
+## the printed logs are kept under results/ by redirecting the output.
+## The chain file is the working of every change: for each entry in the
+## closure, the lookups its law made in the sweep round that set its final
+## value, with the value found, the k of the answering row, its source
+## (record, the offered improvement, or a derived entry of this run), the
+## constant-row credit used and the frozen-record value; for the direct
+## product, the pair the law chose and its credit. tests/check_chains.R
+## recomputes every value from its working: the law of its family evaluated
+## on the recorded values and credits (the direct product by its own rule on
+## the recorded pair), with no other lookup allowed.
+## The run stops with exit status 1 and writes nothing if the identity
+## test fails or the two modes disagree.
 suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame
 source("arith_laws.R")
 Mtab <- read.csv("data/arith_power_Mtable.csv", stringsAsFactors = FALSE)
@@ -48,7 +61,7 @@ cat("RECURSIVE entries:", nrow(ar), " by family:", paste(names(table(ar$arith_fa
 ## ---- the living table lookup: ecan(t, w, v) = min N over rows with k >= w ----
 LT <- new.env()
 build_lookup <- function(tab) {
-    LT$kmax <- list(); LT$Nk <- list(); LT$who <- list(); LT$nc <- list()
+    LT$kmax <- list(); LT$Nk <- list(); LT$who <- list(); LT$nc <- list(); LT$src <- list()
     for (key in unique(paste(tab$t, tab$v))) {
         tv <- strsplit(key, " ")[[1]]; s <- tab[tab$t == tv[1] & tab$v == tv[2], ]; s <- s[order(s$k), ]
         km <- max(s$k); Nk <- rep(NA_real_, km); who <- rep(NA_real_, km)
@@ -56,19 +69,24 @@ build_lookup <- function(tab) {
         best <- Inf; bk <- NA
         for (i in nrow(s):1) { if (s$N[i] < best) { best <- s$N[i]; bk <- s$k[i] }
             lo <- if (i == 1) 1 else s$k[i - 1] + 1; Nk[lo:s$k[i]] <- best; who[lo:s$k[i]] <- bk }
-        LT$kmax[[key]] <- km; LT$Nk[[key]] <- Nk; LT$who[[key]] <- who; LT$nc[[key]] <- rep(NA_real_, km) }
+        LT$kmax[[key]] <- km; LT$Nk[[key]] <- Nk; LT$who[[key]] <- who; LT$nc[[key]] <- rep(NA_real_, km)
+        LT$src[[key]] <- rep("record", km) }   ## where each lookup's answer comes from, for the working
 }
 ecan <- function(t, w, v) { key <- paste(t, v); Nk <- LT$Nk[[key]]; if (is.null(Nk) || w < 1 || w > length(Nk)) return(NA_real_); Nk[w] }
 whok <- function(t, w, v) { key <- paste(t, v); who <- LT$who[[key]]; if (is.null(who) || w < 1 || w > length(who)) return(NA_real_); who[w] }
 ncan <- function(t, w, v) { key <- paste(t, v); nc <- LT$nc[[key]]; if (is.null(nc) || w < 1 || w > length(nc)) return(NA_real_); nc[w] }
-apply_improvement <- function(t, k, v, N, nconst = 1) {
+apply_improvement <- function(t, k, v, N, nconst = 1, src = "") {
     key <- paste(t, v); Nk <- LT$Nk[[key]]; if (is.null(Nk)) return(invisible(FALSE))
     kk <- min(k, length(Nk)); idx <- 1:kk; hit <- Nk[idx] > N
     LT$Nk[[key]][idx][hit] <- N; LT$who[[key]][idx][hit] <- k; LT$nc[[key]][idx][hit] <- nconst
-    ## a tie in N keeps the larger constant-row credit (order independence within a batch)
+    LT$src[[key]][idx][hit] <- src
+    ## a tie in N keeps the larger constant-row credit (order independence within a batch);
+    ## the answering row and its source follow the credit, so the working names one row
     tie <- Nk[idx] == N & !is.na(LT$nc[[key]][idx]) & LT$nc[[key]][idx] < nconst
-    LT$nc[[key]][idx][tie] <- nconst; invisible(any(hit))
+    LT$nc[[key]][idx][tie] <- nconst; LT$who[[key]][idx][tie] <- k; LT$src[[key]][idx][tie] <- src
+    invisible(any(hit))
 }
+srcl <- function(t, w, v) { key <- paste(t, v); s <- LT$src[[key]]; if (is.null(s) || w < 1 || w > length(s)) return(NA_character_); s[w] }
 kmax2 <- function() { out <- list(); for (key in names(LT$kmax)) { tv <- strsplit(key, " ")[[1]]; if (tv[1] == "2") out[[tv[2]]] <- LT$kmax[[key]] }; out }
 base <- cb[, c("t", "k", "v", "N")]
 build_lookup(base); K2 <- kmax2()
@@ -143,7 +161,7 @@ direct_via <- sapply(seq_len(nrow(ar)), function(i) if (!direct[i]) "" else { d 
     paste(unique(hits), collapse = " ") })
 ## graph mode: rounds of candidates from the current improvements, applied, until no entry moves
 Ncur_G <- ar$N; round <- 0; cur <- imp
-snap <- list(Nk = LT$Nk, who = LT$who, nc = LT$nc)
+snap <- list(Nk = LT$Nk, who = LT$who, nc = LT$nc, src = LT$src)
 t1 <- Sys.time()
 while (nrow(cur)) { round <- round + 1
     cand <- candidates(cur)
@@ -155,15 +173,33 @@ while (nrow(cur)) { round <- round + 1
     cur <- if (length(ch)) data.frame(t = ar$t[ch], k = ar$k[ch], v = ar$v[ch], N = Ncur_G[ch], nconst = 1) else cur[0, ] }
 cat(sprintf("graph mode: %d entries change in %d rounds (%.1f s)\n", sum(Ncur_G < ar$N), round, as.numeric(Sys.time() - t1, units = "secs")))
 ## sweep mode from the same starting table: full recompute, apply, repeat
-LT$Nk <- snap$Nk; LT$who <- snap$who; LT$nc <- snap$nc
-for (j in seq_len(nrow(imp))) apply_improvement(imp$t[j], imp$k[j], imp$v[j], imp$N[j], imp$nconst[j])
+LT$Nk <- snap$Nk; LT$who <- snap$who; LT$nc <- snap$nc; LT$src <- snap$src
+imp_src <- if (!is.null(imp$id)) as.character(imp$id) else sprintf("improvement (%d,%d,%d)->%d", imp$t, imp$k_offered, imp$v, imp$N)
+for (j in seq_len(nrow(imp))) apply_improvement(imp$t[j], imp$k[j], imp$v[j], imp$N[j], imp$nconst[j], imp_src[j])
+## the working of each change, captured on the table as it stood when the value was computed
+frozen_val <- function(t, w, v) { Nk <- snap$Nk[[paste(t, v)]]; if (is.null(Nk) || w < 1 || w > length(Nk)) NA_real_ else Nk[w] }
+frozen_who <- function(t, w, v) { who <- snap$who[[paste(t, v)]]; if (is.null(who) || w < 1 || w > length(who)) NA_real_ else who[w] }
+chain_rows <- function(i, r, rnd) {
+    if (!is.null(r$pick)) { lk <- data.frame(t = 2, w = c(r$pick[["k1"]], r$pick[["k2"]]), v = ar$v[i], role = "direct product pair")
+                            credit <- r$pick[["cc"]] }
+    else { d <- r$deps[!r$deps$range, , drop = FALSE]; lk <- data.frame(t = d$t, w = d$w, v = d$v, role = rep("lookup", nrow(d))); credit <- NA }
+    data.frame(t = ar$t[i], v = ar$v[i], k = ar$k[i], N = ar$N[i], N_new = r$N, family = ar$arith_family[i], Source = ar$Source[i],
+               round = rnd, role = lk$role, ing_t = lk$t, ing_w = lk$w, ing_v = lk$v,
+               value = mapply(ecan, lk$t, lk$w, lk$v), answer_k = mapply(whok, lk$t, lk$w, lk$v),
+               answer_source = mapply(srcl, lk$t, lk$w, lk$v), nconst_credit = mapply(ncan, lk$t, lk$w, lk$v),
+               pair_credit = rep(credit, nrow(lk)),
+               value_frozen = mapply(frozen_val, lk$t, lk$w, lk$v), answer_k_frozen = mapply(frozen_who, lk$t, lk$w, lk$v),
+               stringsAsFactors = FALSE) }
+chains <- vector("list", nrow(ar))
 Ncur_S <- ar$N; sround <- 0; t2 <- Sys.time()
 repeat { sround <- sround + 1
-    NS <- sapply(recompute(seq_len(nrow(ar))), `[[`, "N"); ch <- which(!is.na(NS) & NS < Ncur_S)
+    RS <- recompute(seq_len(nrow(ar))); NS <- sapply(RS, `[[`, "N"); ch <- which(!is.na(NS) & NS < Ncur_S)
     cat(sprintf("sweep mode round %d: changed %d\n", sround, length(ch)))
     if (!length(ch)) break
+    for (i in ch) chains[[i]] <- chain_rows(i, RS[[i]], sround)   ## before this round's changes are applied
     Ncur_S[ch] <- NS[ch]
-    for (i in ch) apply_improvement(ar$t[i], ar$k[i], ar$v[i], Ncur_S[i], 1) }
+    for (i in ch) apply_improvement(ar$t[i], ar$k[i], ar$v[i], Ncur_S[i], 1,
+                                    sprintf("derived (%d,%d,%d)->%s", ar$t[i], ar$k[i], ar$v[i], format(Ncur_S[i], scientific = FALSE))) }
 cat(sprintf("sweep mode: %d entries change, stable after %d rounds (%.1f s)\n", sum(Ncur_S < ar$N), sround, as.numeric(Sys.time() - t2, units = "secs")))
 agree <- isTRUE(all(Ncur_G == Ncur_S))
 cat("TWO-MODE AGREEMENT ON THE CLOSURE:", if (agree) "PASS" else "FAIL (sweep wins; investigate graph mode)", "\n")
@@ -176,7 +212,11 @@ casc$via <- if (length(changed)) ifelse(direct_via[changed] != "", direct_via[ch
 casc$tier <- rep("RECURSIVE", nrow(casc))
 outfile <- if (mode == "demo") "data/arith_cascade.csv" else paste0("data/arith_cascade_", sub("\\.csv$", "", basename(impfile)), ".csv")
 write.csv(casc, outfile, row.names = FALSE)
+chainfile <- if (mode == "demo") "data/arith_chain.csv" else paste0("data/arith_chain_", sub("\\.csv$", "", basename(impfile)), ".csv")
+chain <- do.call(rbind, chains[changed])
+if (is.null(chain)) chain <- data.frame(t = numeric(0))
+write.csv(chain, chainfile, row.names = FALSE)
 cat("\n== CLOSURE:", nrow(casc), "RECURSIVE entries improve (claims propagated from the improvements) ==\n")
 if (nrow(casc)) print(casc[order(casc$t, casc$v, casc$k), c("t","v","k","N","N_new","delta","Source","via")], row.names = FALSE)
-cat("total rows saved across the closure:", -sum(casc$delta), " written:", outfile, "\n")
+cat("total rows saved across the closure:", -sum(casc$delta), " written:", outfile, "and", chainfile, "\n")
 cat("PROPAGATION DONE\n")

@@ -1,0 +1,8 @@
+"t","v","k","N","N_new","family","Source","round","role","ing_t","ing_w","ing_v","value","answer_k","answer_source","nconst_credit","pair_credit","value_frozen","answer_k_frozen"
+3,14,24,6279,6202,"Chateauneuf-Kreher doubling","Chateauneuf-Kreher doubling",1,"lookup",3,12,14,3381,12,"improvement (3,12,14)->3381",14,NA,3458,12
+3,14,24,6279,6202,"Chateauneuf-Kreher doubling","Chateauneuf-Kreher doubling",1,"lookup",2,12,14,217,12,"record",NA,NA,217,12
+5,14,23,3070224,3053515,"Martirosyan-TVT","Martirosyan-TVT variant",1,"lookup",5,12,14,857559,12,"record",NA,NA,857559,12
+5,14,23,3070224,3053515,"Martirosyan-TVT","Martirosyan-TVT variant",1,"lookup",4,12,14,59318,12,"record",NA,NA,59318,12
+5,14,23,3070224,3053515,"Martirosyan-TVT","Martirosyan-TVT variant",1,"lookup",2,11,14,217,12,"record",NA,NA,217,12
+5,14,23,3070224,3053515,"Martirosyan-TVT","Martirosyan-TVT variant",1,"lookup",3,12,14,3381,12,"improvement (3,12,14)->3381",14,NA,3458,12
+5,14,23,3070224,3053515,"Martirosyan-TVT","Martirosyan-TVT variant",1,"lookup",3,11,14,3185,11,"record",NA,NA,3185,11
