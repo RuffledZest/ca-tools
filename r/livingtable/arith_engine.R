@@ -1,5 +1,6 @@
-## arith_engine.R - the RECURSIVE tier wired as an engine organ. The living table is the frozen record (13,641 rows of
-## colbournBigFrame) plus verified improvements; the RECURSIVE entries
+## arith_engine.R - the RECURSIVE tier wired as an engine organ. The living table is the frozen record (13,641 rows,
+## read from the CITED rows of table/ca_table.csv and checked against the fingerprint of
+## CAs::colbournBigFrame, base_record.R; CAs itself is not needed) plus verified improvements; the RECURSIVE entries
 ## (data/arith_tally.csv, tier RECURSIVE) are recomputed from it by the
 ## laws in arith_laws.R, and every lookup an entry makes is recorded as
 ## an arithmetic edge (data/arith_edges.csv: child entry -> ingredient
@@ -22,6 +23,8 @@
 ##   Rscript arith_engine.R identity                 the frozen record must reproduce itself
 ##   Rscript arith_engine.R propagate improvements.csv   columns t,k,v,N (new best sizes)
 ##   Rscript arith_engine.R demo                     improvements = data/better_verified.csv
+## Any mode also takes --table=PATH (default ../../table/ca_table.csv); a table
+## whose CITED rows are not the calibrated record stops the run, nothing written.
 ## Outputs: data/arith_edges.csv (identity run; one row per distinct
 ## child -> lookup pair with its multiplicity, range rows for the
 ## direct product carry no answering row) and the cascade files named
@@ -35,7 +38,17 @@
 ## assume v constant rows (c flags, the direct product) credit an
 ## improved ingredient only for what it carries. An improvement may also
 ## carry an id column, used to name it in the working (otherwise it is
-## named by its t, k, v and N).
+## named by its t, k, v and N), and a priority_date or entered column
+## (YYYY-MM-DD). Improvements are put in a canonical order before anything
+## else: t, v, N, more constant rows first, the earlier priority date, the
+## wider array, the id. So the result does not depend on the order of the
+## file, and at equal size and equal constant rows the earlier work is the
+## one named. A later array of the same size is named only where it
+## carries more constant rows, at widths the earlier one does not cover,
+## or against a row with no date. An improvement that only equals
+## the table is not accepted, and where an improvement equals a frozen row
+## at some width, the frozen row stays named there.
+## The id is compared as text, character by character (C locale), so "10" sorts before "9".
 ## Result files: data/arith_cascade.csv and data/arith_chain.csv (demo),
 ## and for propagate data/arith_cascade_<file>.csv and
 ## data/arith_chain_<file>.csv (the base name of the improvements file);
@@ -51,7 +64,13 @@
 ## the recorded pair), with no other lookup allowed.
 ## The run stops with exit status 1 and writes nothing if the identity
 ## test fails or the two modes disagree.
-suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame
+options(scipen = 99)   ## every number written in full, never in scientific notation
+args <- commandArgs(TRUE); pos <- args[!grepl("^--", args)]
+## the base record: the CITED rows of the table, refused unless they are the calibrated record (base_record.R)
+source("base_record.R")
+br <- read_base(table_path(args))
+if (!br$ok) { cat(paste0("ENGINE STOPPED: ", br$why, "; nothing was written\n")); quit(save = "no", status = 1) }
+cb <- br$cb   ## t, v, k, N, Source; also read by the Add a factor chains in arith_laws.R
 source("arith_laws.R")
 Mtab <- read.csv("data/arith_power_Mtable.csv", stringsAsFactors = FALSE)
 tal <- read.csv("data/arith_tally.csv", stringsAsFactors = FALSE)
@@ -95,7 +114,7 @@ recompute <- function(idx) {
     lapply(idx, function(i) eval_law(ar$arith_family[i], ar$t[i], ar$v[i], ar$k[i], ar$Source[i], ecan, ncan, Mtab, K2))
 }
 
-mode <- commandArgs(TRUE)[1]; if (is.na(mode)) mode <- "identity"
+mode <- pos[1]; if (is.na(mode)) mode <- "identity"
 
 ## ---- identity: the frozen record reproduces itself, and the edges are written ----
 t0 <- Sys.time()
@@ -129,22 +148,38 @@ if (mode == "identity") {
 }
 
 ## ---- propagation ----
-impfile <- if (mode == "demo") "data/better_verified.csv" else commandArgs(TRUE)[2]
+impfile <- if (mode == "demo") "data/better_verified.csv" else pos[2]
 imp <- if (mode == "demo") { b <- read.csv("data/better_verified.csv", stringsAsFactors = FALSE); b <- b[b$verified %in% TRUE, ]
         data.frame(t = b$t, k = b$k, v = b$v, N = b$N_built) } else read.csv(impfile, stringsAsFactors = FALSE)
 if (is.null(imp$nconst)) imp$nconst <- 1
 imp$nconst[is.na(imp$nconst)] <- 1
 imp$k_offered <- imp$k
+## priority: the date the work first appeared publicly (priority_date), else the date it was
+## entered in the table (entered), else none; a malformed date is refused below
+pdate <- if (!is.null(imp$priority_date)) as.character(imp$priority_date) else rep(NA_character_, nrow(imp))
+if (!is.null(imp$entered)) pdate[is.na(pdate) | pdate == ""] <- as.character(imp$entered)[is.na(pdate) | pdate == ""]
+pdate[!is.na(pdate) & pdate == ""] <- NA
+imp$priority <- pdate
+## canonical order, so the result does not depend on the order of the input file:
+## t, v, N, then more constant rows, then the earlier priority date (none last), then the
+## wider array, then the id. At equal size the row applied first is the one named in the
+## working (a tie in N replaces it only for a larger constant-row credit), so at equal N
+## and equal constant rows the earlier work is credited.
+idk <- if (!is.null(imp$id)) as.character(imp$id) else rep(NA_character_, nrow(imp))
+imp <- imp[order(imp$t, imp$v, imp$N, -imp$nconst, imp$priority, -imp$k_offered, idk, na.last = TRUE, method = "radix"), , drop = FALSE]
+rownames(imp) <- NULL
 ## validation
 ok <- rep(TRUE, nrow(imp)); why <- rep("", nrow(imp))
 for (j in seq_len(nrow(imp))) { key <- paste(imp$t[j], imp$v[j])
-    if (is.null(LT$Nk[[key]])) { ok[j] <- FALSE; why[j] <- "no (t, v) in the table" }
+    if (!is.na(imp$priority[j]) && (!grepl("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", imp$priority[j]) || is.na(as.Date(imp$priority[j], format = "%Y-%m-%d", optional = TRUE)))) { ok[j] <- FALSE; why[j] <- "priority_date or entered must be YYYY-MM-DD" }
+    else if (is.null(LT$Nk[[key]])) { ok[j] <- FALSE; why[j] <- "no (t, v) in the table" }
     else if (imp$N[j] != round(imp$N[j]) || imp$k[j] != round(imp$k[j]) || imp$k[j] < imp$t[j]) { ok[j] <- FALSE; why[j] <- "N and k must be integers with k >= t" }
     else if (imp$N[j] < imp$v[j]^imp$t[j]) { ok[j] <- FALSE; why[j] <- "below the trivial bound v^t" }
     else if (imp$nconst[j] < 1 || imp$nconst[j] > imp$v[j]) { ok[j] <- FALSE; why[j] <- "nconst must be between 1 and v" }
     else { if (imp$k[j] > LT$kmax[[key]]) { why[j] <- sprintf("k clamped to the table's widest row %d", LT$kmax[[key]]); imp$k[j] <- LT$kmax[[key]] }
         if (!(ecan(imp$t[j], imp$k[j], imp$v[j]) > imp$N[j])) { ok[j] <- FALSE; why[j] <- "does not beat the current table" } } }
-cat("\nimprovements offered:", nrow(imp), " accepted:", sum(ok), "\n"); print(cbind(imp[, c("t","k_offered","v","N","nconst")], note = why), row.names = FALSE)
+cat("\nimprovements offered:", nrow(imp), " accepted:", sum(ok), "\n"); print(cbind(imp[, c("t","k_offered","v","N","nconst")], priority = ifelse(is.na(imp$priority), "", imp$priority),
+                                                                          id = if (is.null(imp$id)) "" else as.character(imp$id), note = why), row.names = FALSE)
 imp <- imp[ok, ]
 if (!nrow(imp)) { cat("no accepted improvement; nothing to propagate\nPROPAGATION DONE\n"); quit(save = "no") }
 ## dependency index for graph mode: every recorded lookup with its entry

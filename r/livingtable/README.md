@@ -276,7 +276,25 @@ the entries whose recorded lookups the improvement can move, applied
 and repeated with the changed entries as the next round's
 improvements) and sweep (recompute every RECURSIVE entry, apply,
 repeat), are each iterated to a fixpoint and must agree on the
-closure, the sweep winning otherwise.
+closure; a run in which they disagree stops and writes nothing.
+The engine starts from the CITED rows of `table/ca_table.csv`
+(`base_record.R`), which equal `colbournBigFrame` row for row; it
+refuses a table whose CITED rows do not give the recorded fingerprint,
+and needs only R, not CAs. Improvements are put in a fixed order
+before anything else, so the result does not depend on the order of
+the file. Where two improvements answer a lookup with the same N, the
+one named in the working is the one with more constant rows, then the
+earlier priority date (the date the work first appeared publicly,
+column `priority_date`, else the date it was entered in the table,
+column `entered`; a row with neither comes last), then the wider
+array, then the smaller id (compared as text, so "10" sorts before
+"9"). So among arrays of the same size the earlier work is credited.
+A later one is named only where it carries more constant rows (a law
+that credits constant rows may then give a smaller value from it), at
+widths the earlier one does not cover, or against a row with no date.
+An improvement that only equals the table is not accepted, and where
+an improvement equals a frozen row at some width, the frozen row stays
+named there.
 
 Demo (`results/arith_engine_demo_result.txt`, `data/arith_cascade.csv`).
 The 17 verified improvements of `data/better_verified.csv` were
@@ -615,7 +633,8 @@ per-row workers launched by `mac_finish2.R`, `mac_finish3.R` and
 `mac_powerct_refix.R` as subprocesses and are not run directly.
 
 The arithmetic tier, in this order (each script reads the frozen
-table inside CAs and, most of them, `data/engine_coverage.csv`, writes
+table inside CAs, except `arith_engine.R`, which reads the CITED rows
+of `table/ca_table.csv`, and, most of them, `data/engine_coverage.csv`, writes
 its csv to `data/`, and takes a few seconds apart from
 `arith_formula_mtvt.R` at about a minute; the whole sequence ran in
 about two minutes in the packaging test, plus about a minute for the
@@ -648,7 +667,9 @@ checks the law on the executed recipes. The family scripts do not
 depend on it. `arith_formula_fuse.R` reads the probe's csv,
 `arith_formula_cmmssy.R` reads the shipped tally (see above),
 `arith_formula_powercz.R` sources `cz_tables.R`, `arith_tally.R`
-reads every family csv, `arith_engine.R` reads `data/arith_tally.csv`
+reads every family csv, `arith_engine.R` reads the CITED rows of
+`../../table/ca_table.csv` (or the table given by `--table=PATH`)
+through `base_record.R`, reads `data/arith_tally.csv`
 and `data/arith_power_Mtable.csv` and sources `arith_laws.R` (which
 reads `data/arith_pcax_recipes.csv`), and the republish reads the
 tally. `arith_formula_power.R` reads `data/nct_key_status.csv` to
@@ -657,7 +678,8 @@ after any change, `Rscript mac_rename_check.R` reruns the tally and
 the republish and prints the counts of the nine classes against the
 expected numbers. To propagate your own improvements, give a
 csv with columns t, k, v, N and optionally nconst (constant rows the
-array carries, default 1):
+array carries, default 1), priority_date or entered (YYYY-MM-DD) and
+id:
 
     Rscript arith_engine.R propagate my_improvements.csv
 
@@ -738,6 +760,7 @@ Every size it contains is a claim.
 | `arith_tally.R` | the class of every UNRESOLVED entry, joined from the family csvs |
 | `arith_laws.R` | the law evaluators, one per admitted family (sourced by the engine) |
 | `arith_engine.R` | identity test, arithmetic edges, and two-mode propagation to closure |
+| `base_record.R` | reads the engine's base record from the CITED rows of the table and checks its fingerprint |
 | `arith_coverage_republish.R` | coverage accounting with the arithmetic tier counted apart |
 | `data/arith_formula_power.csv`, `data/arith_power_Mtable.csv` | per-row power calibration and the fitted N-CT hash family table, with the `nct_status` column |
 | `data/nct_key_status.csv` | CERTIFIED, REFUTED or OPEN for each of the 39 N-CT keys |

@@ -1,6 +1,6 @@
 ## check_chains.R - recomputes every derived value from its recorded working.
 ##
-##   Rscript tests/check_chains.R data/arith_chain_<name>.csv      (from r/livingtable/)
+##   Rscript tests/check_chains.R data/arith_chain_<name>.csv [--table=PATH]     (from r/livingtable/)
 ##
 ## For each entry in the chain file the size law of its family (arith_laws.R,
 ## the engine's own laws) is evaluated on the recorded lookup values and
@@ -12,10 +12,14 @@
 ## both are frozen), and e(2, k1, v) + e(2, k2, v) - credit. Every result must
 ## equal N_new exactly. Prints one line per failure and ends with CHAIN CHECK: PASS or FAIL
 ## (exit status 1 on failure).
-suppressMessages(library(CAs)); data(colbournBigFrame); cb <- colbournBigFrame   ## Add a factor chains read cb
+options(scipen = 99)
+args <- commandArgs(TRUE); f <- args[!grepl("^--", args)][1]
+source("base_record.R")   ## the same base record as the engine: the CITED rows of the table, fingerprint checked
+br <- read_base(table_path(args))
+if (!br$ok) { cat(br$why, "\nCHAIN CHECK: FAIL\n"); quit(save = "no", status = 1) }
+cb <- br$cb   ## Add a factor chains read cb
 source("arith_laws.R")
 Mtab <- read.csv("data/arith_power_Mtable.csv", stringsAsFactors = FALSE)
-f <- commandArgs(TRUE)[1]
 ch <- read.csv(f, stringsAsFactors = FALSE)
 if (!nrow(ch)) { cat("no chains in", f, "\nCHAIN CHECK: PASS (empty)\n"); quit(save = "no") }
 key <- paste(ch$t, ch$v, ch$k)

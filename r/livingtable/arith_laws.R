@@ -90,7 +90,7 @@ law_derive <- function(t, v, k, Source, ecan) { f <- as.numeric(sub(".*strength 
     list(N = floor(ecan(f, k + 1, v) / v), deps = data.frame(t = f, w = k + 1, v = v, range = FALSE)) }
 ## add n factors (tags "Add n factors" and "Add a factor"; for the latter
 ## n is the chain length of consecutive "Add a factor" rows in the frozen
-## record, which needs cb, colbournBigFrame, in scope as in arith_engine.R):
+## record, which needs cb, the base record (base_record.R), in scope as in arith_engine.R):
 ## N = ecan(t, b, v) + sum_{j=2}^{min(t, n+1)} v^(j-1) (v-1) ecan(t-j, b-1, v),
 ## b = k - n, ecan(1, ., v) = v, ecan(0, ., v) = 1 (arith_formula_addn.R)
 add_chain <- function(t, v, k) { f <- cb$k[cb$Source == "Add a factor" & cb$t == t & cb$v == v]; n <- 1

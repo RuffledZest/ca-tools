@@ -1,0 +1,3 @@
+improvements offered: 9  accepted: 9 
+graph mode: 8 entries change in 3 rounds
+sweep mode: 8 entries change, stable after 3 rounds
