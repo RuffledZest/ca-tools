@@ -21,6 +21,10 @@
 #   synthetic     15 invented improvements chosen to set off a long cascade
 #                 (inputs/imp_synthetic.csv): 14 accepted, 415 entries change over
 #                 4 rounds; test input only, not claims about any array
+#   credit        3 invented improvements with one constant row each (inputs/imp_credit.csv),
+#                 power entries tagged c and direct products are credited for the one
+#                 constant row; the third row is below the trivial bound and rejected (2 accepted);
+#                 6 entries change; test input only
 # Every engine run must exit with status 0. For each propagation input: the
 # two modes must agree on the closure, the
 # cascade file must equal expected/cascade_<name>.csv, and the summary lines
@@ -65,11 +69,12 @@ else
     echo "identity   FAIL  (${why:-identity.txt differs from expected/identity.txt})"; cat "$WORK/identity.txt"; echo "edges in the repository $committed"; tail -3 "$WORK/identity.out"; fail=1
 fi
 
-for name in september table synthetic; do
+for name in september table synthetic credit; do
     case $name in
         september) in=imp_september.csv ;;
         table) in=imp_table_0cc536b.csv ;;
         synthetic) in=imp_synthetic.csv ;;
+        credit) in=imp_credit.csv ;;
     esac
     cp "$HERE/inputs/$in" "$WORK/lt/$in"
     out="data/arith_cascade_${in%.csv}.csv"

@@ -1,0 +1,12 @@
+"t","v","k","N","N_new","family","Source","round","role","ing_t","ing_w","ing_v","value","answer_k","answer_source","nconst_credit","pair_credit","value_frozen","answer_k_frozen"
+5,2,2380,938,910,"Power CT","Power CT68^2,cT33c",1,"lookup",5,68,2,131,68,"improvement (5,68,2)->131",1,NA,136,68
+5,2,2380,938,910,"Power CT","Power CT68^2,cT33c",1,"lookup",5,35,2,131,68,"improvement (5,68,2)->131",1,NA,134,35
+5,2,4624,940,910,"Power CT","Power CT68^2,c",1,"lookup",5,68,2,131,68,"improvement (5,68,2)->131",1,NA,136,68
+5,2,4896,988,983,"Power CT","Power CT72^2,cT4c",1,"lookup",5,72,2,144,72,"record",NA,NA,144,72
+5,2,4896,988,983,"Power CT","Power CT72^2,cT4c",1,"lookup",5,68,2,131,68,"improvement (5,68,2)->131",1,NA,136,68
+5,2,5440,1078,1073,"Power CT","Power CT80^2,cT12c",1,"lookup",5,80,2,159,80,"record",NA,NA,159,80
+5,2,5440,1078,1073,"Power CT","Power CT80^2,cT12c",1,"lookup",5,68,2,131,68,"improvement (5,68,2)->131",1,NA,136,68
+2,6,600,115,112,"Direct product","Direct product",1,"direct product pair",2,24,6,57,25,"improvement (2,25,6)->57",1,2,66,24
+2,6,600,115,112,"Direct product","Direct product",1,"direct product pair",2,25,6,57,25,"improvement (2,25,6)->57",1,2,67,26
+2,6,624,116,112,"Direct product","Direct product",1,"direct product pair",2,25,6,57,25,"improvement (2,25,6)->57",1,2,67,26
+2,6,624,116,112,"Direct product","Direct product",1,"direct product pair",2,25,6,57,25,"improvement (2,25,6)->57",1,2,67,26
