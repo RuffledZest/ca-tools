@@ -66,13 +66,15 @@ Some arrays contain `NA` don't-care entries. Verification uses the
 "promise" semantics: coverage holds on the concrete entries alone, so
 these arrays remain covering no matter how the don't-cares are filled.
 
-The 57 `exceeds_snapshot` arrays are published work, chiefly
-Torres-Jimenez arrays shipped in the CAs package and the 23 arrays of
-Mickael Bergeron's submission, whose run sizes beat the
-November 2024 snapshot's recorded rung at their parameters. The
-improvements belong to their published sources; this table's
-contribution is only the verification stamp and the side-by-side
-accounting. Each such row's notes name the snapshot value it beats.
+The `exceeds_snapshot` arrays (their number is in the counts above)
+are other people's work: Torres-Jimenez arrays shipped in the CAs
+package, arrays built by the CAs package's implementations of
+published constructions, an array from Aaron Dwyer's CA_Database, and
+the 23 arrays of Mickael Bergeron's submission, whose run sizes beat the November 2024 snapshot's
+recorded rung at their parameters. The improvements belong to their
+sources; this table's contribution is only the verification stamp and
+the side-by-side accounting. Each such row's notes name the snapshot
+value it beats.
 
 ## Schema
 
@@ -86,9 +88,10 @@ v symbols". `tier` is the evidence class:
   Ulrike Groemping preserved in her CAs package after the original
   site (public.asu.edu/~ccolbou) became unavailable.
 - `VERIFIED` - an explicit array is in hand and was checked
-  exhaustively by the caverify kernel at the claimed strength. The
-  row carries the array's SHA-256 (canonical form) and a stamp naming
-  the caverify version, date, and machine.
+  exhaustively at the claimed strength, by the caverify kernel or, for
+  community submissions, by `ca_verify.c` at a fixed commit. The row
+  carries the array's SHA-256 (canonical form) and a stamp naming the
+  verifier and its version or commit, the date, and the machine.
 - `FAILED_PENDING_RECHECK` - a verification attempt that failed its
   dimension check. Kept because history is never rewritten; each such
   row is superseded by a later resolution row. The three present at
@@ -225,16 +228,26 @@ caverify package.
 
 The table is append-only in its claims: a row's t, v, k, N, tier,
 source, hash, stamp and entry date are never changed, and a better N
-or a correction is a new row. Four things have been written into
-existing rows since publication, all recorded here: on 2026-10-19
-the `construction` text of the 23 Bergeron rows was corrected to the
-formula checked against all 23 arrays; on 2026-10-20 the new
-`construction` column was filled for rows that predate it (above),
-and the notes of the 23 Bergeron rows lost a fragment that repeated
-the previous best; on 2026-10-21 the `construction` text of
-the 24 CAEX rows was made precise (their last step is column
-extension by computer search, per the `CAs::CAEX` help page, not a
-product construction, which CAEX uses only for N = 34 and 36 to 50). To add a claim with evidence:
+or a correction is a new row. Seven things have been written into
+existing rows since publication, all recorded here (dates as in the
+commits, US Central time): on 2026-10-19 the new `construction` column
+was filled for rows that predate it (above; commits a1ad327 and
+597a5f7), and the notes of the 23 Bergeron rows lost a fragment that
+repeated the previous best (a1ad327); the same evening the
+`construction` text of the 23 Bergeron rows was corrected to the
+formula checked against all 23 arrays (80791b8); on 2026-10-20 the
+`construction` text of the three Dwyer resolution rows was corrected
+(50b439f); on 2026-10-21 the `construction` text of the 24 CAEX rows
+was made precise, in two passes (90539cf, 1bc0699): their last step is
+column extension by computer search, per the `CAs::CAEX` help page, not
+a product construction, which CAEX uses only for N = 34 and 36 to 50;
+on 2026-10-23 the notes of the three Dwyer resolution rows were
+corrected (the guess that the repository file had been improved in
+place is superseded by VERIFICATION_LOG.md: the database holds twin
+arrays), and the notes of the three SCREENED Bergeron rows were made
+consistent (they were screened on the public runner, and the full check
+on the maintainer's machine is recorded in the VERIFIED rows with the
+same hash). To add a claim with evidence:
 
 1. Get the array (download, construct, or receive it) and note the
    exact recipe: URL and date, or the generating call and package

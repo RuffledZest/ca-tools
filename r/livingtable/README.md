@@ -122,8 +122,9 @@ t=5: 1,670, t=6: 2,881.
 `data/better_verified.csv` holds the 17 VERIFIED_IMPROVED entries that
 were feasible to build and verify in full. All 17 verified, with
 margins of 1 to 170 rows over the snapshot (routes TJ, CK_doublingCA,
-ODbasedCA, DWYER). Since 2026-10-21 all 17 are VERIFIED rows of
-`table/ca_table.csv`.
+ODbasedCA, DWYER). Since 2026-10-21 all 17 are covered by VERIFIED
+rows of `table/ca_table.csv`: 11 by a row at their own k, 6 through a
+row with more columns (stair-step).
 
 The 9,007 UNRESOLVED entries are the subject of the arithmetic tier
 below, which reads size laws off their Source tags and splits the
@@ -221,7 +222,7 @@ the tally):
 | PCAxPCA, PCAx2PCA | Theorems 3.2 and 3.3 of the same paper, N = eCAN(2, w1, v) + eCAN(2, w2, v) - v with the two widths from a bounded closure of the products over the OA, the PCAcat rows and the package's cover starters (`arith_formula_cmmssy.R`, recipe table `data/arith_pcax_recipes.csv`), and the package's 447 PCAcat recipes reproduce on (N, k, k1) 447 of 447 | 44 of 545 exact (27 of them VERIFIED already), 313 at the plain best-pair floor and classed RECURSIVE_TENTATIVE, 182 above it, 6 postop | 17 |
 | Derive from strength t+1 | N = floor(eCAN(t+1, k+1, v) / v) | 71 of 71 | 33 |
 | Add n factors, Add a factor | b = k - n, N = eCAN(t, b, v) + sum over j = 2 to min(t, n+1) of v^(j-1) (v-1) eCAN(t-j, b-1, v); domain n of at most 2, or v a prime power with n of at most v, or n = 3 at v in 12, 15, 20, 21, 24 | 396 of 579 exact, 6 above inside the domain, 177 outside the domain | 391 |
-| Chateauneuf-Kreher doubling | N = eCAN(3, k/2, v) + (v-1) eCAN(2, k/2, v) (Cohen, Colbourn and Ling 2008, Theorem 2) | 111 of 114, the 3 rows at v = 20 above the law | 95 |
+| Chateauneuf-Kreher doubling | N = eCAN(3, k/2, v) + (v-1) eCAN(2, k/2, v) (Chateauneuf and Kreher 2002, restated as Theorem 2 of Cohen, Colbourn and Ling 2008) | 111 of 114, the 3 rows at v = 20 above the law | 95 |
 | Martirosyan-Colbourn | h = k/2, N = eCAN(t, h, v) + (v-1) eCAN(t-1, h, v) + eCAN(t-2, h, v^2), read off the record (no copy of the paper was available) | 37 of 38 exact where the third ingredient is a table entry (v of at most 5), 1 above; 117 rows at larger v exact with one constant per (t, v), classed RECURSIVE_TENTATIVE | 37 |
 | fuse (every tag ending in m fuse words) | N = eCAN(t, k, v + m) - 2m at strengths 3 to 6, a regularity read from the record | 1,303 of 1,354 exact, 42 with the base outside the table, 9 below the law | 147 |
 | Colbourn-Martirosyan-TVT-Walker, strength 3 | N = eCAN(3, k', v) + (v-1) eCAN(2, k', v) + v^3 - v^2, k' = ceiling(k / v), at prime power v; at v + 1 a prime power, that row minus 2 | 28 of 28 (23 and 5) | 28 |
@@ -509,9 +510,9 @@ author's workstation.
   sizes of the demo, CAN(3, 24, 14) at 6,202 and CAN(5, 23, 14) at
   3,053,515, are claims from a verified ingredient through the
   record's own tags, and the ten RECURSIVE_STALE rows are constructions
-  that have not been executed. The propagate mode has been exercised
-  here only with the demo's improvement set, and no propagated size
-  has yet been built and verified.
+  that have not been executed. Beyond the demo, the propagate mode is
+  exercised by the reference inputs in `tests/` (`tests/README.md`),
+  and no propagated size has yet been built and verified.
 - The arithmetic laws for Martirosyan-Colbourn, Martirosyan-TVT at
   strength 6, the odd-k Martirosyan-TVT variant, the fuse loss of two
   rows per symbol at strengths 3 to 6, the Add n factors sum and the

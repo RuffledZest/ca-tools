@@ -85,7 +85,10 @@ r/livingtable/
     VERIFIED 987 and VERIFIED_IMPROVED 24 are entries an implemented
     route in CAs reproduces or beats; of these, 629 and 17 were built
     and verified in full, the rest screened, unfinished or failed (these
-    are the engine's working labels, not the table's VERIFIED tier).
+    are the engine's working labels, not the table's VERIFIED tier;
+    three of the 987, the cyclotomy entries CAN(3, 128, 6),
+    CAN(3, 2162, 20) and CAN(3, 2312, 21), failed a later check and
+    would count 984 on a rerun, see r/livingtable/README.md).
     RECURSIVE 4,425 are sizes a calibrated construction law reproduces
     exactly from table ingredients,
     nothing built, with RECURSIVE_TENTATIVE 531 where the reading may
@@ -103,15 +106,15 @@ r/livingtable/
 
 ## Validation
 
-The verifier was tested against all 77 covering arrays shipped in the CAs
-package data (CAEX_CAs and CKRS_CAs): 77 of 77 verify. Negative tests:
+The verifier was tested against all 77 covering arrays of the CAs
+package data sets CAEX_CAs and CKRS_CAs: 77 of 77 verify. Negative tests:
 deleting a row, flipping a single entry, and over-claiming strength (t=4 on
 a strength-3 array) are all detected and reported with example missing
 tuples.
 
 Speed on a small 2-core machine: a full scan of 2,118,760 column sets
-(t=5, k=50, v=2, N=150) takes 1.7 seconds. Verification of every array in
-the CAs package takes well under a second in total.
+(t=5, k=50, v=2, N=150) takes 1.7 seconds. Verification of all 77
+of those arrays takes well under a second in total.
 
 ## Why a fast verifier matters
 

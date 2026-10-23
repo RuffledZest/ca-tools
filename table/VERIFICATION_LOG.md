@@ -40,7 +40,10 @@ appended in the table, and the failed-attempt rows are retained
 unedited, history is never rewritten. The resolution rows' notes
 still say the repository file was "improved in place"; that was the
 guess held when they were written, and it is superseded by this
-section.
+section. Update 2026-10-23: those notes now say so (a recorded write,
+table/README.md, maintainer's guide). The resolution rows'
+source_detail keeps the larger twin's file name, as it was written; the
+array behind each row is the one its hash names.
 
 ## Collection cross-check, 2026-08-23
 

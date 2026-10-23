@@ -6,8 +6,9 @@ the small certificate checker.
 
 Everything here re-implements or generalises a routine of CAs and is
 tested against the CAs original on a battery that prints a DONE or PASS
-line. NOTES.md is the register: what each function does, how it differs
-from hers, what was tested and what the limits are.
+line. The help pages state the differences from the CAs originals and
+the limits, the deviations of the post-optimizer are listed in
+R/nck_driver.R, and the test batteries are in inst/tests.
 
 ## Functions
 
@@ -22,7 +23,7 @@ from hers, what was tested and what the limits are.
 ## Build, install, test
 
     R CMD build cafast
-    R CMD INSTALL cafast_0.1.0.tar.gz
+    R CMD INSTALL cafast_*.tar.gz
     cd cafast/inst/tests
     sh run_all.sh 2>&1 | tee run_all_result.txt
 

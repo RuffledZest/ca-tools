@@ -221,7 +221,10 @@ LEGEND = [
     ("notes", "comparison with the previous best, credit, submission, and supersession notes"),
     ("lb, lb_evidence", "reserved for lower-bound evidence, empty in every row so far"),
     ("construction", "the construction or search that produced the entry, in a researcher's "
-     "words; for the baseline it is Colbourn's own label"),
+     "words; for the baseline it is Colbourn's own label. Where Colbourn's table and a verified "
+     "array give the same entry, the page shows both, labelled. The Dwyer source codes are "
+     "Aaron Dwyer's abbreviations for the method; many of his arrays cite personal "
+     "communication with Colbourn"),
 ]
 
 
@@ -241,22 +244,44 @@ def stair(rows_tv):
     return out
 
 
+DWYER_TAIL = " (Aaron Dwyer's abbreviation for the method; many of his arrays cite personal communication with Colbourn)"
+
+
+def page_text(c):
+    """Construction text as shown on the page: the sentence every Dwyer row
+    repeats is said once in the legend instead (the data are unchanged)."""
+    return c[:-len(DWYER_TAIL)] if c.endswith(DWYER_TAIL) else c
+
+
 def evidence_html(rs):
-    ver = [r for r in rs if r["tier"] == "VERIFIED"]
+    """A rung's evidence. Every verified array on the rung is shown (one per
+    array, by hash), each with its verified tag, and when Colbourn's table
+    has the same entry its own construction label is shown beside it, so a
+    reader does not take the verified array to come from Colbourn's
+    construction."""
+    ver, seen = [], set()
+    for r in rs:
+        if r["tier"] == "VERIFIED" and r["array_sha256"] not in seen:
+            seen.add(r["array_sha256"]); ver.append(r)
+    cited = [r for r in rs if r["tier"] == "CITED"]
     parts = []
-    if ver:
-        r = ver[-1]
+    if cited and ver:
+        parts.append('<span class=lbl>Colbourn\'s table</span> %s<br>' %
+                     html.escape(construction_of(cited[0]) or cited[0]["source_detail"]))
+    vparts = []
+    for r in ver:
         cr = credit_of(r)
-        con = construction_of(r)
+        con = page_text(construction_of(r))
         crs = constant_rows_of(r)
-        parts.append('<span class="tag ver">verified</span>%s%s%s'
+        vparts.append('<span class="tag ver">verified</span>%s%s%s'
                      '<span class="stamp">%s, sha256 %s%s</span>' % (
                          html.escape(cr + "; ") if cr else "",
                          ("<i>%s</i>; " % html.escape(con)) if con else "",
                          html.escape(r["source_detail"]),
                          stamp_html(r), html.escape(r["array_sha256"][:12]),
                          (", " + crs) if crs else ""))
-    else:
+    parts.append("".join(vparts))
+    if not ver:
         r = rs[0]
         parts.append(html.escape(construction_of(r) or r["source_detail"] or r["source_id"]))
     return "".join(parts)
