@@ -126,8 +126,11 @@ def block(c):
         "",
         "- rows: %s (%s)" % (fmt(c["rows"]), tier_txt),
         "- arrays on file: %s (%s equal the best-known size for their parameters at "
-        "entry, %s are smaller than the November 2024 snapshot's recorded best)"
-        % (fmt(c["arrays"]), fmt(c["status"]["equals_best"]), fmt(c["status"]["exceeds_snapshot"])),
+        "entry, %s are smaller than the November 2024 snapshot's recorded best%s)"
+        % (fmt(c["arrays"]), fmt(c["status"]["equals_best"]), fmt(c["status"]["exceeds_snapshot"]),
+           ", %s %s larger than a snapshot value that has a DISPUTED row"
+           % (fmt(c["status"]["above_snapshot"]), "is" if c["status"]["above_snapshot"] == 1 else "are")
+           if c["status"]["above_snapshot"] else ""),
         "- VERIFIED rows without a stored array: %s (%s), %s of them above the best "
         "known size" % (fmt(c["nofile"]), src, fmt(c["nofile_above"])),
         "- against the frozen tables at their %s points, the lookups over CITED and "
@@ -195,6 +198,46 @@ def check_structure(raw, rows, man):
                 % (TABLE, BASELINE_ROWS, BASELINE_SNAPSHOT, len(s1)))
 
 
+def check_disputed(rows, man):
+    """A DISPUTED row (defined 2026-10-23) disputes one CITED row: it carries the
+    same t, v, k, N, at most one DISPUTED row per CITED row, it is not part of the
+    baseline (source_id other than S1), and it has notes saying what failed, the
+    recipe that was checked (source_detail) and a construction. An above_snapshot
+    array is kept only beside a disputed entry: at its t, v, k the stair-step
+    value over the CITED rows is a disputed CITED row, and the array is larger."""
+    cited = {(r["t"], r["v"], r["k"], r["N"]) for r in rows if r["tier"] == "CITED"}
+    disputed = [r for r in rows if r["tier"] == "DISPUTED"]
+    dkeys = collections.Counter((r["t"], r["v"], r["k"], r["N"]) for r in disputed)
+    for key, n in dkeys.items():
+        if n > 1:
+            problem("%s: %d DISPUTED rows for the CITED row %s; one is enough"
+                    % (TABLE, n, ",".join(key)))
+    for r in disputed:
+        key = (r["t"], r["v"], r["k"], r["N"])
+        if key not in cited:
+            problem("%s: DISPUTED row %s matches no CITED row" % (TABLE, ",".join(key)))
+        if r["source_id"] == "S1":
+            problem("%s: DISPUTED row %s has source S1; the baseline rows are CITED only"
+                    % (TABLE, ",".join(key)))
+        for f in ("notes", "source_detail", "construction"):
+            if not r[f].strip():
+                problem("%s: DISPUTED row %s without %s" % (TABLE, ",".join(key), f))
+    cited_tv = collections.defaultdict(list)
+    for r in rows:
+        if r["tier"] == "CITED":
+            cited_tv[(r["t"], r["v"])].append(r)
+    for m in man:
+        if m["status"] != "above_snapshot":
+            continue
+        cand = [r for r in cited_tv[(m["t"], m["v"])] if int(r["k"]) >= int(m["k"])]
+        best = min((int(r["N"]) for r in cand), default=None)
+        ok = (best is not None and int(m["N"]) > best and
+              any(int(r["N"]) == best and (r["t"], r["v"], r["k"], r["N"]) in dkeys for r in cand))
+        if not ok:
+            problem("%s: %s is above_snapshot, but the CITED stair-step value at its t, v, k is "
+                    "not a disputed row smaller than it" % (MANIFEST, m["file"]))
+
+
 def check_arrays(rows, man):
     files = set(os.listdir(ARRAYS)) if os.path.isdir(ARRAYS) else set()
     mfiles = collections.Counter(m["file"] for m in man)
@@ -216,7 +259,7 @@ def check_arrays(rows, man):
         if not match:
             problem("%s: %s (sha256 %s) has no VERIFIED or SCREENED table row with the same "
                     "t, v, k, N" % (MANIFEST, m["file"], m["sha256"][:12]))
-        if m["status"] not in ("equals_best", "exceeds_snapshot", "screened"):
+        if m["status"] not in ("equals_best", "exceeds_snapshot", "above_snapshot", "screened"):
             problem("%s: %s has unknown status %r" % (MANIFEST, m["file"], m["status"]))
 
 
@@ -301,6 +344,7 @@ def main():
         return 2
     check_structure(raw, rows, man)
     check_arrays(rows, man)
+    check_disputed(rows, man)
     check_links()
     if c["worse"]:
         problem("the CITED and VERIFIED lookups are worse than the frozen tables at %d points" % c["worse"])

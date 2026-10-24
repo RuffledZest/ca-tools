@@ -6,8 +6,11 @@ evidence event. Tiers: CITED (traceable to a dated snapshot or paper),
 VERIFIED (an explicit array is in hand and machine-checked, row carries
 its SHA-256 and a verification stamp), FAILED_PENDING_RECHECK (a
 verification attempt that failed its dimension check; each such row is
-superseded by a later resolution row), DISPUTED (reserved; none at
-publication). Stair-step semantics: a row (t, v, k, N) means N runs
+superseded by a later resolution row), SCREENED (an array screened on
+column windows, not counted), DISPUTED (since 2026-10-23: an added row
+beside a CITED row whose cited construction, as implemented and checked,
+did not give a covering array at the recorded size; not counted, and the CITED row it
+disputes is still counted). Stair-step semantics: a row (t, v, k, N) means N runs
 suffice for up to k columns.
 
 Usage:

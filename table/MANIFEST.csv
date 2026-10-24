@@ -288,3 +288,4 @@
 "CA_2215_3_16_10.txt",3,10,16,2215,"exceeds_snapshot","c9fd2c74c21d8371204f192499d48729893716f6e6c2d33d41d6d0bfc6d88edb","S6","CAs::bestCA(3, 16, 10, seed = 20260829) via CK_doublingCA, CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",10
 "CA_3381_3_12_14.txt",3,14,12,3381,"exceeds_snapshot","94767a2368e2326ece16b8d9d0e3c0432145df7824e6a860a7dedebd8015f662","S6","CAs::bestCA(3, 12, 14, seed = 20260829) via ODbasedCA, CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",14
 "CA_9330_3_12_20.txt",3,20,12,9330,"exceeds_snapshot","b88a6d1f59e266cee18e7e5ddb5287742d1f322fcce838692d6b471ccc0466d3","S6","CAs::bestCA(3, 12, 20, seed = 20260829) via ODbasedCA, CAs 0.24.4","caverify 0.2.0 2026-10-21 Darwin-arm64",20
+"CA_768_3_128_6.txt",3,6,128,768,"above_snapshot","bcd4189aa0229c06139145ef2b8c066f339dfe8f52ddf2c499beaf0aaa73495e","S6","CAs::bestCA(3, 128, 6, seed = 20260829) via CYCLOTOMY, CAs 0.24.4","caverify 0.2.0 2026-10-23 Darwin-arm64",6

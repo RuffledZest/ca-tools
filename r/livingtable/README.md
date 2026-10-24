@@ -441,6 +441,12 @@ at the time, did not produce a covering array:
 | CAN(3, 2312, 21) | 48,531 | 50-column screen, cyclotomy type 3a at q=2311 | same finding |
 | CAN(3, 1584, 2) | 64 | full verification, 123 gapped triples, powerCT with cover starter | `findings/FINDING_POWERCT_3_1584_2.md` |
 
+Since 2026-10-23 the three cyclotomy entries carry DISPUTED rows in
+the table (`../../table/VERIFICATION_LOG.md`): Colbourn (2010) was
+read, and at these q its cyclotomic vector has property 4a, not the
+3a its Table 2 lists (`cyclotomy_recheck.py`, the finding's status
+note).
+
 The cyclotomy family audit (`mac_cyclotomy_audit2.R`,
 `results/cyclotomy_audit2_result.txt`) covered all 213 rows of
 `CYCLOTOMYcat`: 210 pass (16 full, 194 screen), the 3 above fail. The
@@ -732,6 +738,7 @@ Every size it contains is a claim.
 | `verify_better.R` | build and verify the entries whose sweep status is BETTER |
 | `mac_cyclotomy_audit2.R`, `mac_cyclotomy_followup.R` | cyclotomy family audit and follow-up |
 | `mac_4a_check.R`, `mac_4a_q127.R` | checks of the type 4a repair |
+| `cyclotomy_recheck.py` | properties 3a and 4a recomputed from the definitions in Colbourn (2010) at q = 127, 2161, 2311, and the q = 127 arrays checked in full (Python 3 and numpy) |
 | `mac_powerct_audit.R` | powerCT family audit |
 | `mac_powerct_refix.R`, `powerct_one.R` | post-fix re-audit of the 14 diagnosed powerCT rows and its worker |
 | `data/recipe_ingredients.csv` | recipes and their ingredient calls |
@@ -758,6 +765,7 @@ Every size it contains is a claim.
 | `results/cyclotomy_followup_result.txt` | log of the cyclotomy follow-up |
 | `results/mac_4a_result.txt` | log of the type 4a window checks at q=2161 and q=2311 |
 | `results/mac_4a_q127_result.txt` | log of the type 4a full verification at q=127 |
+| `results/cyclotomy_recheck_result.txt` | output of `cyclotomy_recheck.py` (2026-10-23) |
 | `results/powerct_refix_result.txt` | log of the post-fix powerCT re-audit |
 | `findings/FINDING_CAN_3_128_6.md` | the cyclotomy finding |
 | `findings/FINDING_POWERCT_3_1584_2.md` | the powerCT finding |

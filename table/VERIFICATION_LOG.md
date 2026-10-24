@@ -135,3 +135,58 @@ verified by caverify 0.2.0 on the Mac, checked again with
 VERIFIED, v constant rows each), and entered as S6 rows with status
 exceeds_snapshot. The improvements belong to the CAs implementation
 and the published constructions, not to this project.
+
+## Three cyclotomy entries disputed, 2026-10-23
+
+The November 2024 snapshot records CAN(3, 128, 6) = 762,
+CAN(3, 2162, 20) = 43,220 and CAN(3, 2312, 21) = 48,531, each with
+construction "Cyclotomy (Colbourn)". These are results of Colbourn,
+Covering arrays from cyclotomy, Des. Codes Cryptogr. 55 (2010)
+201-219, doi:10.1007/s10623-009-9333-8: Table 3 lists the three sizes
+as new arrays, and Table 2 places q = 127 (v = 6), q = 2161 (v = 20)
+and q = 2311 (v = 21) in the range where the cyclotomic vector has
+property 3a of Construction 4.1, which gives CA(vq; 3, q + 1, v).
+
+In August 2026 the CAs package's implementation of type 3a at these q
+was found not to give covering arrays
+(`../r/livingtable/findings/FINDING_CAN_3_128_6.md`): at q = 127 the
+762 by 128 array leaves 5,334 of its 341,376 column triples uncovered
+(caverify 0.2.0, 2026-08-29), and at q = 2161 and q = 2311 a 50-column
+window of the array is not covered (2026-08-30). On 2026-09-04 the CAs
+author changed these catalogue entries to type 4a (commit ae81661),
+which adds a constant row and gives vq + v rows: 768, 43,240 and
+48,552. The 768 by 128 array was verified in full
+(`../r/livingtable/results/mac_4a_q127_result.txt`) and the two larger
+ones screened on 48 column windows each
+(`../r/livingtable/results/mac_4a_result.txt`).
+
+On 2026-10-23 the paper itself was read and the properties were
+recomputed from its own definitions (cyclotomic vector, Section 2;
+Construction 4.1) by `../r/livingtable/cyclotomy_recheck.py`, whose
+results a separate implementation reproduced (output in
+`../r/livingtable/results/cyclotomy_recheck_result.txt`). At each of the three q the
+vector meets every condition of type 3a except one: on some sets of
+three columns the constant pattern (all three entries equal) never
+occurs, even after the development modulo v. Type 4a supplies exactly
+that pattern with its added constant row, so the vector has property
+4a and not 3a. At q = 127 the script gives the same 5,334 uncovered
+column triples for the 3a array as the August check, and a 768 by 128
+type 4a array with none. This explains why the CAs fix works. The
+result does not depend on the choice of primitive element (the paper
+notes that another primitive element multiplies every entry by a unit
+modulo v; the script checks two at q = 127, and the August check tried
+all 36).
+
+Recorded in the table on 2026-10-23: three DISPUTED rows, one per
+entry, each with the same t, v, k and N as the CITED row, the type 3a
+call that was checked as its recipe, and notes saying what failed. The
+CITED rows are unchanged and still counted by the lookups. The 768 by
+128 array, built with `CAs::bestCA(3, 128, 6, seed = 20260829)` (CAs
+0.24-4, route CYCLOTOMY) and verified by caverify 0.2.0 on the Mac on
+2026-10-23, was checked again with `ca_verify.c` (commit 50b439f) and
+`tools/constant_rows.c` on a second machine (Linux x86_64): VERIFIED,
+6 constant rows, file hash equal to the stamp. It is entered as a
+VERIFIED S6 row with MANIFEST status above_snapshot. The two larger
+type 4a arrays are not entered (screened only, and over 200 MB each
+as text). None of this shows that the recorded sizes cannot be
+reached by another construction.

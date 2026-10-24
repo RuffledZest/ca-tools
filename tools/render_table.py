@@ -24,9 +24,9 @@ RAW_CSV = "https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/c
 
 CSS = """
 :root { color-scheme: light dark; --fg:#1d1d1f; --bg:#fdfdfc; --mute:#5f6368;
-  --line:#dcdcd8; --ver:#0b6e3a; --scr:#8a5a00; --soft:#f2f2ee; }
+  --line:#dcdcd8; --ver:#0b6e3a; --scr:#8a5a00; --dis:#a8321e; --soft:#f2f2ee; }
 @media (prefers-color-scheme: dark) { :root { --fg:#e8e8e3; --bg:#18181a;
-  --mute:#a0a0a0; --line:#3a3a3d; --ver:#5fd08f; --scr:#e0b050; --soft:#232326; } }
+  --mute:#a0a0a0; --line:#3a3a3d; --ver:#5fd08f; --scr:#e0b050; --dis:#f08a74; --soft:#232326; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg);
   font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -46,7 +46,7 @@ details { border-bottom:1px solid var(--line); padding:.35rem 0; }
 summary { cursor:pointer; }
 .tag { display:inline-block; font-size:.75rem; font-weight:600; border-radius:4px; padding:0 .35rem;
   border:1px solid currentColor; margin-right:.3rem; }
-.ver { color:var(--ver); } .scr { color:var(--scr); }
+.ver { color:var(--ver); } .scr { color:var(--scr); } .dis { color:var(--dis); }
 .stamp { color:var(--mute); font-size:.8rem; display:block; }
 .subhead { font-size:.9rem; margin:.4rem 0; overflow-wrap:anywhere; }
 .lbl { color:var(--mute); font-size:.8rem; margin-right:.3rem; }
@@ -203,7 +203,10 @@ LEGEND = [
      "<b>SCREENED</b>: an array too large for the public check, screened on random column "
      "windows, listed but not counted as best known. <b>FAILED_PENDING_RECHECK</b>: a "
      "verification attempt that failed its dimension check, kept and superseded by a later "
-     "row. <b>DISPUTED</b>: reserved for failures that survive recheck, none so far"),
+     "row. <b>DISPUTED</b> (since 2026-10-23): an added row beside a CITED entry whose cited "
+     "construction, as implemented and checked here, did not give a covering array at the "
+     "recorded size; the CITED "
+     "row stays as recorded and is still counted, and the rung is marked disputed"),
     ("source_id", "the source class. <b>S1</b> Colbourn's tables (the CAs snapshot), "
      "<b>S4</b> NIST covering array library, <b>S5</b> Dwyer CA_Database, <b>S6</b> data "
      "and constructions of the CAs package, <b>S7</b> literature and community submissions"),
@@ -287,6 +290,35 @@ def evidence_html(rs):
     return "".join(parts)
 
 
+def disputed_html(d, rows_tv):
+    """The mark for a CITED entry that has a DISPUTED row: what was checked, and
+    the best value at this point once the disputed CITED rows are left out, when
+    that value is a verified array."""
+    dis = {(r["k"], r["N"]) for r in rows_tv if r["tier"] == "DISPUTED"}
+    rest = [r for r in rows_tv if r["k"] >= d["k"] and (
+        r["tier"] == "VERIFIED" or (r["tier"] == "CITED" and (r["k"], r["N"]) not in dis))]
+    out = ('<br><span class="tag dis">disputed</span>the construction recorded for this entry, '
+           '<i>%s</i>, did not give a covering array at the recorded size when checked here '
+           '(<code>%s</code>); the recorded size stays listed and counted, and is not shown to '
+           'be unreachable (<a href="%s">verification log</a>)'
+           % (html.escape(d["construction"] or d["source_detail"]),
+              html.escape(d["source_detail"]), LOG_URL))
+    if any(r["tier"] == "VERIFIED" and r["N"] <= d["N"] for r in rest):
+        out += ('<span class="stamp">a verified array of at most %d rows now covers this point</span>'
+                % d["N"])
+    elif rest:
+        best = min(r["N"] for r in rest)
+        ver = sorted((r for r in rest if r["tier"] == "VERIFIED" and r["N"] == best),
+                     key=lambda r: -r["k"])
+        if ver:
+            a = ver[0]
+            out += ('<span class="stamp">verified at this point: N = %d (%s), %s, sha256 %s%s</span>'
+                    % (a["N"], html.escape(page_text(construction_of(a))), stamp_html(a),
+                       html.escape(a["array_sha256"][:12]),
+                       (", " + constant_rows_of(a)) if constant_rows_of(a) else ""))
+    return out
+
+
 def render(rows, manifest, date):
     global CR
     CR = {m["sha256"]: m.get("constant_rows", "") for m in manifest}
@@ -317,7 +349,10 @@ def render(rows, manifest, date):
              "explicit array in hand were checked exhaustively by a verifier and carry "
              "the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check "
              "in full on the public runner were screened on random column windows "
-             "(tier SCREENED); they are listed but do not count as best known. Improvements "
+             "(tier SCREENED); they are listed but do not count as best known. Where Colbourn's "
+             "construction for an entry, as checked here, did not give a covering array at the "
+             "recorded size, the "
+             "entry stays as recorded and its rung is marked disputed (tier DISPUTED). Improvements "
              "are not yet propagated through recursive constructions: the propagation engine "
              "in <a href=\"%s/tree/main/r/livingtable\">r/livingtable</a> is run by hand and "
              "is not connected to submissions, so no entry here is derived by it.</p>" % REPO_URL)
@@ -335,7 +370,8 @@ def render(rows, manifest, date):
              % (REPO_URL, REPO_URL, RAW_CSV))
     H.append("<ul class=\"stats\">")
     for label, n in (("table rows", len(rows)), ("verified rows", tiers["VERIFIED"]),
-                     ("screened rows, not yet verified in full", tiers["SCREENED"]), ("arrays on file", len(manifest)),
+                     ("screened rows, not yet verified in full", tiers["SCREENED"]),
+                     ("disputed entries", tiers["DISPUTED"]), ("arrays on file", len(manifest)),
                      ("verified arrays", len(manifest) - mstat["screened"]),
                      ("screened arrays", mstat["screened"]),
                      ("community submissions", len({slug_of(r) for r in subs})),
@@ -368,15 +404,25 @@ def render(rows, manifest, date):
         steps = stair(rs)
         nver = sum(1 for _, _, _, e in steps if any(r["tier"] == "VERIFIED" for r in e))
         scr = [r for r in rs if r["tier"] == "SCREENED" and r["array_sha256"] not in verified_sha]
-        H.append("<details><summary>t = %d, v = %d: %d rungs, %d verified%s</summary>"
+        dis = {(r["k"], r["N"]): r for r in rs if r["tier"] == "DISPUTED"}
+        H.append("<details><summary>t = %d, v = %d: %d rungs, %d verified%s%s</summary>"
                  % (t, v, len(steps), nver,
-                    ", %d screened" % len(scr) if scr else ""))
+                    ", %d screened" % len(scr) if scr else "",
+                    ", %d disputed" % len(dis) if dis else ""))
         H.append("<table><thead><tr><th class=n>k</th><th class=n>N</th>"
                  "<th>evidence</th></tr></thead><tbody>")
         for n, k0, k1, e in steps:
             krange = str(k1) if k0 == k1 else "%d to %d" % (k0, k1)
-            H.append("<tr><td class=n>%s</td><td class=n>%d</td><td class=ev>%s</td></tr>"
-                     % (krange, n, evidence_html(e)))
+            H.append("<tr><td class=n>%s</td><td class=n>%d</td><td class=ev>%s%s</td></tr>"
+                     % (krange, n, evidence_html(e),
+                        disputed_html(dis[(k1, n)], rs) if (k1, n) in dis else ""))
+        rung_keys = {(k1, n) for n, _, k1, _ in steps}
+        for (dk, dn), d in sorted(dis.items()):
+            if (dk, dn) not in rung_keys:
+                H.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=ev>%s%s</td></tr>"
+                         % (dk, dn, html.escape(construction_of(next(
+                             (r for r in rs if r["tier"] == "CITED" and r["k"] == dk and r["N"] == dn), d))),
+                            disputed_html(d, rs)))
         for r in scr:
             H.append("<tr><td class=n>%d</td><td class=n>%d</td><td class=ev>"
                      "<span class=\"tag scr\">screened</span>%s%s<span class=stamp>%s, "

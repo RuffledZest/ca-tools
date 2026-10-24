@@ -1,8 +1,8 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Covering Array Table</title><style>
 :root { color-scheme: light dark; --fg:#1d1d1f; --bg:#fdfdfc; --mute:#5f6368;
-  --line:#dcdcd8; --ver:#0b6e3a; --scr:#8a5a00; --soft:#f2f2ee; }
+  --line:#dcdcd8; --ver:#0b6e3a; --scr:#8a5a00; --dis:#a8321e; --soft:#f2f2ee; }
 @media (prefers-color-scheme: dark) { :root { --fg:#e8e8e3; --bg:#18181a;
-  --mute:#a0a0a0; --line:#3a3a3d; --ver:#5fd08f; --scr:#e0b050; --soft:#232326; } }
+  --mute:#a0a0a0; --line:#3a3a3d; --ver:#5fd08f; --scr:#e0b050; --dis:#f08a74; --soft:#232326; } }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--fg);
   font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
@@ -22,7 +22,7 @@ details { border-bottom:1px solid var(--line); padding:.35rem 0; }
 summary { cursor:pointer; }
 .tag { display:inline-block; font-size:.75rem; font-weight:600; border-radius:4px; padding:0 .35rem;
   border:1px solid currentColor; margin-right:.3rem; }
-.ver { color:var(--ver); } .scr { color:var(--scr); }
+.ver { color:var(--ver); } .scr { color:var(--scr); } .dis { color:var(--dis); }
 .stamp { color:var(--mute); font-size:.8rem; display:block; }
 .subhead { font-size:.9rem; margin:.4rem 0; overflow-wrap:anywhere; }
 .lbl { color:var(--mute); font-size:.8rem; margin-right:.3rem; }
@@ -31,14 +31,15 @@ a { color: inherit; }
 @media (max-width: 480px) { body { font-size:15px; } table { font-size:.82rem; } th, td { padding:.25rem .2rem; } }
 </style></head><body><main>
 <h1>Best known covering arrays, with evidence</h1>
-<p>A covering array CA(N; t, k, v) is an N by k array over v symbols in which every choice of t columns shows every one of the v<sup>t</sup> value combinations in some row. This table records, for each strength t and alphabet size v, the smallest known N for each number of columns k, and says where every entry comes from. The baseline is the November 2024 status of Charles J. Colbourn's covering array tables as preserved by Ulrike Groemping in the CAs R package (tier CITED). Entries with an explicit array in hand were checked exhaustively by a verifier and carry the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check in full on the public runner were screened on random column windows (tier SCREENED); they are listed but do not count as best known. Improvements are not yet propagated through recursive constructions: the propagation engine in <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/r/livingtable">r/livingtable</a> is run by hand and is not connected to submissions, so no entry here is derived by it.</p>
+<p>A covering array CA(N; t, k, v) is an N by k array over v symbols in which every choice of t columns shows every one of the v<sup>t</sup> value combinations in some row. This table records, for each strength t and alphabet size v, the smallest known N for each number of columns k, and says where every entry comes from. The baseline is the November 2024 status of Charles J. Colbourn's covering array tables as preserved by Ulrike Groemping in the CAs R package (tier CITED). Entries with an explicit array in hand were checked exhaustively by a verifier and carry the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check in full on the public runner were screened on random column windows (tier SCREENED); they are listed but do not count as best known. Where Colbourn's construction for an entry, as checked here, did not give a covering array at the recorded size, the entry stays as recorded and its rung is marked disputed (tier DISPUTED). Improvements are not yet propagated through recursive constructions: the propagation engine in <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/r/livingtable">r/livingtable</a> is run by hand and is not connected to submissions, so no entry here is derived by it.</p>
 <p>Rows are stair-steps: an entry (t, v, k, N) means N runs suffice for up to k columns, so the best known N at k is the smallest N among entries with at least k columns. The construction column names the construction or search that produced each entry, where it is known. For every array on file, constant rows is the largest number of its rows that can be made constant by permuting symbols within columns, a property that matters when the array is an ingredient of another construction. Anyone can add an array by pull request; see <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/submissions/README.md">how to submit</a>. The data is <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/table">table/ in the repository</a>; the raw file <a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/ca_table.csv">table/ca_table.csv</a> is the machine-readable form (see the README for the stair-step rule and an R snippet).</p>
 <ul class="stats">
-<li>table rows <b>14,208</b></li>
-<li>verified rows <b>561</b></li>
+<li>table rows <b>14,212</b></li>
+<li>verified rows <b>562</b></li>
 <li>screened rows, not yet verified in full <b>0</b></li>
-<li>arrays on file <b>289</b></li>
-<li>verified arrays <b>289</b></li>
+<li>disputed entries <b>3</b></li>
+<li>arrays on file <b>290</b></li>
+<li>verified arrays <b>290</b></li>
 <li>screened arrays <b>0</b></li>
 <li>community submissions <b>1</b></li>
 <li>arrays from submissions <b>23</b></li>
@@ -47,7 +48,7 @@ a { color: inherit; }
 <details><summary>What the columns of ca_table.csv mean</summary>
 <table><thead><tr><th>column</th><th>meaning</th></tr></thead><tbody>
 <tr><td><code>t, v, k, N</code></td><td class=ev>the claim: N runs suffice for a covering array of strength t on up to k columns of v symbols (stair-step: the best known N at k is the smallest N among entries with at least k columns)</td></tr>
-<tr><td><code>tier</code></td><td class=ev>the evidence class. <b>CITED</b>: traceable to a dated snapshot or publication, no array in hand (the 13,641 baseline rows are Colbourn's tables of November 2024). <b>VERIFIED</b>: an explicit array was checked exhaustively at strength t. <b>SCREENED</b>: an array too large for the public check, screened on random column windows, listed but not counted as best known. <b>FAILED_PENDING_RECHECK</b>: a verification attempt that failed its dimension check, kept and superseded by a later row. <b>DISPUTED</b>: reserved for failures that survive recheck, none so far</td></tr>
+<tr><td><code>tier</code></td><td class=ev>the evidence class. <b>CITED</b>: traceable to a dated snapshot or publication, no array in hand (the 13,641 baseline rows are Colbourn's tables of November 2024). <b>VERIFIED</b>: an explicit array was checked exhaustively at strength t. <b>SCREENED</b>: an array too large for the public check, screened on random column windows, listed but not counted as best known. <b>FAILED_PENDING_RECHECK</b>: a verification attempt that failed its dimension check, kept and superseded by a later row. <b>DISPUTED</b> (since 2026-10-23): an added row beside a CITED entry whose cited construction, as implemented and checked here, did not give a covering array at the recorded size; the CITED row stays as recorded and is still counted, and the rung is marked disputed</td></tr>
 <tr><td><code>source_id</code></td><td class=ev>the source class. <b>S1</b> Colbourn's tables (the CAs snapshot), <b>S4</b> NIST covering array library, <b>S5</b> Dwyer CA_Database, <b>S6</b> data and constructions of the CAs package, <b>S7</b> literature and community submissions</td></tr>
 <tr><td><code>source_detail</code></td><td class=ev>the exact retrieval or generation recipe (URL and commit, or the generating call and package version)</td></tr>
 <tr><td><code>snapshot_id</code></td><td class=ev>the dated source: <code>colbourn-2024-11-ug</code> for the baseline, <code>pr-N</code> (or the submission folder name) for a submission, empty where <code>source_detail</code> already carries a dated recipe</td></tr>
@@ -3900,7 +3901,7 @@ a { color: inherit; }
 <tr><td class=n>9518 to 9727</td><td class=n>1225</td><td class=ev>Restricted CPHF Ext 10( 0, 5) WCS</td></tr>
 <tr><td class=n>9728 to 10000</td><td class=n>1229</td><td class=ev>Restricted CPHF Ext 10( 0, 4) WCS</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 6: 94 rungs, 2 verified</summary>
+<details><summary>t = 3, v = 6: 94 rungs, 2 verified, 1 disputed</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 4</td><td class=n>216</td><td class=ev>Derive from strength 4</td></tr>
 <tr><td class=n>5</td><td class=n>240</td><td class=ev><span class=lbl>Colbourn's table</span> cross-sum (CKRS)<br><span class="tag ver">verified</span><i>Dwyer CA_Database source code &quot;CrossSum&quot;</i>; aadwyer/CA_Database CA_240_3_5_6.txt via CAs::dwyerCA, CAs 0.24<span class="stamp"><a href="https://cran.r-project.org/package=caverify">caverify 0.2.0</a> 2026-08-23 Darwin-arm64 (<a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/arrays/CA_240_3_5_6.txt">array</a>, <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>), sha256 005de0a38b0c, constant rows 6 of 6</span></td></tr>
@@ -3920,7 +3921,7 @@ a { color: inherit; }
 <tr><td class=n>19 to 20</td><td class=n>620</td><td class=ev>Chateauneuf-Kreher doubling</td></tr>
 <tr><td class=n>21 to 104</td><td class=n>624</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
 <tr><td class=n>105 to 122</td><td class=n>726</td><td class=ev>Cyclotomy (Torres-Jimenez)</td></tr>
-<tr><td class=n>123 to 128</td><td class=n>762</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
+<tr><td class=n>123 to 128</td><td class=n>762</td><td class=ev>Cyclotomy (Colbourn)<br><span class="tag dis">disputed</span>the construction recorded for this entry, <i>cyclotomy, Construction 4.1 type 3a at q = 127 (Colbourn 2010), as implemented in CAs (cyc)</i>, did not give a covering array at the recorded size when checked here (<code>CAs::cyc(127, 6, type = &quot;3a&quot;), CAs 0.24.4 (the CYCLOTOMYcat route for this entry before CAs commit ae81661)</code>); the recorded size stays listed and counted, and is not shown to be unreachable (<a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>)<span class="stamp">verified at this point: N = 768 (cyclotomy, Construction 4.1 type 4a at q = 127 (Colbourn 2010), as implemented in CAs (CYCLOTOMY), the route chosen by CAs::bestCA), <a href="https://cran.r-project.org/package=caverify">caverify 0.2.0</a> 2026-10-23 Darwin-arm64 (<a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/arrays/CA_768_3_128_6.txt">array</a>, <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>), sha256 bcd4189aa022, constant rows 6 of 6</span></td></tr>
 <tr><td class=n>129 to 152</td><td class=n>906</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
 <tr><td class=n>153 to 164</td><td class=n>978</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
 <tr><td class=n>165 to 170</td><td class=n>1020</td><td class=ev>Cyclotomy (Torres-Jimenez)</td></tr>
@@ -4866,7 +4867,7 @@ a { color: inherit; }
 <tr><td class=n>7621 to 8463</td><td class=n>39349</td><td class=ev>Restricted CPHF Ext  6( 5, 6) WCS</td></tr>
 <tr><td class=n>8464 to 10000</td><td class=n>39691</td><td class=ev>Restricted CPHF Ext  6( 4, 6) WCS</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 20: 85 rungs, 1 verified</summary>
+<details><summary>t = 3, v = 20: 85 rungs, 1 verified, 1 disputed</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 6</td><td class=n>8000</td><td class=ev>orthogonal array (Ji-Yin)</td></tr>
 <tr><td class=n>7 to 11</td><td class=n>8930</td><td class=ev>ordered design (CCL)</td></tr>
@@ -4896,7 +4897,7 @@ a { color: inherit; }
 <tr><td class=n>604 to 651</td><td class=n>31239</td><td class=ev>Raaphorst-Moura-Stevens fuse fuse fuse fuse fuse</td></tr>
 <tr><td class=n>652 to 1802</td><td class=n>36040</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
 <tr><td class=n>1803 to 2142</td><td class=n>42840</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
-<tr><td class=n>2143 to 2162</td><td class=n>43220</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
+<tr><td class=n>2143 to 2162</td><td class=n>43220</td><td class=ev>Cyclotomy (Colbourn)<br><span class="tag dis">disputed</span>the construction recorded for this entry, <i>cyclotomy, Construction 4.1 type 3a at q = 2161 (Colbourn 2010), as implemented in CAs (cyc)</i>, did not give a covering array at the recorded size when checked here (<code>CAs::cyc(2161, 20, type = &quot;3a&quot;), CAs 0.24.4 (the CYCLOTOMYcat route for this entry before CAs commit ae81661)</code>); the recorded size stays listed and counted, and is not shown to be unreachable (<a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>)</td></tr>
 <tr><td class=n>2163 to 2342</td><td class=n>46820</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
 <tr><td class=n>2343 to 2492</td><td class=n>48593</td><td class=ev>Restricted CPHF Ext  4( 0, 4) WCS fuse fuse fuse</td></tr>
 <tr><td class=n>2493 to 2516</td><td class=n>48615</td><td class=ev>Restricted CPHF Ext  4( 0, 3) WCS fuse fuse fuse</td></tr>
@@ -4954,7 +4955,7 @@ a { color: inherit; }
 <tr><td class=n>9385 to 9671</td><td class=n>56827</td><td class=ev>Cohen-Colbourn-Ling</td></tr>
 <tr><td class=n>9672 to 10000</td><td class=n>56849</td><td class=ev>Cohen-Colbourn-Ling</td></tr>
 </tbody></table></details>
-<details><summary>t = 3, v = 21: 81 rungs, 0 verified</summary>
+<details><summary>t = 3, v = 21: 81 rungs, 0 verified, 1 disputed</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>3 to 6</td><td class=n>9261</td><td class=ev>orthogonal array (Ji-Yin)</td></tr>
 <tr><td class=n>7</td><td class=n>11253</td><td class=ev>orthogonal array fuse fuse postop NCK</td></tr>
@@ -5005,7 +5006,7 @@ a { color: inherit; }
 <tr><td class=n>1107 to 1402</td><td class=n>47583</td><td class=ev>Restricted CPHF Ext  4( 2, 4) WCS fuse fuse</td></tr>
 <tr><td class=n>1403 to 1404</td><td class=n>47605</td><td class=ev>Restricted CPHF Ext  4( 2, 3) WCS fuse fuse</td></tr>
 <tr><td class=n>1405 to 2270</td><td class=n>47670</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
-<tr><td class=n>2271 to 2312</td><td class=n>48531</td><td class=ev>Cyclotomy (Colbourn)</td></tr>
+<tr><td class=n>2271 to 2312</td><td class=n>48531</td><td class=ev>Cyclotomy (Colbourn)<br><span class="tag dis">disputed</span>the construction recorded for this entry, <i>cyclotomy, Construction 4.1 type 3a at q = 2311 (Colbourn 2010), as implemented in CAs (cyc)</i>, did not give a covering array at the recorded size when checked here (<code>CAs::cyc(2311, 21, type = &quot;3a&quot;), CAs 0.24.4 (the CYCLOTOMYcat route for this entry before CAs commit ae81661)</code>); the recorded size stays listed and counted, and is not shown to be unreachable (<a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>)</td></tr>
 <tr><td class=n>2313 to 2492</td><td class=n>48595</td><td class=ev>Restricted CPHF Ext  4( 0, 4) WCS fuse fuse</td></tr>
 <tr><td class=n>2493 to 2516</td><td class=n>48617</td><td class=ev>Restricted CPHF Ext  4( 0, 3) WCS fuse fuse</td></tr>
 <tr><td class=n>2517 to 2534</td><td class=n>48639</td><td class=ev>Restricted CPHF Ext  4( 0, 2) WCS fuse fuse</td></tr>

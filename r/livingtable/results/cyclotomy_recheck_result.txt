@@ -1,0 +1,8 @@
+q = 127, v = 6, primitive element 3: sets {0, b, c} failing property 3: 126, of these missing only the constant pattern: 126; pairs {0, b} failing the exact pair condition: 0; so property 4a and not 3a
+    type 3a array 762 x 128: column triples not covered 5334 of 341376, missing tuples 32004
+    type 4a array 768 x 128: column triples not covered 0 of 341376, missing tuples 0
+q = 127, v = 6, primitive element 118: sets {0, b, c} failing property 3: 126, of these missing only the constant pattern: 126; pairs {0, b} failing the exact pair condition: 0; so property 4a and not 3a
+    type 3a array 762 x 128: column triples not covered 5334 of 341376, missing tuples 32004
+    type 4a array 768 x 128: column triples not covered 0 of 341376, missing tuples 0
+q = 2161, v = 20, primitive element 23: sets {0, b, c} failing property 3: 19440, of these missing only the constant pattern: 19440; pairs {0, b} failing the exact pair condition: 0; so property 4a and not 3a
+q = 2311, v = 21, primitive element 3: sets {0, b, c} failing property 3: 9240, of these missing only the constant pattern: 9240; pairs {0, b} failing the exact pair condition: 0; so property 4a and not 3a
