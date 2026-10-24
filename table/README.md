@@ -34,18 +34,21 @@ the array files and these documents agree.
 - `arrays/` - the explicit arrays in canonical form (0-based integer
   symbols, one run per line, space separated; `NA` marks a don't-care
   entry, see below). The MANIFEST `status` column separates arrays
-  that equal the best-known size for their parameters
-  (`equals_best`) from those SMALLER than the November 2024
-  snapshot's recorded best (`exceeds_snapshot`). A third status,
-  `above_snapshot` (since 2026-10-23), marks an array larger than the
-  snapshot's recorded best at its point, stored because that recorded
-  value has a DISPUTED row (below). File names are
-  `CA_N_t_k_v.txt`, with a hash suffix where two distinct arrays
-  share parameters. An array is stored when it equals or beats the
-  best known size at entry, or when it is the verified size beside a
-  disputed entry; the other VERIFIED rows, all above the
-  best known size, carry the hash, stamp and recipe, so the array can
-  be fetched again and checked against its hash.
+  that equal the best-known size for their parameters (`equals_best`)
+  from those SMALLER than the November 2024 snapshot's recorded best
+  (`exceeds_snapshot`). A third status, `above_snapshot` (since
+  2026-10-23), marks an array larger than the snapshot's recorded best
+  at its point, stored because that recorded value has a DISPUTED row
+  (below). An array that comes through the submission check above the
+  best known size at entry is stored with status `above_best`, and one
+  that was screened rather than verified in full with status
+  `screened`. File names are `CA_N_t_k_v.txt`, with a hash suffix
+  where two distinct arrays share parameters. An array is stored when
+  it equals or beats the best known size at entry, when it is the
+  verified size beside a disputed entry, or when it came through the
+  submission check; the other VERIFIED rows, all above the best known
+  size, carry the hash, stamp and recipe, so the array can be fetched
+  again and checked against its hash.
 - `MANIFEST.csv` - one row per array file: parameters, status,
   SHA-256 of the canonical file content, retrieval recipe,
   verification stamp, and `constant_rows` (added 2026-10-20): the

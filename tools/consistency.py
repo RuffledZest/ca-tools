@@ -128,9 +128,12 @@ def block(c):
         "- arrays on file: %s (%s equal the best-known size for their parameters at "
         "entry, %s are smaller than the November 2024 snapshot's recorded best%s)"
         % (fmt(c["arrays"]), fmt(c["status"]["equals_best"]), fmt(c["status"]["exceeds_snapshot"]),
-           ", %s %s larger than a snapshot value that has a DISPUTED row"
-           % (fmt(c["status"]["above_snapshot"]), "is" if c["status"]["above_snapshot"] == 1 else "are")
-           if c["status"]["above_snapshot"] else ""),
+           "".join(", %s %s %s" % (fmt(c["status"][st]), "is" if c["status"][st] == 1 else "are", what)
+                   for st, what in (("above_snapshot", "larger than a snapshot value that has a DISPUTED row"),
+                                    ("above_best", "larger than the best known size at entry, entered "
+                                                   "through the submission check"),
+                                    ("screened", "screened, not verified in full"))
+                   if c["status"][st])),
         "- VERIFIED rows without a stored array: %s (%s), %s of them above the best "
         "known size" % (fmt(c["nofile"]), src, fmt(c["nofile_above"])),
         "- against the frozen tables at their %s points, the lookups over CITED and "
@@ -259,7 +262,7 @@ def check_arrays(rows, man):
         if not match:
             problem("%s: %s (sha256 %s) has no VERIFIED or SCREENED table row with the same "
                     "t, v, k, N" % (MANIFEST, m["file"], m["sha256"][:12]))
-        if m["status"] not in ("equals_best", "exceeds_snapshot", "above_snapshot", "screened"):
+        if m["status"] not in ("equals_best", "exceeds_snapshot", "above_snapshot", "above_best", "screened"):
             problem("%s: %s has unknown status %r" % (MANIFEST, m["file"], m["status"]))
 
 

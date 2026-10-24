@@ -113,7 +113,11 @@ means N is smaller than the current best known value, a new record.
 `equals_best` means N equals it. `above_table` means N is larger: the
 array is still recorded as verified, with a note that it is not an
 improvement. The table rows record which of these applied and the
-value the claim was compared with.
+value the claim was compared with. The comparison uses the CITED and
+VERIFIED rows, including a CITED value that has a DISPUTED row (see
+table/README.md), so a claim larger than a disputed value is classed
+`above_table`, even when it is smaller than every verified array at
+those parameters.
 
 ## Size limits
 
