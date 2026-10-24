@@ -3,8 +3,13 @@
 ## law recovered from the Source tag and calibrated on every row of the
 ## frozen table, with the table's own eCAN values as ingredient sizes.
 ##
-## Size law (Colbourn and Torres-Jimenez 2010, Theorem 2.3, as in
-## CAs::DHHF2CA): a hash family with M rows over the q^e columns of the
+## Size law (Colbourn and Torres-Jimenez 2010, as restated in Theorem 2.1
+## of Colbourn and Zhou 2012, as in CAs::DHHF2CA; the hash family size
+## M = (e - 1) Turan(t, v) + 1 from Colbourn 2009, as restated in Lemma
+## 2.4 of Colbourn and Zhou 2012, as in CAs::createDHF; this header
+## earlier cited "Theorem 2.3" of the 2010 paper, the number given in the
+## CAs documentation of DHHF2CA, not checked against the paper):
+## a hash family with M rows over the q^e columns of the
 ## OA(q^e, q+1, q, e) transposed; row i carries a CA(t, w_i, v) of N_i rows
 ## with rho_i constant rows; N = chi + sum_i (N_i - rho_i),
 ## chi = max(0, v - sum_i (v - rho_i)); N_i = eCAN(t, w_i, v).

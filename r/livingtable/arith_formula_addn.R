@@ -1,3 +1,7 @@
+## [Added 2026-10-24: the n = 1 case is Theorem 3.2 of Colbourn, Keri,
+## Rivas Soriano and Schlage-Puchta 2010 (Discrete Appl. Math. 158), read
+## 2026-10-23; no paper was found for n of at least 2. The header below
+## was written before that and is kept as written.]
 ## arith_formula_addn.R - the "Add n factors" family in full
 ## (tags "Add n factors", n >= 1, and "Add a factor"), calibrated on
 ## EVERY row of both tags in the frozen table. Supersedes the n = 1

@@ -1,3 +1,7 @@
+## [Added 2026-10-24: the minus 2 per fused symbol at every strength is
+## Lemma 3.1 of Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010
+## (Discrete Appl. Math. 158), read 2026-10-23. The header below was
+## written before that and is kept as written.]
 ## arith_formula_fuse.R - the "fuse" suffix as a family of its
 ## own: every Source tag ending in one or more " fuse" words, over the
 ## WHOLE frozen table (1,354 rows), calibrated on every such row. With

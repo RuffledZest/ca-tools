@@ -227,7 +227,8 @@ caverify package.
 ## How to append a row (maintainer's guide)
 
 The table is append-only in its claims: a row's t, v, k, N, tier,
-source, hash, stamp and entry date are never changed, and a better N
+source_id, source_detail, snapshot_id, array_sha256, verify_stamp and
+entered are never changed, and a better N
 or a correction is a new row. Seven things have been written into
 existing rows since publication, all recorded here (dates as in the
 commits, US Central time): on 2026-10-19 the new `construction` column
@@ -260,7 +261,8 @@ same hash). To add a claim with evidence:
    the hash and stamp filled in. A failed check returns a
    FAILED_PENDING_RECHECK row; recheck from a fresh copy before
    concluding anything, catalogues go stale (see the log).
-4. Append the row to `ca_table.csv`, never edit existing rows. A
+4. Append the row to `ca_table.csv`; never change the fields named
+   above in an existing row. A
    better N is a new row; a correction is a new row whose notes
    reference what it supersedes.
 5. If you add the array to `arrays/`, add its MANIFEST.csv line.

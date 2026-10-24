@@ -129,8 +129,9 @@ repositories routinely, e.g. in CI on every submission.
 
 Early version, offered to the community; suggestions and corrections
 welcome. The code is under the MIT license (LICENSE), except r/cafast
-and r/countkernel, which follow code of the CAs package closely and are
-under GPL (>= 3), the license of CAs. The table data in table/ is not original
+and r/countkernel, which follow code of the CAs package (GPL-3, by Ulrike
+Groemping) closely and are under GPL (>= 3), with her agreement to the
+"or later" terms. The table data in table/ is not original
 to this repository. Each row names its source, the sources are listed
 under Attribution in table/README.md, and the data remains subject to
 those sources' terms.

@@ -215,21 +215,35 @@ the tally):
 
 | family | law | calibration on the table | unresolved admitted |
 |---|---|---|---|
-| Power CT | hash family of M rows over the columns of OA(q^e, q+1, q, e), row i a CA(t, w_i, v) with rho_i constant rows, N = chi + sum (N_i - rho_i) (Colbourn and Torres-Jimenez 2010, Theorem 2.3, as in `CAs::DHHF2CA`), M = (e - 1) Turan(t, v) + 1, tag grammar q^e, +p, T, S, Arc, Trin, c read from the record | 469 of 471 exact, 0 wrong, 2 inexpressible | 445 |
+| Power CT | hash family of M rows over the columns of OA(q^e, q+1, q, e), row i a CA(t, w_i, v) with rho_i constant rows, N = chi + sum (N_i - rho_i) (Colbourn and Torres-Jimenez 2010, as restated in Theorem 2.1 of Colbourn and Zhou 2012; `CAs::DHHF2CA`, whose documentation gives it as Theorem 2.3 of the 2010 paper, a number not checked here), M = (e - 1) Turan(t, v) + 1 rows of the hash family from the transposed OA (Colbourn 2009, as restated in Lemma 2.4 of Colbourn and Zhou 2012; `CAs::createDHF`), tag grammar q^e, +p, T, S, Arc, c read from the record (Trin occurs only in Power N-CT tags) | 469 of 471 exact, 0 wrong, 2 inexpressible | 445 |
 | Power N-CT | the same law with M not known from theory and solved from the record as one integer per (t, min(t, v), q, e), 39 keys, every row of a key giving the same integer, M plus or minus 1 fitting 0 of 2,093 rows | 2,033 of 2,093 exact, 0 wrong, 60 inexpressible | 2,033 |
 | perfect hash family a,b,w [T r or S s] [,c] | the same law with M = a; the D16 form (na rows at a symbols, nb at b) N = na (eCAN(t, a, v) - 1) + nb (eCAN(t, b, v) - 1) + 1 | 612 of 612, and 8 of 8 for the D16 form | 620 |
 | Direct product (plain tag) | N = min over pairs k1 k2 of at least k of eCAN(2, k1, v) + eCAN(2, k2, v) - v (Colbourn, Martirosyan, Mullen, Shasha, Sherwood and Yucas 2006, Theorem 3.2; `CAs::productCA`), 174 of 174 on the executed DPcat recipes | 212 of 545 exact; the generalized tag 32 of 1,573 with the record below the best pair on 1,522 | 206 |
 | PCAxPCA, PCAx2PCA | Theorems 3.2 and 3.3 of the same paper, N = eCAN(2, w1, v) + eCAN(2, w2, v) - v with the two widths from a bounded closure of the products over the OA, the PCAcat rows and the package's cover starters (`arith_formula_cmmssy.R`, recipe table `data/arith_pcax_recipes.csv`), and the package's 447 PCAcat recipes reproduce on (N, k, k1) 447 of 447 | 44 of 545 exact (27 of them VERIFIED already), 313 at the plain best-pair floor and classed RECURSIVE_TENTATIVE, 182 above it, 6 postop | 17 |
-| Derive from strength t+1 | N = floor(eCAN(t+1, k+1, v) / v) | 71 of 71 | 33 |
-| Add n factors, Add a factor | b = k - n, N = eCAN(t, b, v) + sum over j = 2 to min(t, n+1) of v^(j-1) (v-1) eCAN(t-j, b-1, v); domain n of at most 2, or v a prime power with n of at most v, or n = 3 at v in 12, 15, 20, 21, 24 | 396 of 579 exact, 6 above inside the domain, 177 outside the domain | 391 |
+| Derive from strength t+1 | N = floor(eCAN(t+1, k+1, v) / v) (Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010, inequality (7)) | 71 of 71 | 33 |
+| Add n factors, Add a factor | b = k - n, N = eCAN(t, b, v) + sum over j = 2 to min(t, n+1) of v^(j-1) (v-1) eCAN(t-j, b-1, v); domain n of at most 2, or v a prime power with n of at most v, or n = 3 at v in 12, 15, 20, 21, 24; n = 1 is Theorem 3.2 of Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010, the sum for n of at least 2 and the domain are read from the record (no paper found) | 396 of 579 exact, 6 above inside the domain, 177 outside the domain | 391 |
 | Chateauneuf-Kreher doubling | N = eCAN(3, k/2, v) + (v-1) eCAN(2, k/2, v) (Chateauneuf and Kreher 2002, restated as Theorem 2 of Cohen, Colbourn and Ling 2008) | 111 of 114, the 3 rows at v = 20 above the law | 95 |
-| Martirosyan-Colbourn | h = k/2, N = eCAN(t, h, v) + (v-1) eCAN(t-1, h, v) + eCAN(t-2, h, v^2), read off the record (no copy of the paper was available) | 37 of 38 exact where the third ingredient is a table entry (v of at most 5), 1 above; 117 rows at larger v exact with one constant per (t, v), classed RECURSIVE_TENTATIVE | 37 |
-| fuse (every tag ending in m fuse words) | N = eCAN(t, k, v + m) - 2m at strengths 3 to 6, a regularity read from the record | 1,303 of 1,354 exact, 42 with the base outside the table, 9 below the law | 147 |
+| Martirosyan-Colbourn | h = k/2, N = eCAN(t, h, v) + (v-1) eCAN(t-1, h, v) + eCAN(t-2, h, v^2) (Martirosyan and Colbourn 2005, Corollary 2.2; the law was first read off the record, before a copy of the paper was available) | 37 of 38 exact where the third ingredient is a table entry (v of at most 5), 1 above; 117 rows at larger v exact with one constant per (t, v), classed RECURSIVE_TENTATIVE | 37 |
+| fuse (every tag ending in m fuse words) | N = eCAN(t, k, v + m) - 2m at strengths 3 to 6 (Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010, Lemma 3.1, two rows fewer per fused symbol at every strength) | 1,303 of 1,354 exact, 42 with the base outside the table, 9 below the law | 147 |
 | Colbourn-Martirosyan-TVT-Walker, strength 3 | N = eCAN(3, k', v) + (v-1) eCAN(2, k', v) + v^3 - v^2, k' = ceiling(k / v), at prime power v; at v + 1 a prime power, that row minus 2 | 28 of 28 (23 and 5) | 28 |
-| Colbourn-Martirosyan-TVT-Walker, strength 4 | the k = v^2 rows by CMTW Theorem 4.13 with DCAN(2, v, v) = v - 1 from Yin 2003 and CODN(2, v, v^2) = v^4 - v^2, N = eCAN(4, v, v) + (v-1) eCAN(3, v, v) + (v^3 - v^2)(v - 1) + 2 (v^4 - v^2) (`arith_formula_dcan.R`, Yin's values in `data/dcan_table.csv`) | 7 of 7 such rows, 11 rows by Lemma 4.8 with one fitted CODN value classed RECURSIVE_TENTATIVE, 565 open | 7 |
+| Colbourn-Martirosyan-TVT-Walker, strength 4 | the k = v^2 rows by CMTW Theorem 4.13 with DCAN(2, v, v) = v - 1 from Yin 2003 and CODN(2, v, v^2) = v^4 - v^2 (derived here from CMTW's bound CODN(2, w, w) <= w^2 - w for a prime power w, applied at w = v^2 with v a prime power; not found in CMTW as read here), N = eCAN(4, v, v) + (v-1) eCAN(3, v, v) + (v^3 - v^2)(v - 1) + 2 (v^4 - v^2) (`arith_formula_dcan.R`, Yin's values in `data/dcan_table.csv`) | 7 of 7 such rows, 11 rows by Lemma 4.8 with one fitted CODN value classed RECURSIVE_TENTATIVE, 565 open | 7 |
 | Martirosyan-TVT | even k, c = k/2, the size law `CAs::N_upper_MTVTRouxtypeCA` states at strength 5 and its shape one strength up at 6; odd k (the variant tag), the ingredient widths split over ceiling(k/2) and floor(k/2) as the unique full fit | 206 of 206 even, 160 of 160 odd, 6 postop rows bound only | 366 |
 | Power CZ | Colbourn and Zhou 2012, Theorem 2.2, N = the least sum of quilting array sizes over the assignments Lemma 2.3 allows, sizes from the paper's Tables 1 and 2 (`arith_formula_powercz.R`, tables in `cz_tables.R`), a reading, nothing wired | 41 of 68 binary rows exact with the sizes as printed, 65 with two sizes fitted from the record, while the 27 ternary rows at strength 3, the 3 at strength 6 and the 117 rows at v = 6 have no ingredient in the paper | 0 (62 RECURSIVE_TENTATIVE) |
 | Cohen-Colbourn-Ling | the k-ary Roux of CMTW Theorem 3.3 with Yin's DCAN values | 0 of 318, the record a median 24 percent below the law, so the difference covering arrays behind these rows were found by search | 0 |
+
+References for the citations in the table above: C. J. Colbourn,
+Distributing hash families and covering arrays, J. Combin. Inf. Syst.
+Sci. 34 (2009) 113-126; C. J. Colbourn and J. Torres-Jimenez,
+Heterogeneous hash families and covering arrays, Contemp. Math. 523
+(2010) 3-15, doi:10.1090/conm/523/10309; C. J. Colbourn and J. Zhou,
+Improving two recursive constructions for covering arrays, J. Stat.
+Theory Pract. 6 (2012) 30-47, doi:10.1080/15598608.2012.647489 (notes
+in `findings/POWERCZ_NOTES.md`); C. J. Colbourn, G. Keri, P. P. Rivas
+Soriano and J.-C. Schlage-Puchta, Covering and radius-covering arrays:
+constructions and classification, Discrete Appl. Math. 158 (2010)
+1158-1180, doi:10.1016/j.dam.2010.03.008; S. S. Martirosyan and C. J.
+Colbourn, Recursive constructions of covering arrays, Bayreuth. Math.
+Schr. 74 (2005) 266-275.
 
 The fitted N-CT hash family table (`data/arith_power_Mtable.csv`, 39
 keys) carries a status column, `nct_status`, from a separate lane that
@@ -513,12 +527,19 @@ author's workstation.
   that have not been executed. Beyond the demo, the propagate mode is
   exercised by the reference inputs in `tests/` (`tests/README.md`),
   and no propagated size has yet been built and verified.
-- The arithmetic laws for Martirosyan-Colbourn, Martirosyan-TVT at
-  strength 6, the odd-k Martirosyan-TVT variant, the fuse loss of two
-  rows per symbol at strengths 3 to 6, the Add n factors sum and the
-  D16 hash family form were read off the record, not from a paper.
-  Each is exact on every row of its stated domain, and each is
-  labeled a reading in its script header. The paper of Colbourn,
+- The arithmetic laws for Martirosyan-TVT at strength 6, the odd-k
+  Martirosyan-TVT variant, the Add n factors sum for n of at least 2
+  and the D16 hash family form were read off the record, not from a
+  paper. Each is exact on every row the engine admits; six Add n
+  factors rows inside the stated domain sit above the sum and are not
+  admitted (listed above). Each is labeled a reading in its script
+  header.
+  Four laws first read off the record have since been found in print:
+  derive from strength t+1 is inequality (7), add one factor is
+  Theorem 3.2 and the fuse loss of two rows per symbol is Lemma 3.1 of
+  Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010, and the
+  Martirosyan-Colbourn law is Corollary 2.2 of Martirosyan and Colbourn
+  2005. Their script headers carry a note saying so. The paper of Colbourn,
   Martirosyan, Van Trung and Walker was read only through an
   automated summary of the authors' copy, in two passes (the second,
   formula by formula, is in `findings/DCAN_NOTES.md`). The Power CZ

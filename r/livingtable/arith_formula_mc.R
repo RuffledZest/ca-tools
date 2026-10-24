@@ -1,3 +1,7 @@
+## [Added 2026-10-24: the law below is Corollary 2.2 of Martirosyan and
+## Colbourn 2005, CAN(t, 2l, v) <= CAN(t, l, v) + (v - 1) CAN(t - 1, l, v)
+## + CAN(t - 2, l, v^2), read from a copy of the paper. The header
+## below was written before a copy was available and is kept as written.]
 ## arith_formula_mc.R - the "Martirosyan-Colbourn" family
 ## (155 rows, t = 5 and 6, every k even), calibrated on EVERY row of
 ## the family in the frozen table. No copy of the Martirosyan and

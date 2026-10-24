@@ -84,5 +84,6 @@ documented above.
 
 ## License
 
-GPL (>= 3), the license of the CAs package, whose routines this code
-follows closely; the same code is packaged in `../cafast`, also GPL (>= 3).
+GPL (>= 3). This code follows routines of the CAs package (GPL-3, by
+Ulrike Groemping) closely, and she has agreed to the "or later" terms;
+the same code is packaged in `../cafast`, also GPL (>= 3).

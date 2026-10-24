@@ -1,3 +1,7 @@
+## [Added 2026-10-24: Derive from strength t+1 is inequality (7) and Add
+## 1 factors is Theorem 3.2 of Colbourn, Keri, Rivas Soriano and
+## Schlage-Puchta 2010 (Discrete Appl. Math. 158), read 2026-10-23. The
+## header below was written before that and is kept as written.]
 ## arith_formula_small.R - four smaller families whose size
 ## law is a direct function of other table entries (ingredient sizes
 ## from the frozen table's own eCAN), each calibrated on EVERY row of
