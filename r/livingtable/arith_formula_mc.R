@@ -11,7 +11,9 @@
 ## Walker (2006), CAN(4, 2k, v) <= CAN(4, k, v) + (v - 1) CAN(3, k, v)
 ## + CAN(2, k, v^2), as read on 2026-09-06 through an automated summary
 ## of the authors' open copy, not by eye (see arith_formula_cmtw.R);
-## that is a reading of a paper, not a computed fact. With h = k / 2:
+## that is a reading of a paper, not a computed fact. Read directly in
+## the authors' copy on 2026-10-25, Theorem 4.7 is as stated (credited
+## there to Hartman). With h = k / 2:
 ##   N = eCAN(t, h, v) + (v - 1) eCAN(t - 1, h, v) + eCAN(t - 2, h, v^2)
 ## The third ingredient is a table entry only for v <= 5 (v^2 <= 25).
 ## For v >= 6 the record uses one k-independent number per (t, v),

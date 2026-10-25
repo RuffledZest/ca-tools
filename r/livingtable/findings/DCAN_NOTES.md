@@ -16,7 +16,8 @@ arrays of strengths three and four", DCC 41 (2006), uni-due.de), asked
 formula by formula in three passes; that is a summary reading, not a
 reading by eye, and it supersedes the earlier one-pass summary of the
 same paper where the two differ (they agree on every formula both
-give).
+give). Superseded on 2026-10-25 by a direct reading of the authors'
+copy (section 5).
 
 ## 1. Yin's definition (p. 327-328), verbatim
 
@@ -147,14 +148,14 @@ theorems above. Yin does not define covering ordered designs.
 
 ## 3. What the living table's theorems mean by DCAN, and the mapping
 
-CMTW (Section 2, fetch reading): a DCA(N, Γ; t, k, v) over a group Γ of
+CMTW (Section 2, fetch reading, confirmed in the authors' copy 2026-10-25): a DCA(N, Γ; t, k, v) over a group Γ of
 order v is an N × k array such that for any t distinct columns j_1,
 ..., j_t the set of tuples (d_{i j_1} − d_{i j_2}, ..., d_{i j_1} −
 d_{i j_t}), 1 ≤ i ≤ N, "contains every nonzero (t − 1)-tuple over Γ at
 least once"; "When Γ = Z_v we omit it from the notation"; "We denote
 by DCAN(t, k, v) the minimum N for which a DCA(N; t, k, v) exists."
 In the proof of Theorem 3.4 the multiplication table of F_v (Theorem
-2.2, Bush: "a (v, v; 1)-difference matrix over EA(v)") with its first
+2.2, credited there to [14], the CRC Handbook: "a (v, v; 1)-difference matrix over EA(v)") with its first
 row removed is called a DCA(v − 1; 2, v, v). Cohen, Colbourn and Ling's
 Theorem 3 is quoted as CMTW Theorem 3.3 with the same DCAN.
 
@@ -204,11 +205,17 @@ prime powers; 177 entries in all, all exact. The rows need far more:
 CCL's k-ary Roux search runs k' = 2..5000 (k_row 144..10000), CMTW's
 vk forms need k' = k/v from 2 to 3072 and the 2k forms k/2 up to 5000.
 Beyond the coverage above Yin's paper gives nothing; the only general
-bound available is the observation (not in Yin, not in CMTW as read)
+bound available is the observation (not in Yin, and not stated in CMTW, which gives the COD form in the
+proofs of Corollaries 2.4 and 4.9)
 that a CA(N; 2, k, v) with a constant row deleted is a DCA(N − 1; 2, k,
 v), DCAN_cmtw(2, k, v) ≤ CAN(2, k, v) − 1.
 
 ## 5. The CMTW forms used (summary reading, formula by formula)
+
+Checked on 2026-10-25 against the authors' copy, read directly (text
+and page images): the statements of the theorems, lemmas and
+corollaries below match it, and the CODN(2, k, v) <= CAN(2, k, v) - 1
+step is in the proof of Corollary 2.4.
 
 - Theorem 3.3 [Cohen, Colbourn, Ling]: CAN(3, kl, v) ≤ CAN(3, k, v) +
   CAN(3, l, v) + CAN(2, l, v) · DCAN(2, k, v). No CODN variant is
@@ -227,8 +234,8 @@ v), DCAN_cmtw(2, k, v) ≤ CAN(2, k, v) − 1.
 - Corollary 4.9 (v prime power, k ≥ 4): CAN(4, 2k, v) ≤ CAN(4, k, v) +
   (v − 1) CAN(3, k, v) + v² CAN(2, k, v) − v². (Its proof states
   CODN(2, v, v) ≤ v² − v for a prime power v, from Bush, and uses
-  CODN(2, k, v) ≤ CAN(2, k, v) − 1, which the summary reading places in
-  Section 2 near Corollary 2.4; the section number is unverified.)
+  CODN(2, k, v) ≤ CAN(2, k, v) − 1, which is the whole proof of
+  Corollary 2.4 and is restated in the proof of Corollary 4.9.)
 - Theorem 4.10: CAN(4, 3k, 2) ≤ CAN(4, k, 2) + 6 DCAN(2, k, 2) +
   CAN(3, k, 2) + CAN(3, k + 1, 2) + 4 CODN(2, k, 2).
 - Theorem 4.11: CAN(4, 3k, 3) ≤ CAN(4, k, 3) + 2 CAN(3, k, 3) +

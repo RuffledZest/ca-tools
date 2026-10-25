@@ -1,11 +1,12 @@
 ## arith_formula_cmtw.R - the "Colbourn-Martirosyan-TVT-Walker"
 ## family (707 rows: 611 plain, 96 with fuse suffixes handled in
 ## arith_formula_fuse.R), calibrated on every plain row. The paper,
-## CMTW 2006, was found open (the authors' copy) on 2026-09-06 and read
-## through an automated summary of the pdf, not by eye; the theorem
-## numbers and conditions below are that summary's, and the fits do
-## not depend on them.
-## Strength 3 (28 plain rows), the form the summary calls Theorem 3.4:
+## CMTW 2006, was found open (the authors' copy) on 2026-09-06 and first
+## read through an automated summary of the pdf. On 2026-10-25 it was
+## read directly in that copy (a preprint): Theorems 3.4 and 4.7 and
+## Corollary 4.9 are as below, and Theorem 3.4 needs a prime power v of
+## at least 3, which all 23 rows meet. The fits do not depend on this.
+## Strength 3 (28 plain rows), Theorem 3.4:
 ##   N = eCAN(3, k', v) + (v - 1) eCAN(2, k', v) + v^3 - v^2,  k' = ceiling(k / v)
 ## exact on all 23 rows with prime power v (21 with k = v k', 2 at the
 ## table's k = 10000 cap where k' = ceiling(10000 / v) gives the same
@@ -14,7 +15,7 @@
 ## fusion reading of arith_formula_fuse.R without the tag; exact on
 ## all 5 and admitted under that reading.
 ## Strength 4 (583 plain rows): the pure-CAN strength-4 forms in the
-## summary (4.7, a doubling with a CAN(2, k/2, v^2) ingredient; 4.9,
+## paper (4.7, a doubling with a CAN(2, k/2, v^2) ingredient; 4.9,
 ## the prime power doubling with v^2 CAN(2, k/2, v) - v^2) and the
 ## package's strength-4 Martirosyan-Van Trung form (eCAN(4, c, v) +
 ## (v - 1) eCAN(3, c, v) + eCAN(2, c, v)^2, c = ceiling(k / 2)) are

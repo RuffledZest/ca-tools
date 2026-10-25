@@ -10,6 +10,8 @@
 ## holds the statements). The CMTW forms were re-read the same day
 ## through an automated summary of the authors' open copy (formula by
 ## formula, not by eye); findings/DCAN_NOTES.md records that reading.
+## Read directly in the authors' copy on 2026-10-25, the statements
+## match (findings/DCAN_NOTES.md section 5).
 ## Conventions. Yin: a DCA(k, n; q) over an abelian group G of order q
 ## is a k x n array such that, for any two distinct rows, EVERY element
 ## of G (zero included) occurs in the difference list; n >= q, with
