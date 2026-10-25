@@ -34,12 +34,12 @@ a { color: inherit; }
 <p>A covering array CA(N; t, k, v) is an N by k array over v symbols in which every choice of t columns shows every one of the v<sup>t</sup> value combinations in some row. This table records, for each strength t and alphabet size v, the smallest known N for each number of columns k, and says where every entry comes from. The baseline is the November 2024 status of Charles J. Colbourn's covering array tables as preserved by Ulrike Groemping in the CAs R package (tier CITED). Entries with an explicit array in hand were checked exhaustively by a verifier and carry the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check in full on the public runner were screened on random column windows (tier SCREENED); they are listed but do not count as best known. Where Colbourn's construction for an entry, as checked here, did not give a covering array at the recorded size, the entry stays as recorded and its rung is marked disputed (tier DISPUTED). Improvements are not yet propagated through recursive constructions: the propagation engine in <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/r/livingtable">r/livingtable</a> is run by hand and is not connected to submissions, so no entry here is derived by it.</p>
 <p>Rows are stair-steps: an entry (t, v, k, N) means N runs suffice for up to k columns, so the best known N at k is the smallest N among entries with at least k columns. The construction column names the construction or search that produced each entry, where it is known. For every array on file, constant rows is the largest number of its rows that can be made constant by permuting symbols within columns, a property that matters when the array is an ingredient of another construction. Anyone can add an array by pull request; see <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/submissions/README.md">how to submit</a>. The data is <a href="https://github.com/chrispbsmolen/ca-tools/tree/main/table">table/ in the repository</a>; the raw file <a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/ca_table.csv">table/ca_table.csv</a> is the machine-readable form (see the README for the stair-step rule and an R snippet).</p>
 <ul class="stats">
-<li>table rows <b>14,212</b></li>
-<li>verified rows <b>562</b></li>
+<li>table rows <b>14,214</b></li>
+<li>verified rows <b>564</b></li>
 <li>screened rows, not yet verified in full <b>0</b></li>
 <li>disputed entries <b>3</b></li>
-<li>arrays on file <b>290</b></li>
-<li>verified arrays <b>290</b></li>
+<li>arrays on file <b>292</b></li>
+<li>verified arrays <b>292</b></li>
 <li>screened arrays <b>0</b></li>
 <li>community submissions <b>1</b></li>
 <li>arrays from submissions <b>23</b></li>
@@ -51,7 +51,7 @@ a { color: inherit; }
 <tr><td><code>tier</code></td><td class=ev>the evidence class. <b>CITED</b>: traceable to a dated snapshot or publication, no array in hand (the 13,641 baseline rows are Colbourn's tables of November 2024). <b>VERIFIED</b>: an explicit array was checked exhaustively at strength t. <b>SCREENED</b>: an array too large for the public check, screened on random column windows, listed but not counted as best known. <b>FAILED_PENDING_RECHECK</b>: a verification attempt that failed its dimension check, kept and superseded by a later row. <b>DISPUTED</b> (since 2026-10-23): an added row beside a CITED entry whose cited construction, as implemented and checked here, did not give a covering array at the recorded size; the CITED row stays as recorded and is still counted, and the rung is marked disputed</td></tr>
 <tr><td><code>source_id</code></td><td class=ev>the source class. <b>S1</b> Colbourn's tables (the CAs snapshot), <b>S4</b> NIST covering array library, <b>S5</b> Dwyer CA_Database, <b>S6</b> data and constructions of the CAs package, <b>S7</b> literature and community submissions</td></tr>
 <tr><td><code>source_detail</code></td><td class=ev>the exact retrieval or generation recipe (URL and commit, or the generating call and package version)</td></tr>
-<tr><td><code>snapshot_id</code></td><td class=ev>the dated source: <code>colbourn-2024-11-ug</code> for the baseline, <code>pr-N</code> (or the submission folder name) for a submission, empty where <code>source_detail</code> already carries a dated recipe</td></tr>
+<tr><td><code>snapshot_id</code></td><td class=ev>the dated source: <code>colbourn-2024-11-ug</code> for the baseline, <code>pr-N</code> (or the submission folder name) for a submission, the arXiv id with version (for example <code>arXiv:2510.13122v2</code>) for a paper, empty where <code>source_detail</code> already carries a dated recipe</td></tr>
 <tr><td><code>array_sha256</code></td><td class=ev>SHA-256 of the array in canonical form (0-based symbols, one run per line), for rows with an array</td></tr>
 <tr><td><code>verify_stamp</code></td><td class=ev>the verifier, its version or commit, the date and the machine; on this page each stamp links to that verifier (caverify on CRAN, or the ca_verify source at that commit), to the array file where one is stored, and to the verification log</td></tr>
 <tr><td><code>entered</code></td><td class=ev>the date the row was added</td></tr>
@@ -6066,7 +6066,7 @@ a { color: inherit; }
 <tr><td class=n>8137 to 9153</td><td class=n>243389</td><td class=ev>Colbourn-Martirosyan-TVT-Walker</td></tr>
 <tr><td class=n>9154 to 10000</td><td class=n>244049</td><td class=ev>Colbourn-Martirosyan-TVT-Walker fuse</td></tr>
 </tbody></table></details>
-<details><summary>t = 4, v = 11: 73 rungs, 0 verified</summary>
+<details><summary>t = 4, v = 11: 74 rungs, 1 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>4 to 12</td><td class=n>14641</td><td class=ev>orthogonal array</td></tr>
 <tr><td class=n>13</td><td class=n>27482</td><td class=ev>orthogonal array fuse fuse postop NCK</td></tr>
@@ -6077,7 +6077,8 @@ a { color: inherit; }
 <tr><td class=n>44 to 47</td><td class=n>43791</td><td class=ev>2-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>48 to 49</td><td class=n>43901</td><td class=ev>SCPHF Random Extension (CLS)</td></tr>
 <tr><td class=n>50 to 51</td><td class=n>43921</td><td class=ev>CPHF IPO 3 (WCS)</td></tr>
-<tr><td class=n>52 to 80</td><td class=n>55891</td><td class=ev>3,3-Restricted SCPHF RE (CL)</td></tr>
+<tr><td class=n>52 to 61</td><td class=n>43921</td><td class=ev><span class="tag ver">verified</span>K. Shokri, L. Moura and B. Stevens 2025 (the construction and the size, arXiv:2510.13122, Theorem 5.1 and Table 3 of v2 (Table 4 of v3), an arXiv preprint with no journal reference as of 2026-10-25); <i>strength-4 construction from three truncated Moebius planes (Shokri, Moura and Stevens 2025, Theorem 5.1): for l = 1, 2, 4, all F_q-linear combinations of the rows of the 4 x (q^2+1)/2 matrix whose columns are the coordinate vectors of alpha^(l(q+1)j), j = i or i + (q^2+1)/2 for each i &lt; (q^2+1)/2, alpha primitive in F_(q^4); the three q^4-row arrays stacked with two of the three zero rows removed, N = 3q^4 - 2, q = 11</i>; tools/sms_theorem51.py 11 (Theorem 5.1 of Shokri, Moura and Stevens, arXiv:2510.13122v2; p = 0, primitive polynomial x^4 + 4x^3 + 2)<span class="stamp"><a href="https://cran.r-project.org/package=caverify">caverify 0.2.0</a> 2026-10-25 Darwin-arm64 (<a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/arrays/CA_43921_4_61_11.txt">array</a>, <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>), sha256 a7b45f381b76, constant rows 11 of 11</span></td></tr>
+<tr><td class=n>62 to 80</td><td class=n>55891</td><td class=ev>3,3-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>81 to 84</td><td class=n>57101</td><td class=ev>3,2-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>85 to 89</td><td class=n>57211</td><td class=ev>3-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>90 to 95</td><td class=n>58311</td><td class=ev>2,2-Restricted SCPHF RE (CL)</td></tr>
@@ -6243,7 +6244,7 @@ a { color: inherit; }
 <tr><td class=n>9941 to 9968</td><td class=n>448041</td><td class=ev>Colbourn-Martirosyan-TVT-Walker</td></tr>
 <tr><td class=n>9969 to 10000</td><td class=n>460679</td><td class=ev>Colbourn-Martirosyan-TVT-Walker fuse</td></tr>
 </tbody></table></details>
-<details><summary>t = 4, v = 13: 75 rungs, 0 verified</summary>
+<details><summary>t = 4, v = 13: 76 rungs, 1 verified</summary>
 <table><thead><tr><th class=n>k</th><th class=n>N</th><th>evidence</th></tr></thead><tbody>
 <tr><td class=n>4 to 14</td><td class=n>28561</td><td class=ev>orthogonal array</td></tr>
 <tr><td class=n>15</td><td class=n>54756</td><td class=ev>extended OA (Colbourn)</td></tr>
@@ -6254,7 +6255,8 @@ a { color: inherit; }
 <tr><td class=n>52 to 55</td><td class=n>85501</td><td class=ev>2-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>56 to 57</td><td class=n>85657</td><td class=ev>SCPHF Random Extension (CLS)</td></tr>
 <tr><td class=n>58 to 62</td><td class=n>85681</td><td class=ev>CPHF IPO 3 (WCS)</td></tr>
-<tr><td class=n>63 to 94</td><td class=n>109837</td><td class=ev>3,3-Restricted SCPHF RE (CL)</td></tr>
+<tr><td class=n>63 to 85</td><td class=n>85681</td><td class=ev><span class="tag ver">verified</span>K. Shokri, L. Moura and B. Stevens 2025 (the construction and the size, arXiv:2510.13122, Theorem 5.1 and Table 3 of v2 (Table 4 of v3), an arXiv preprint with no journal reference as of 2026-10-25); <i>strength-4 construction from three truncated Moebius planes (Shokri, Moura and Stevens 2025, Theorem 5.1): for l = 1, 2, 4, all F_q-linear combinations of the rows of the 4 x (q^2+1)/2 matrix whose columns are the coordinate vectors of alpha^(l(q+1)j), j = i or i + (q^2+1)/2 for each i &lt; (q^2+1)/2, alpha primitive in F_(q^4); the three q^4-row arrays stacked with two of the three zero rows removed, N = 3q^4 - 2, q = 13</i>; tools/sms_theorem51.py 13 (Theorem 5.1 of Shokri, Moura and Stevens, arXiv:2510.13122v2; p = 0, primitive polynomial x^4 + 6x^3 + 2x^2 + 2)<span class="stamp"><a href="https://cran.r-project.org/package=caverify">caverify 0.2.0</a> 2026-10-25 Darwin-arm64 (<a href="https://raw.githubusercontent.com/chrispbsmolen/ca-tools/main/table/arrays/CA_85681_4_85_13.txt">array</a>, <a href="https://github.com/chrispbsmolen/ca-tools/blob/main/table/VERIFICATION_LOG.md">verification log</a>), sha256 237357f7da42, constant rows 13 of 13</span></td></tr>
+<tr><td class=n>86 to 94</td><td class=n>109837</td><td class=ev>3,3-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>95 to 105</td><td class=n>111865</td><td class=ev>3,2-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>106</td><td class=n>112021</td><td class=ev>3-Restricted SCPHF RE (CL)</td></tr>
 <tr><td class=n>107 to 119</td><td class=n>113893</td><td class=ev>2,2-Restricted SCPHF RE (CL)</td></tr>

@@ -190,3 +190,37 @@ VERIFIED S6 row with MANIFEST status above_snapshot. The two larger
 type 4a arrays are not entered (screened only, and over 200 MB each
 as text). None of this shows that the recorded sizes cannot be
 reached by another construction.
+
+## Two strength-4 arrays from Shokri, Moura and Stevens, 2026-10-25
+
+K. Shokri, L. Moura and B. Stevens, "Existence of 3 anti-cocircular
+truncated Moebius planes and constructions of strength-4 covering
+arrays", arXiv:2510.13122 (v1 2025-10-15, v2 2026-01-17, v3
+2026-10-16), give in Theorem 5.1 a CA(3q^4 - 2; 4, (q^2+1)/2, q) for
+every odd prime power q, and their Table 3 (Table 4 in v3) shows it
+below Colbourn's tables for q = 11 to 25. The paper gives the
+construction and the sizes; no array files were found published. Two
+of the arrays were built here from Theorem 5.1 with
+`../tools/sms_theorem51.py` (odd primes q, the column choice p = 0,
+the first primitive polynomial in its search order) and entered as S7
+rows with status exceeds_snapshot:
+
+| (t, k, v) | N | snapshot best | constant rows |
+|---|---|---|---|
+| (4, 61, 11) | 43,921 | 55,891 | 11 |
+| (4, 85, 13) | 85,681 | 109,837 | 13 |
+
+Both were verified in full twice: by caverify 0.2.0 on the Mac
+(2026-10-25, after rebuilding them there with the same script and
+getting the same SHA-256) and by `ca_verify.c` on a second machine
+(every column 4-set: 521,855 and 2,024,785). An independent
+reimplementation of Theorem 5.1, written without this script and with
+a different primitive polynomial and column choice, also gave a
+verified CA(43921; 4, 61, 11) (not stored). Constant rows were counted
+by `../tools/constant_rows.c` and cafast::maxconstant_c. At q = 13 the
+snapshot already recorded 85,681 rows for k = 62; the gain there is 23
+columns. Checked at q = 7, the first of the three blocks alone is not
+a strength-4 covering array. The improvements belong to the authors'
+construction, not to this project. Larger q (17, 19, 23, and 25 with
+F_25 arithmetic) would follow the same way; their full verification is
+long and was not attempted.

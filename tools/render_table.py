@@ -213,7 +213,8 @@ LEGEND = [
     ("source_detail", "the exact retrieval or generation recipe (URL and commit, or the "
      "generating call and package version)"),
     ("snapshot_id", "the dated source: <code>colbourn-2024-11-ug</code> for the baseline, "
-     "<code>pr-N</code> (or the submission folder name) for a submission, empty where "
+     "<code>pr-N</code> (or the submission folder name) for a submission, the arXiv id "
+     "with version (for example <code>arXiv:2510.13122v2</code>) for a paper, empty where "
      "<code>source_detail</code> already carries a dated recipe"),
     ("array_sha256", "SHA-256 of the array in canonical form (0-based symbols, one run per "
      "line), for rows with an array"),
@@ -329,7 +330,10 @@ def render(rows, manifest, date):
     rows_shown = [r for r in rows if not (r["tier"] == "SCREENED" and r["array_sha256"] in verified_sha)]
     tiers = collections.Counter(r["tier"] for r in rows_shown)
     mstat = collections.Counter(m["status"] for m in manifest)
-    subs = [r for r in rows_shown if r["source_id"] == "S7" and r["tier"] in ("VERIFIED", "SCREENED")]
+    # community submissions are the S7 rows that came through the submission check (their notes
+    # name the submission); S7 rows entered from the literature appear in the stair-steps only
+    subs = [r for r in rows_shown if r["source_id"] == "S7" and r["tier"] in ("VERIFIED", "SCREENED")
+            and slug_of(r) != "(unnamed)"]
     by_tv = collections.defaultdict(list)
     for r in rows:
         by_tv[(r["t"], r["v"])].append(r)
