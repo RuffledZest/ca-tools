@@ -46,7 +46,7 @@ details { border-bottom:1px solid var(--line); padding:.35rem 0; }
 summary { cursor:pointer; }
 .tag { display:inline-block; font-size:.75rem; font-weight:600; border-radius:4px; padding:0 .35rem;
   border:1px solid currentColor; margin-right:.3rem; }
-.ver { color:var(--ver); } .scr { color:var(--scr); } .dis { color:var(--dis); }
+.ver { color:var(--ver); } .scr { color:var(--scr); } .dis { color:var(--dis); } .lit { color:var(--mute); }
 .stamp { color:var(--mute); font-size:.8rem; display:block; }
 .subhead { font-size:.9rem; margin:.4rem 0; overflow-wrap:anywhere; }
 .lbl { color:var(--mute); font-size:.8rem; margin-right:.3rem; }
@@ -225,8 +225,9 @@ LEGEND = [
     ("source_detail", "the exact retrieval or generation recipe (URL and commit, or the "
      "generating call and package version)"),
     ("snapshot_id", "the dated source: <code>colbourn-2024-11-ug</code> for the baseline, "
-     "<code>pr-N</code> (or the submission folder name) for a submission, the arXiv id "
-     "with version (for example <code>arXiv:2510.13122v2</code>) for a paper, empty where "
+     "<code>pr-N</code> (or the submission folder name) for a submission, the DOI or the "
+     "arXiv id with version (for example <code>doi:10.3390/math12121908</code>, "
+     "<code>arXiv:2510.13122v2</code>) for a paper, empty where "
      "<code>source_detail</code> already carries a dated recipe"),
     ("array_sha256", "SHA-256 of the array in canonical form (0-based symbols, one run per "
      "line), for rows with an array"),
@@ -281,11 +282,20 @@ def evidence_html(rs):
     for r in rs:
         if r["tier"] == "VERIFIED" and r["array_sha256"] not in seen:
             seen.add(r["array_sha256"]); ver.append(r)
-    cited = [r for r in rs if r["tier"] == "CITED"]
+    cited = [r for r in rs if r["tier"] == "CITED" and r["source_id"] == "S1"]
+    lit = [r for r in rs if r["tier"] == "CITED" and r["source_id"] != "S1"]
     parts = []
-    if cited and ver:
+    if cited and (ver or lit):
         parts.append('<span class=lbl>Colbourn\'s table</span> %s<br>' %
                      html.escape(construction_of(cited[0]) or cited[0]["source_detail"]))
+    for r in lit:
+        # a size published in a paper, no array in hand (tier CITED, source S7)
+        cr = credit_of(r)
+        con = construction_of(r)
+        parts.append('<span class="tag lit">published</span>%s%s%s<br>' % (
+            html.escape(cr + "; ") if cr else "",
+            ("<i>%s</i>; " % html.escape(con)) if con else "",
+            html.escape(r["source_detail"])))
     vparts = []
     for r in ver:
         cr = credit_of(r)
@@ -299,7 +309,7 @@ def evidence_html(rs):
                          stamp_html(r), html.escape(r["array_sha256"][:12]),
                          (", " + crs) if crs else ""))
     parts.append("".join(vparts))
-    if not ver:
+    if not ver and not lit:
         r = rs[0]
         parts.append(html.escape(construction_of(r) or r["source_detail"] or r["source_id"]))
     return "".join(parts)
@@ -363,7 +373,9 @@ def render(rows, manifest, date):
              "alphabet size v, the smallest known N for each number of columns k, and "
              "says where every entry comes from. The baseline is the November 2024 "
              "status of Charles J. Colbourn's covering array tables as preserved by "
-             "Ulrike Groemping in the CAs R package (tier CITED). Entries with an "
+             "Ulrike Groemping in the CAs R package (tier CITED). Sizes published in papers "
+             "and not in the snapshot are also tier CITED, each naming its paper (source S7, marked "
+             "published), until an array is in hand. Entries with an "
              "explicit array in hand were checked exhaustively by a verifier and carry "
              "the array's SHA-256 and a stamp (tier VERIFIED). Arrays too large to check "
              "in full on the public runner were screened on random column windows "
@@ -388,6 +400,7 @@ def render(rows, manifest, date):
              % (REPO_URL, REPO_URL, RAW_CSV))
     H.append("<ul class=\"stats\">")
     for label, n in (("table rows", len(rows)), ("verified rows", tiers["VERIFIED"]),
+                     ("rows cited from papers", sum(1 for r in rows if r["tier"] == "CITED" and r["source_id"] != "S1")),
                      ("screened rows, not yet verified in full", tiers["SCREENED"]),
                      ("disputed entries", tiers["DISPUTED"]), ("arrays on file", len(manifest)),
                      ("verified arrays", len(manifest) - mstat["screened"]),

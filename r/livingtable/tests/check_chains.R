@@ -14,7 +14,7 @@
 ## (exit status 1 on failure).
 options(scipen = 99)
 args <- commandArgs(TRUE); f <- args[!grepl("^--", args)][1]
-source("base_record.R")   ## the same base record as the engine: the CITED rows of the table, fingerprint checked
+source("base_record.R")   ## the same base record as the engine: the baseline rows (CITED, S1) of the table, fingerprint checked
 br <- read_base(table_path(args))
 if (!br$ok) { cat(br$why, "\nCHAIN CHECK: FAIL\n"); quit(save = "no", status = 1) }
 cb <- br$cb   ## Add a factor chains read cb

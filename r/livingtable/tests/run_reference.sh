@@ -11,9 +11,9 @@
 # Run from the repository root. The engine runs in a temporary copy of
 # r/livingtable, so nothing tracked is written; every output file is deleted
 # in the copy before the run that should produce it. The engine and the chain
-# checker read the base record from the CITED rows of table/ca_table.csv
+# checker read the base record from the baseline rows (CITED, S1) of table/ca_table.csv
 # (base_record.R); CAs is needed only for the cross-check below. What is checked:
-#   base          the CITED rows give the recorded fingerprint, and, when CAs is
+#   base          the baseline rows give the recorded fingerprint, and, when CAs is
 #                 installed, so does CAs::colbournBigFrame
 #   identity      the engine reproduces every RECURSIVE entry of the frozen record
 #                 (the line "identity: 4425 of 4425 ...") and writes a fresh
@@ -59,7 +59,7 @@ fail=0
 sha() { (sha256sum "$1" 2>/dev/null || shasum -a 256 "$1") | cut -c1-64; }
 Rscript -e 'cat("R", as.character(getRversion()), " CAs", if (requireNamespace("CAs", quietly = TRUE)) as.character(packageVersion("CAs")) else "not installed", "\n")'
 
-# base: the table's CITED rows are the calibrated record (base_record.R), and, when
+# base: the table's baseline rows (CITED, S1) are the calibrated record (base_record.R), and, when
 # CAs is installed, the fingerprint of CAs::colbournBigFrame is the recorded one too
 Rscript -e 'source("base_record.R"); r <- read_base(commandArgs(TRUE)[1])
     cat("table fingerprint", r$fp, if (r$ok) "matches" else paste("REFUSED:", r$why), "\n")

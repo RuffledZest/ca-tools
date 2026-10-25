@@ -11,13 +11,13 @@ runs from the repository root, works in a temporary copy of
 deleted in the copy before the run that should produce it), prints the
 R and CAs versions, and ends with `REFERENCE CHECK: PASS` or `FAIL`.
 Since build step 2d the engine and `check_chains.R` read the frozen
-record from the CITED rows of `table/ca_table.csv` (`base_record.R`)
+record from the baseline rows (CITED, source S1) of `table/ca_table.csv` (`base_record.R`)
 and need only R; the CAs package, when installed, is used for one
 cross-check. The references were recorded with R 4.3.3 and CAs 0.24.4.
 
 | check | input | expected |
 |---|---|---|
-| base | the CITED rows of `table/ca_table.csv` | their fingerprint (md5 of one line t,v,k,N,Source per row, in table order) equals the one recorded in `base_record.R`, `3e568873d54f25ce100f2f01d232e129`, and so does that of `CAs::colbournBigFrame` when CAs is installed |
+| base | the baseline rows (CITED, S1) of `table/ca_table.csv` | their fingerprint (md5 of one line t,v,k,N,Source per row, in table order) equals the one recorded in `base_record.R`, `3e568873d54f25ce100f2f01d232e129`, and so does that of `CAs::colbournBigFrame` when CAs is installed |
 | identity | the frozen record | `expected/identity.txt`: 4,425 of 4,425 RECURSIVE entries reproduced, and a freshly written `data/arith_edges.csv` identical to the one in the repository |
 | september | `inputs/imp_september.csv`, the 17 verified improvements of September 2026 (`data/better_verified.csv`) | `expected/cascade_september.csv`, 2 entries; identical to the committed `data/arith_cascade.csv` |
 | table | `inputs/imp_table_0cc536b.csv`, every VERIFIED row of `table/ca_table.csv` at commit 0cc536b, sorted by t, v, k, N and sha256, with its constant rows from the MANIFEST (1 where the array is not stored) | `expected/cascade_table.csv`, 2 entries, byte-identical to the September cascade: of the 561 rows, 60 beat the frozen record and only the 3381 at (3, 12, 14) moves anything |
@@ -31,7 +31,7 @@ added in build step 2b) must also equal `expected/chain_<name>.csv`, and
 the law of its family evaluated on the recorded values and constant-row
 credits, no lookup missing and none extra, and for the direct product
 the recorded pair checked by the law's own rule (2, 2, 415, 6 and 8 entries).
-It reads the engine's laws and data files and the same CITED rows as the
+It reads the engine's laws and data files and the same baseline rows as the
 engine.
 
 Each propagation input is then run again with its rows in another

@@ -292,9 +292,11 @@ and repeated with the changed entries as the next round's
 improvements) and sweep (recompute every RECURSIVE entry, apply,
 repeat), are each iterated to a fixpoint and must agree on the
 closure; a run in which they disagree stops and writes nothing.
-The engine starts from the CITED rows of `table/ca_table.csv`
-(`base_record.R`), which equal `colbournBigFrame` row for row; it
-refuses a table whose CITED rows do not give the recorded fingerprint,
+The engine starts from the baseline rows of `table/ca_table.csv`
+(tier CITED, source S1; `base_record.R`), which equal `colbournBigFrame`
+row for row; CITED rows from the literature (source S7, since
+2026-10-25) are not part of its base record yet. It
+refuses a table whose baseline rows do not give the recorded fingerprint,
 and needs only R, not CAs. Improvements are put in a fixed order
 before anything else, so the result does not depend on the order of
 the file. Where two improvements answer a lookup with the same N, the
@@ -668,7 +670,7 @@ per-row workers launched by `mac_finish2.R`, `mac_finish3.R` and
 `mac_powerct_refix.R` as subprocesses and are not run directly.
 
 The arithmetic tier, in this order (each script reads the frozen
-table inside CAs, except `arith_engine.R`, which reads the CITED rows
+table inside CAs, except `arith_engine.R`, which reads the baseline rows
 of `table/ca_table.csv`, and, most of them, `data/engine_coverage.csv`, writes
 its csv to `data/`, and takes a few seconds apart from
 `arith_formula_mtvt.R` at about a minute; the whole sequence ran in
@@ -702,7 +704,7 @@ checks the law on the executed recipes. The family scripts do not
 depend on it. `arith_formula_fuse.R` reads the probe's csv,
 `arith_formula_cmmssy.R` reads the shipped tally (see above),
 `arith_formula_powercz.R` sources `cz_tables.R`, `arith_tally.R`
-reads every family csv, `arith_engine.R` reads the CITED rows of
+reads every family csv, `arith_engine.R` reads the baseline rows of
 `../../table/ca_table.csv` (or the table given by `--table=PATH`)
 through `base_record.R`, reads `data/arith_tally.csv`
 and `data/arith_power_Mtable.csv` and sources `arith_laws.R` (which
@@ -797,7 +799,7 @@ Every size it contains is a claim.
 | `arith_tally.R` | the class of every UNRESOLVED entry, joined from the family csvs |
 | `arith_laws.R` | the law evaluators, one per admitted family (sourced by the engine) |
 | `arith_engine.R` | identity test, arithmetic edges, and two-mode propagation to closure |
-| `base_record.R` | reads the engine's base record from the CITED rows of the table and checks its fingerprint |
+| `base_record.R` | reads the engine's base record from the baseline rows (CITED, S1) of the table and checks its fingerprint |
 | `arith_coverage_republish.R` | coverage accounting with the arithmetic tier counted apart |
 | `data/arith_formula_power.csv`, `data/arith_power_Mtable.csv` | per-row power calibration and the fitted N-CT hash family table, with the `nct_status` column |
 | `data/nct_key_status.csv` | CERTIFIED, REFUTED or OPEN for each of the 39 N-CT keys |

@@ -1,5 +1,5 @@
 ## arith_engine.R - the RECURSIVE tier wired as an engine organ. The living table is the frozen record (13,641 rows,
-## read from the CITED rows of table/ca_table.csv and checked against the fingerprint of
+## read from the baseline rows (CITED, S1) of table/ca_table.csv and checked against the fingerprint of
 ## CAs::colbournBigFrame, base_record.R; CAs itself is not needed) plus verified improvements; the RECURSIVE entries
 ## (data/arith_tally.csv, tier RECURSIVE) are recomputed from it by the
 ## laws in arith_laws.R, and every lookup an entry makes is recorded as
@@ -24,7 +24,7 @@
 ##   Rscript arith_engine.R propagate improvements.csv   columns t,k,v,N (new best sizes)
 ##   Rscript arith_engine.R demo                     improvements = data/better_verified.csv
 ## Any mode also takes --table=PATH (default ../../table/ca_table.csv); a table
-## whose CITED rows are not the calibrated record stops the run, nothing written.
+## whose baseline rows are not the calibrated record stops the run, nothing written.
 ## Outputs: data/arith_edges.csv (identity run; one row per distinct
 ## child -> lookup pair with its multiplicity, range rows for the
 ## direct product carry no answering row) and the cascade files named
@@ -66,7 +66,7 @@
 ## test fails or the two modes disagree.
 options(scipen = 99)   ## every number written in full, never in scientific notation
 args <- commandArgs(TRUE); pos <- args[!grepl("^--", args)]
-## the base record: the CITED rows of the table, refused unless they are the calibrated record (base_record.R)
+## the base record: the baseline rows (CITED, S1) of the table, refused unless they are the calibrated record (base_record.R)
 source("base_record.R")
 br <- read_base(table_path(args))
 if (!br$ok) { cat(paste0("ENGINE STOPPED: ", br$why, "; nothing was written\n")); quit(save = "no", status = 1) }

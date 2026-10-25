@@ -78,7 +78,7 @@ def counts(rows, man):
     full = collections.defaultdict(list)
     for r in rows:
         key = (r["t"], r["v"])
-        if r["tier"] == "CITED":
+        if r["tier"] == "CITED" and r["source_id"] == "S1":
             cited[key].append((int(r["k"]), num(r["N"])))
         if r["tier"] in ("CITED", "VERIFIED"):
             full[key].append((int(r["k"]), num(r["N"])))
@@ -86,11 +86,12 @@ def counts(rows, man):
     nofile_src = collections.Counter(r["source_id"] for r in nofile)
     nofile_above = sum(1 for r in nofile
                        if num(r["N"]) > stair_min(full[(r["t"], r["v"])], int(r["k"])))
-    # the frozen tables' eCAN and eCAK points are the CITED rows; compare the
-    # stair-step lookups over CITED rows alone with CITED and VERIFIED together
+    # the frozen tables' eCAN and eCAK points are the baseline rows (CITED, S1);
+    # compare the stair-step lookups over them alone with CITED (baseline and
+    # literature) and VERIFIED rows together
     smaller_n = more_k = worse = 0
     for r in rows:
-        if r["tier"] != "CITED":
+        if r["tier"] != "CITED" or r["source_id"] != "S1":
             continue
         key, k, n = (r["t"], r["v"]), int(r["k"]), num(r["N"])
         a, b = stair_min(cited[key], k), stair_min(full[key], k)
@@ -107,7 +108,7 @@ def counts(rows, man):
     latest = max(r["entered"] for r in rows if DATE.match(r["entered"]))
     return dict(rows=len(rows), tiers=tiers, arrays=len(man), status=status,
                 nofile=len(nofile), nofile_src=nofile_src, nofile_above=nofile_above,
-                points=tiers["CITED"], smaller_n=smaller_n, more_k=more_k, worse=worse,
+                points=sum(1 for r in rows if r["source_id"] == "S1"), smaller_n=smaller_n, more_k=more_k, worse=worse,
                 latest=latest)
 
 
@@ -199,6 +200,19 @@ def check_structure(raw, rows, man):
     if len(s1) != BASELINE_ROWS or any(r["tier"] != "CITED" or r["snapshot_id"] != BASELINE_SNAPSHOT for r in s1):
         problem("%s: the baseline must be %d S1 rows, tier CITED, snapshot %s (found %d S1 rows)"
                 % (TABLE, BASELINE_ROWS, BASELINE_SNAPSHOT, len(s1)))
+    # a CITED row outside the baseline cites the literature (S7, since 2026-10-25): a DOI
+    # or arXiv id as snapshot_id, no array fields, and notes that credit the paper
+    for r in rows:
+        if r["tier"] == "CITED" and r["source_id"] != "S1":
+            key = ",".join((r["t"], r["v"], r["k"], r["N"]))
+            if r["source_id"] != "S7" or not re.match(r"(doi:10\.|arXiv:)", r["snapshot_id"]):
+                problem("%s: CITED row %s outside the baseline must be S7 with a DOI or arXiv id as snapshot_id"
+                        % (TABLE, key))
+            if r["array_sha256"] or r["verify_stamp"]:
+                problem("%s: CITED row %s has array fields" % (TABLE, key))
+            if "credit: " not in r["notes"] or not r["construction"].strip() or not r["source_detail"].strip():
+                problem("%s: CITED row %s needs a credit in its notes, a source_detail and a construction"
+                        % (TABLE, key))
 
 
 def check_disputed(rows, man):
@@ -207,7 +221,7 @@ def check_disputed(rows, man):
     baseline (source_id other than S1), and it has notes saying what failed, the
     recipe that was checked (source_detail) and a construction. An above_snapshot
     array is kept only beside a disputed entry: at its t, v, k the stair-step
-    value over the CITED rows is a disputed CITED row, and the array is larger."""
+    value over the baseline rows (CITED, S1) is a disputed row, and the array is larger."""
     cited = {(r["t"], r["v"], r["k"], r["N"]) for r in rows if r["tier"] == "CITED"}
     disputed = [r for r in rows if r["tier"] == "DISPUTED"]
     dkeys = collections.Counter((r["t"], r["v"], r["k"], r["N"]) for r in disputed)
@@ -227,7 +241,7 @@ def check_disputed(rows, man):
                 problem("%s: DISPUTED row %s without %s" % (TABLE, ",".join(key), f))
     cited_tv = collections.defaultdict(list)
     for r in rows:
-        if r["tier"] == "CITED":
+        if r["tier"] == "CITED" and r["source_id"] == "S1":
             cited_tv[(r["t"], r["v"])].append(r)
     for m in man:
         if m["status"] != "above_snapshot":
@@ -237,7 +251,7 @@ def check_disputed(rows, man):
         ok = (best is not None and int(m["N"]) > best and
               any(int(r["N"]) == best and (r["t"], r["v"], r["k"], r["N"]) in dkeys for r in cand))
         if not ok:
-            problem("%s: %s is above_snapshot, but the CITED stair-step value at its t, v, k is "
+            problem("%s: %s is above_snapshot, but the snapshot's stair-step value at its t, v, k is "
                     "not a disputed row smaller than it" % (MANIFEST, m["file"]))
 
 
