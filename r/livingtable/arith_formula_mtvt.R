@@ -5,15 +5,20 @@
 ## package (0.24) implements Martirosyan and Van Trung (2004) Section 4
 ## in MTVTRouxtypeCA, and its N_upper_MTVTRouxtypeCA(theoretical =
 ## TRUE) states a size law, which the package attributes to their
-## Theorem 4.13 (the paper is not on record here), at strengths 4 and
+## Theorem 4.13 (the paper was not on record here then), at strengths 4 and
 ## 5 with every ingredient at c = ceiling(k / 2) columns:
 ##   t = 4:  N = eCAN(4, c, v) + (v - 1) eCAN(3, c, v) + eCAN(2, c, v)^2
 ##   t = 5:  N = eCAN(5, c, v) + (v - 1) eCAN(4, c, v) + 2 eCAN(3, c, v) eCAN(2, c, v)
-## The strength-6 form is the same shape one strength up, read off the
-## record (the package stops at 5):
+## The strength-6 form is the same shape one strength up, first read off
+## the record (the package stops at 5). On 2026-10-25 the paper was read
+## in the authors' copy (a preprint on Tran Van Trung's university page):
+## its Theorem 4.13, for any t >= 4 and v >= 2, is CAN(t, 2k, v) <=
+## CAN(t, k, v) + (v - 1) CAN(t - 1, k, v) + sum_{i=2}^{t-2} CAN(i, k, v)
+## CAN(t - i, k, v), which gives the t = 5 form above and the t = 6 form below;
+## the paper treats 2k columns only, so the odd-k variant stays a reading.
 ##   t = 6:  N = eCAN(6, c, v) + (v - 1) eCAN(5, c, v) + 2 eCAN(4, c, v) eCAN(2, c, v) + eCAN(3, c, v)^2
 ## Exact on all 206 even-k rows (66 at t = 5 through the package's
-## formula, 140 at t = 6 through the extension). The package's own
+## formula, 140 at t = 6, Theorem 4.13 at t = 6). The package's own
 ## source notes that its strength-5 construction "appears to be wrong
 ## (and uses more runs)"; what is calibrated here is the size law the
 ## record uses, not the built array.

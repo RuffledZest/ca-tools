@@ -227,7 +227,7 @@ the tally):
 | fuse (every tag ending in m fuse words) | N = eCAN(t, k, v + m) - 2m at strengths 3 to 6 (Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010, Lemma 3.1, two rows fewer per fused symbol at every strength) | 1,303 of 1,354 exact, 42 with the base outside the table, 9 below the law | 147 |
 | Colbourn-Martirosyan-TVT-Walker, strength 3 | N = eCAN(3, k', v) + (v-1) eCAN(2, k', v) + v^3 - v^2, k' = ceiling(k / v), at prime power v (CMTW Theorem 3.4, v of at least 3); at v + 1 a prime power, that row minus 2 (one symbol fused, Lemma 3.1 of Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010) | 28 of 28 (23 and 5) | 28 |
 | Colbourn-Martirosyan-TVT-Walker, strength 4 | the k = v^2 rows by CMTW Theorem 4.13 with DCAN(2, v, v) = v - 1 from Yin 2003 and CODN(2, v, v^2) = v^4 - v^2 (derived here from CMTW's bound CODN(2, w, w) <= w^2 - w for a prime power w, stated in the proof of its Corollary 4.9, applied at w = v^2 with v a prime power and columns removed), N = eCAN(4, v, v) + (v-1) eCAN(3, v, v) + (v^3 - v^2)(v - 1) + 2 (v^4 - v^2) (`arith_formula_dcan.R`, Yin's values in `data/dcan_table.csv`) | 7 of 7 such rows, 11 rows by Lemma 4.8 with one fitted CODN value classed RECURSIVE_TENTATIVE (10 of them UNRESOLVED entries, the eleventh VERIFIED_IMPROVED by a CAs route), 565 open | 7 |
-| Martirosyan-TVT | even k, c = k/2, the size law `CAs::N_upper_MTVTRouxtypeCA` states at strength 5 and its shape one strength up at 6; odd k (the variant tag), the ingredient widths split over ceiling(k/2) and floor(k/2) as the unique full fit | 206 of 206 even, 160 of 160 odd, 6 postop rows bound only | 366 |
+| Martirosyan-TVT | even k, c = k/2, N = eCAN(t, c, v) + (v-1) eCAN(t-1, c, v) + the sum over i = 2 to t-2 of eCAN(i, c, v) eCAN(t-i, c, v) at t = 5 and 6 (Martirosyan and Tran Van Trung 2004, Theorem 4.13, for any t of at least 4; at t = 5 also the default of `CAs::N_upper_MTVTRouxtypeCA`); odd k (the variant tag), the ingredient widths split over ceiling(k/2) and floor(k/2) as the unique full fit | 206 of 206 even, 160 of 160 odd, 6 postop rows bound only | 366 |
 | Power CZ | Colbourn and Zhou 2012, Theorem 2.2, N = the least sum of quilting array sizes over the assignments Lemma 2.3 allows, sizes from the paper's Tables 1 and 2 (`arith_formula_powercz.R`, tables in `cz_tables.R`), a reading, nothing wired | 41 of 68 binary rows exact with the sizes as printed, 65 with two sizes fitted from the record, while the 27 ternary rows at strength 3, the 3 at strength 6 and the 117 rows at v = 6 have no ingredient in the paper | 0 (62 RECURSIVE_TENTATIVE) |
 | Cohen-Colbourn-Ling | the k-ary Roux of CMTW Theorem 3.3 with Yin's DCAN values | 0 of 318, the record a median 24 percent below the law, so the difference covering arrays behind these rows were found by search | 0 |
 
@@ -533,14 +533,17 @@ author's workstation.
   that have not been executed. Beyond the demo, the propagate mode is
   exercised by the reference inputs in `tests/` (`tests/README.md`),
   and no propagated size has yet been built and verified.
-- The arithmetic laws for Martirosyan-TVT at strength 6, the odd-k
-  Martirosyan-TVT variant, the Add n factors sum for n of at least 2
-  and the D16 hash family form were read off the record, not from a
-  paper. Each is exact on every row the engine admits; six Add n
-  factors rows inside the stated domain sit above the sum and are not
-  admitted (listed above). Each is labeled a reading in its script
-  header.
-  Four laws first read off the record have since been found in print:
+- The arithmetic laws for the odd-k Martirosyan-TVT variant, the Add
+  n factors sum for n of at least 2 and the D16 hash family form were
+  read off the record, not from a paper. Each is exact on every row
+  the engine admits; six Add n factors rows inside the stated domain
+  sit above the sum and are not admitted (listed above). Each is
+  labeled a reading in its script header.
+  Five laws first read off the record have since been found in print:
+  the Martirosyan-TVT law at strength 6 is Theorem 4.13 of Martirosyan
+  and Tran Van Trung 2004 at t = 6 (read on 2026-10-25 in the authors'
+  copy, a preprint on Tran Van Trung's university page, so the theorem
+  numbers are the preprint's),
   derive from strength t+1 is inequality (7), add one factor is
   Theorem 3.2 and the fuse loss of two rows per symbol is Lemma 3.1 of
   Colbourn, Keri, Rivas Soriano and Schlage-Puchta 2010, and the
