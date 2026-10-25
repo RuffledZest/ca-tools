@@ -10,6 +10,8 @@ man <- read.csv("table/MANIFEST.csv", stringsAsFactors = FALSE)
 bad <- 0; done <- 0
 for (i in seq_len(nrow(man))) {
     f <- file.path("table/arrays", man$file[i]); v <- man$v[i]
+    if (grepl("[.]gz$", f)) {   ## a stored compressed file: read.table reads gzip directly, the C program needs the text
+        tf <- tempfile(fileext = ".txt"); writeLines(readLines(gzfile(f)), tf); f <- tf }
     D <- as.matrix(read.table(f, header = FALSE, na.strings = c("NA", "-", "*", "x", "X", "-1")))
     storage.mode(D) <- "integer"
     r <- maxconstant_c(D, verbose = 2)

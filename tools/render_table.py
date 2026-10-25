@@ -68,8 +68,20 @@ def load(table_dir):
 
 
 def credit_of(r):
-    m = re.search(r"credit: ([^;]*)", r.get("notes") or "")
-    return m.group(1).strip() if m else ""
+    """The text after "credit: " up to the first semicolon outside parentheses
+    (a semicolon inside, as in CA(15; 3, 12, 2), belongs to the credit)."""
+    notes = r.get("notes") or ""
+    i = notes.find("credit: ")
+    if i < 0:
+        return ""
+    s = notes[i + len("credit: "):]
+    depth = 0
+    for j, ch in enumerate(s):
+        if ch == ";" and depth == 0:
+            return s[:j].strip()
+        depth = max(0, depth + (ch == "(") - (ch == ")"))
+    # unbalanced parentheses: fall back to the first semicolon
+    return (s.split(";", 1)[0] if depth > 0 else s).strip()
 
 
 CR = {}
@@ -103,7 +115,7 @@ def stamp_html(r):
     links = []
     f = SHA2FILE.get(r.get("array_sha256") or "")
     if f:
-        links.append('<a href="%s%s">array</a>' % (ARRAY_URL, html.escape(f)))
+        links.append('<a href="%s%s">%s</a>' % (ARRAY_URL, html.escape(f), "array, gzip" if f.endswith(".gz") else "array"))
     links.append('<a href="%s">verification log</a>' % LOG_URL)
     return head + " (" + ", ".join(links) + ")"
 
@@ -222,7 +234,9 @@ LEGEND = [
      "each stamp links to that verifier (caverify on CRAN, or the ca_verify source at that commit), "
      "to the array file where one is stored, and to the verification log"),
     ("entered", "the date the row was added"),
-    ("notes", "comparison with the previous best, credit, submission, and supersession notes"),
+    ("notes", "comparison with the previous best as of entry, credit, submission, and supersession "
+     "notes; every construction belongs to the sources the row names, and a row whose construction "
+     "is this project's own says so"),
     ("lb, lb_evidence", "reserved for lower-bound evidence, empty in every row so far"),
     ("construction", "the construction or search that produced the entry, in a researcher's "
      "words; for the baseline it is Colbourn's own label. Where Colbourn's table and a verified "

@@ -129,10 +129,13 @@ any claim is checked. The report states the size.
 The limits come from storage. GitHub refuses any file over 100 MiB,
 warns above 50 MiB, and recommends keeping a repository under 1 GB,
 and the table keeps a copy of every accepted array. For scale, the
-largest arrays on file, Bergeron's CA(20216; 3, 401, 19) and its two
-neighbors, are 18 to 19 MiB each as text. Array text compresses well,
-so git stores the whole repository, those three included, in about 7
-MB.
+largest arrays stored as plain text, CA(1078; 2, 8000, 19) and
+Bergeron's CA(20216; 3, 401, 19) and its two neighbors, are 18 to 20
+MiB each as text. One array, CA(1870; 2, 17576, 25), is 82 MiB as text
+and is stored gzip-compressed by the maintainer under the rule in
+`../table/README.md`; a submitted file stays within the limits above.
+Array text compresses well, so git stores the whole repository, those
+files included, in far less than its size as text.
 
 GitHub's web page accepts uploads only up to 25 MiB per file, so an
 array file larger than that has to be added with git from your own

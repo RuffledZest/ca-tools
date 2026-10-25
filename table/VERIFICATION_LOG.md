@@ -224,3 +224,30 @@ a strength-4 covering array. The improvements belong to the authors'
 construction, not to this project. Larger q (17, 19, 23, and 25 with
 F_25 arithmetic) would follow the same way; their full verification is
 long and was not attempted.
+
+## Nine arrays from the CAs constructions, 2026-10-25
+
+Nine more entries where the CAs package's implementations give fewer
+rows than the November 2024 snapshot were built with
+`CAs::bestCA(t, k, v, seed = 20260829)` (CAs 0.24-4) and verified by
+caverify 0.2.0 on the Mac on 2026-10-23. Six are at strength 3 and
+k = 8, by the ordered design construction of Cohen, Colbourn and Ling
+with a binary ingredient that has two constant rows: v = 10, 12, 14,
+18, 20 and 24 give 1180, 1992, 3108, 6444, 8760 and 14928 rows, against
+1215, 2046, 3185, 6579, 8930 and 15180. Three are at strength 2, by the
+generalized direct product applied twice to a Bose array:
+CA(358; 2, 1728, 11), CA(1078; 2, 8000, 19) and CA(1870; 2, 17576, 25),
+one row under the snapshot's 359, 1079 and 1871, because the second
+product step saves three rows (two constant rows of the first
+product and one of the Bose array) where the CAs size formula assumes
+two. On 2026-10-24 each was checked again with `ca_verify.c`
+(commit 50b439f) and `tools/constant_rows.c` on a second machine:
+VERIFIED, file hashes equal to the stamps, v constant rows for the six
+and 3 for the three. All nine are entered as S6 rows with MANIFEST
+status exceeds_snapshot. The 1870-row array is 82 MiB as text and is
+stored gzip-compressed (`CA_1870_2_17576_25.txt.gz`, 0.34 MiB) under
+the rule in README.md; its MANIFEST hash is that of the uncompressed
+text, and the recipe rebuilds it byte for byte. The notes of these rows
+and of four earlier rows name their sources and ingredients. The
+improvements belong to the CAs implementation and the published
+constructions.

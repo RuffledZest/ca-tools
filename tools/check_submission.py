@@ -27,6 +27,7 @@ Usage:
 import argparse
 import csv
 import datetime
+import gzip
 import hashlib
 import io
 import json
@@ -505,7 +506,7 @@ def table_notes(cl, ctx):
     if cl["comparison"] == "exceeds_table":
         parts.append("exceeds table: " + previous_text(cl))
     elif cl["comparison"] == "equals_best":
-        parts.append("equals best known: " + previous_text(cl))
+        parts.append("equals table: " + previous_text(cl))
     else:
         parts.append("above table best, not an improvement: " + previous_text(cl))
     if cl["status"] == "screened":
@@ -693,9 +694,20 @@ def selftest(table_dir):
             print("NO MANIFEST ROW  %s" % name)
             bad += 1
             continue
-        _, _, sha = canonical_of_file(os.path.join(adir, name), int(m["v"]))
-        with open(os.path.join(adir, name), "rb") as f:
-            raw_sha = hashlib.sha256(f.read()).hexdigest()
+        if name.endswith(".gz"):
+            # a stored compressed file (table/README.md, arrays/): the hash of its
+            # decompressed bytes must equal the MANIFEST hash, which is the hash
+            # of the canonical text, so the file decompresses to the canonical
+            # text itself; it is hashed in chunks, not parsed, to keep memory low
+            h = hashlib.sha256()
+            with gzip.open(os.path.join(adir, name), "rb") as f:
+                for chunk in iter(lambda: f.read(1 << 20), b""):
+                    h.update(chunk)
+            sha = raw_sha = h.hexdigest()
+        else:
+            _, _, sha = canonical_of_file(os.path.join(adir, name), int(m["v"]))
+            with open(os.path.join(adir, name), "rb") as f:
+                raw_sha = hashlib.sha256(f.read()).hexdigest()
         ok = sha == m["sha256"] and raw_sha == m["sha256"]
         print("%s  %s  %s" % ("OK      " if ok else "MISMATCH", name, sha))
         bad += not ok
